@@ -29,7 +29,7 @@ class Player(models.Model):
     seasons = models.ManyToManyField('Season', related_name='seasons_players')
 
     def __str__(self):
-        return self.FirstName + ' ' + self.LastName
+        return self.first_name + ' ' + self.last_name
 
 
 class Team(models.Model):

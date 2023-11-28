@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'frisbee_simulator_web_db_local',
+        'NAME': 'frisbee_simulator_web_local',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': 'localhost',

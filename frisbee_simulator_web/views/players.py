@@ -39,7 +39,14 @@ def random_player(request):
     )
     player.overall = calculate_player_rating(player)
     player.save()
-    return redirect('player_list')
+    return redirect('list_players')
+
+
+def list_players(request):
+    players = Player.objects.all()
+    for player in players:
+        print('player name: ', player.first_name)
+    return render(request, 'players/list_players.html', {'players': players})
 
 
 def calculate_player_rating(player):
