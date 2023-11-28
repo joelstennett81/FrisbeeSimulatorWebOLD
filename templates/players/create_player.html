@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Create a Player</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create</button>
+  </form>
+  <br>
+  <form method="post" action="{% url 'random_player' %}">
+    {% csrf_token %}
+    <button type="submit">Create Random Player</button>
+  </form>
+{% endblock %}
