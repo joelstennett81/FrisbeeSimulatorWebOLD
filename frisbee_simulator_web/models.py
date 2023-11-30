@@ -1,12 +1,12 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 
 
 class Player(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     jersey_number = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)])
-    overall = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)])
     height = models.PositiveIntegerField(validators=[MinValueValidator(48), MaxValueValidator(90)])  # In inches
     weight = models.PositiveIntegerField(validators=[MinValueValidator(50), MaxValueValidator(450)])  # In pounds
     speed = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
@@ -25,6 +25,7 @@ class Player(models.Model):
     deep_cuts = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     throw_ability = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     cut_ability = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
     teams = models.ManyToManyField('Team', related_name='teams_players')
     seasons = models.ManyToManyField('Season', related_name='seasons_players')
 
@@ -36,6 +37,7 @@ class Team(models.Model):
     location = models.CharField(max_length=50)
     mascot = models.CharField(max_length=50)
     players = models.ManyToManyField(Player, related_name='players_teams')
+    overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
 
 
 class Season(models.Model):
@@ -53,9 +55,60 @@ class Season(models.Model):
 
 
 class Tournament(models.Model):
+    NUMBER_OF_TEAMS_CHOICES = [
+        (4, '4'),
+        (8, '8'),
+        (16, '16'),
+        (20, '20'),
+        (32, '32'),
+    ]
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=50)
+    number_of_teams = models.PositiveIntegerField(choices=NUMBER_OF_TEAMS_CHOICES, default=4)
     teams = models.ManyToManyField(Team, related_name='teams_tournaments')
+    champion = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
+    is_complete = models.BooleanField(default=False)
+
+
+class TournamentPool(models.Model):
+    POOL_SIZE_CHOICES = [
+        (4, '4'),
+        (5, '5'),
+    ]
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    teams = models.ManyToManyField('TournamentTeam', related_name='teams_pools')
+    number_of_teams = models.PositiveIntegerField(choices=POOL_SIZE_CHOICES, default=4)
+
+
+class TournamentBracket(models.Model):
+    BRACKET_SIZE_CHOICES = [
+        (4, '4'),
+        (8, '8'),
+        (12, '12')
+    ]
+    BRACKET_TYPE_CHOICES = [
+        ('Championship', 'Championship'),
+        ('Loser', 'Loser'),
+    ]
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    teams = models.ManyToManyField('TournamentTeam', related_name='teams_brackets')
+    number_of_teams = models.PositiveIntegerField(choices=BRACKET_SIZE_CHOICES, default=4)
+    bracket_type = models.CharField(max_length=50, choices=BRACKET_TYPE_CHOICES)
+    champion = models.ForeignKey('TournamentTeam', on_delete=models.CASCADE, null=True)
+
+
+class TournamentTeam(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    pool_play_seed = models.PositiveIntegerField()
+    bracket_play_seed = models.PositiveIntegerField(blank=True)
+    pool = models.ForeignKey(TournamentPool, on_delete=models.CASCADE,null=True)
+    bracket = models.ForeignKey(TournamentBracket, on_delete=models.CASCADE, null=True)
+    pool_play_wins = models.PositiveIntegerField(default=0)
+    pool_play_losses = models.PositiveIntegerField(default=0)
+    pool_play_point_differential = models.IntegerField(default=0)
+    bracket_play_wins = models.PositiveIntegerField(default=0)
+    bracket_play_losses = models.PositiveIntegerField(default=0)
 
 
 class Game(models.Model):
@@ -63,14 +116,20 @@ class Game(models.Model):
         ('Pool Play', 'Pool Play'),
         ('Pre-Quarterfinal', 'Pre-Quarterfinal'),
         ('Quarterfinal', 'Quarterfinal'),
+        ('Loser-Semifinal', 'Loser-Semifinal'),
         ('Semifinal', 'Semifinal'),
         ('Championship', 'Championship'),
+        ('Third-Place-Final', 'Third-Place-Final'),
+        ('Fifth-Place-Final', 'Fifth-Place-Final'),
+        ('Seventh-Place-Final', 'Seventh-Place-Final')
     ]
-    date = models.DateTimeField()
-    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_games')
-    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_games')
+    date = models.DateTimeField(default=timezone.now)
+    team_one = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_one_games')
+    team_two = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_two_games')
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='games')
     game_type = models.CharField(max_length=50, choices=GAME_TYPE_CHOICES)
+    winner = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='winner_games', null=True)
+    loser = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='loser_games', null=True)
 
 
 class PlayerGameStat(models.Model):
@@ -107,6 +166,7 @@ class PlayerTournamentStat(models.Model):
     drops = models.PositiveIntegerField(default=0)
     callahans = models.PositiveIntegerField(default=0)
     pulls = models.PositiveIntegerField(default=0)
+
 
 class PlayerSeasonStat(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='season_stats')
@@ -145,13 +205,9 @@ class TeamTournamentStat(models.Model):
     hucks_completed = models.PositiveIntegerField(default=0)
     callahans = models.PositiveIntegerField(default=0)
 
+
 class TeamSeasonStat(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='season_stats')
     season = models.ForeignKey(Season, on_delete=models.CASCADE, related_name='team_season_stats')
     wins = models.PositiveIntegerField()
     losses = models.PositiveIntegerField()
-
-
-
-
-

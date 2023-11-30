@@ -1,18 +1,16 @@
 from django.shortcuts import render, redirect
+from django.views.generic import CreateView
+
 from frisbee_simulator_web.forms import PlayerForm
 from frisbee_simulator_web.models import Player
 from frisbee_simulator_web.views.misc import create_random_player
 
 
-def create_player(request):
-    if request.method == 'POST':
-        form = PlayerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('list_players')
-    else:
-        form = PlayerForm()
-    return render(request, 'players/create_player.html', {'form': form})
+class PlayerCreateView(CreateView):
+    model = Player
+    form_class = PlayerForm
+    template_name = 'players/create_player.html'
+    success_url = '/players/list/'
 
 
 def random_player(request):
@@ -24,4 +22,3 @@ def random_player(request):
 def list_players(request):
     players = Player.objects.all()
     return render(request, 'players/list_players.html', {'players': players})
-

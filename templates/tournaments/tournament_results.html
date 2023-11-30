@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Tournament Results</h1>
+
+    <h2>Bracket Games</h2>
+    <ul>
+        {% for game in tournament.games.all %}
+            <li>
+                {{ game.team_one.name }} vs {{ game.team_two.name }}: {{ game.winner.name }} won
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Overall Winner</h2>
+    <p>
+        The overall winner of the tournament is {{ tournament.winner.name }}
+    </p>
+
+{% endblock %}

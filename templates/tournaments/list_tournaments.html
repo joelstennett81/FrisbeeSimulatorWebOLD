@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <table id="tournament-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Number of Teams</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for tournament in tournaments %}
+            <tr>
+                <td>{{ tournament.name }}</td>
+                <td>{{ tournament.location }}</td>
+                <td>{{ tournament.number_of_teams }}</td>
+                <td>
+                    {% if tournament.is_complete %}
+                        <a href="{% url 'tournament_results' tournament.id %}">Show Results</a>
+                    {% else %}
+                        <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Tournament</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function () {
+            $('#tournament-table').DataTable();
+        });
+    </script>
+{% endblock %}

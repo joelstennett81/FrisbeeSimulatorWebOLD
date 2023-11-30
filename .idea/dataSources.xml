@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="frisbee_simulator_web_db_local" uuid="f22d2180-ab02-4d71-ab49-7772a1f19e58">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="frisbee_simulator_web_local" uuid="9bca2d76-005f-4c07-9e34-f80a2053417b">
+    <data-source source="LOCAL" name="frisbee_simulator_web_local" uuid="20f3917e-1f94-4fdd-926e-68527daec775">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
