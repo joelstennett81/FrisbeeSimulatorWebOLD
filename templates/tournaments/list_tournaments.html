@@ -10,6 +10,7 @@
             <th>Name</th>
             <th>Location</th>
             <th>Number of Teams</th>
+            <th>Action</th>
         </tr>
         </thead>
         <tbody>
@@ -17,7 +18,14 @@
             <tr>
                 <td>{{ tournament.name }}</td>
                 <td>{{ tournament.location }}</td>
-                <td>tournament.number_of_teams</td>
+                <td>{{ tournament.number_of_teams }}</td>
+                <td>
+                    {% if tournament.is_complete %}
+                        <a href="{% url 'tournament_results' tournament.id %}">Show Results</a>
+                    {% else %}
+                        <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Tournament</a>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
         </tbody>

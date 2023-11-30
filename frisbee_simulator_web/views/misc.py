@@ -1,5 +1,7 @@
 import random
 import string
+
+from django.db.models import Avg
 from faker import Faker
 from frisbee_simulator_web.models import Player
 
@@ -92,8 +94,17 @@ def generate_random_mascot():
 
 
 def calculate_player_rating(player):
-    rating_sum = (
-            player.speed + player.jumping + player.flick_distance + player.flick_accuracy + player.backhand_accuracy + player.backhand_distance + player.cutter_defense +
-            player.handler_defense + player.agility + player.handle_cuts + player.under_cuts + player.deep_cuts + player.throw_ability + player.throw_ability)
-    overall_rating = rating_sum / 14
+    rating_attributes = [
+        player.speed, player.jumping, player.flick_distance, player.flick_accuracy,
+        player.backhand_accuracy, player.backhand_distance, player.cutter_defense,
+        player.handler_defense, player.agility, player.handle_cuts, player.under_cuts,
+        player.deep_cuts, player.throw_ability, player.throw_ability
+    ]
+    rating_sum = sum(rating_attributes)
+    overall_rating = rating_sum / len(rating_attributes)
     return overall_rating
+
+
+def calculate_team_rating(team):
+    players = team.players
+    return team.players.all().aggregate(Avg('overall_rating')).get('overall_rating__avg')
