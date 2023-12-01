@@ -19,7 +19,7 @@ class PlayerForm(forms.ModelForm):
 class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
-        exclude = ['players']
+        exclude = ['players', 'o_line_players', 'd_line_players', 'bench_players']
 
     def save(self, commit=True):
         team = super().save(commit=False)

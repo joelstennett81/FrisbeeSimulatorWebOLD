@@ -38,6 +38,9 @@ class Team(models.Model):
     mascot = models.CharField(max_length=50)
     players = models.ManyToManyField(Player, related_name='players_teams')
     overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    o_line_players = models.ManyToManyField(Player, related_name='o_line_players_teams')
+    d_line_players = models.ManyToManyField(Player, related_name='d_line_players_teams')
+    bench_players = models.ManyToManyField(Player, related_name='bench_players_teams')
 
 
 class Season(models.Model):

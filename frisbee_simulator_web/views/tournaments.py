@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.views.generic.edit import CreateView
 from frisbee_simulator_web.models import Tournament, TournamentTeam, Game, TournamentPool, TournamentBracket
 from frisbee_simulator_web.forms import TournamentForm
+from frisbee_simulator_web.views.simulate_game_functions import GameSimulation
 from frisbee_simulator_web.views.teams import create_random_team
 
 
@@ -32,6 +33,9 @@ class TournamentCreateView(CreateView):
         self.object.save()
         return response
 
+    def form_invalid(self, form):
+        return super().form_invalid(form)
+
 
 def list_tournaments(request):
     tournaments = Tournament.objects.all()
@@ -51,19 +55,6 @@ def rank_teams_for_pool_play(tournament):
     print('tournament team created')
 
 
-def simulate_pool_play_game(game):
-    game.winner = game.team_one
-    game.loser = game.team_two
-    game.save()
-    game.winner.pool_play_wins += 1
-    point_differential = random.randint(1, 15)
-    game.winner.pool_play_point_differential = point_differential
-    game.loser.pool_play_losses += 1
-    game.loser.pool_play_point_differential = point_differential * (-1)
-    game.save()
-    return game
-
-
 def simulate_four_team_pool(tournament):
     tournament_teams = TournamentTeam.objects.filter(tournament=tournament)
     pool = TournamentPool.objects.create(tournament=tournament, number_of_teams=4)
@@ -74,6 +65,7 @@ def simulate_four_team_pool(tournament):
             game = Game.objects.create(team_one=pool.teams.all()[i], team_two=pool.teams.all()[j],
                                        tournament=tournament,
                                        game_type='Pool Play')
+            game.save()
             simulate_pool_play_game(game)
             game.save()
 
@@ -222,3 +214,24 @@ def simulate_tournament(request, tournament_id):
 def tournament_results(request, tournament_id):
     tournament = Tournament.objects.get(id=tournament_id)
     return render(request, 'tournaments/tournament_results.html', {'tournament': tournament})
+
+
+def simulate_pool_play_game(game):
+    gameSimulation = GameSimulation(game)
+    gameSimulation.coin_flip()
+    gameSimulation.simulate_full_game()
+    if gameSimulation.winner == gameSimulation.team_one:
+        game.winner = gameSimulation.team_one
+        game.loser = gameSimulation.team_two
+        point_differential = gameSimulation.teamOneScore - gameSimulation.teamTwoScore
+    else:
+        game.winner = gameSimulation.team_two
+        game.loser = gameSimulation.team_one
+        point_differential = gameSimulation.teamTwoScore - gameSimulation.teamOneScore
+    game.save()
+    game.winner.pool_play_wins += 1
+    game.loser.pool_play_losses += 1
+    game.loser.pool_play_point_differential = point_differential
+    game.loser.pool_play_point_differential = point_differential * (-1)
+    game.save()
+    return game
