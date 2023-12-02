@@ -37,14 +37,11 @@ class GameSimulation:
     def __init__(self, game):
         super().__init__()
         self.game = game
-        print('self.game.teamone: ', self.game.team_one)
         self.teamOne = TeamInGameSimulation(self.game.team_one)
         self.teamTwo = TeamInGameSimulation(self.game.team_two)
-        print('self.teamOne: ', self.teamOne)
-        print('self.teamTwo: ', self.teamTwo)
         self.sevenOnFieldForTeamOne = self.teamOne.team.o_line_players
         self.sevenOnFieldForTeamTwo = self.teamTwo.team.d_line_players
-        self.determiner = random.randint(1, 100)
+        self.determiner = 0
         self.teamOneScore = 0
         self.teamTwoScore = 0
         self.discLocationY = 0
@@ -52,6 +49,8 @@ class GameSimulation:
         self.differenceInTeamsOverallRating = 0
         self.probabilityForWinner = 0
         self.winner = self.teamOne.tournamentTeam
+        self.loser = self.teamTwo.tournamentTeam
+        self.pointWinner = self.teamOne
         self.gameOver = False
 
     def coin_flip(self):
@@ -77,7 +76,8 @@ class GameSimulation:
             self.discLocationY = 0
             if self.betterTeam == self.teamOne:
                 # Team 1 has better chance to hold as better team
-                if self.determiner <= (self.probabilityForWinner + 10):
+                self.determiner = random.randint(1, 100)
+                if self.determiner <= self.probabilityForWinner:
                     self.pointWinner = self.teamOne
                     self.teamOneScore += 1
                     print('team 1 held as better team')
@@ -88,7 +88,7 @@ class GameSimulation:
                     print('team 2 broke as worse team')
             elif self.betterTeam == self.teamTwo:
                 # Team 1 holds and wins the point as worse team
-                if self.determiner <= (100 - self.probabilityForWinner) + 10:
+                if self.determiner <= (100 - self.probabilityForWinner):
                     self.pointWinner = self.teamOne
                     self.teamOneScore += 1
                     print('team 1 held as worse team ')
@@ -104,7 +104,7 @@ class GameSimulation:
             self.discLocationY = 70
             if self.betterTeam == self.teamTwo:
                 # Team 2 has better chance to hold as better team
-                if self.determiner <= (self.probabilityForWinner + 10):
+                if self.determiner <= self.probabilityForWinner:
                     self.pointWinner = self.teamTwo
                     self.teamTwoScore += 1
                     print('team 2 holds as better team')
@@ -115,7 +115,7 @@ class GameSimulation:
                     print('team 1 breaks as worse team')
             elif self.betterTeam == self.teamOne:
                 # Team 2 holds and wins the point as worse team
-                if self.determiner <= (100 - self.probabilityForWinner) + 10:
+                if self.determiner <= (100 - self.probabilityForWinner):
                     self.pointWinner = self.teamTwo
                     self.teamTwoScore += 1
                     print('team 2 holds as worse team')
@@ -127,6 +127,7 @@ class GameSimulation:
 
     def simulate_full_game(self):
         self.calculate_difference_in_teams_overall_rating()
+        self.calculate_probability_for_winner()
         while not self.gameOver:
             self.simulate_point()
             print('team 1: ', self.teamOneScore)
@@ -134,10 +135,14 @@ class GameSimulation:
             if self.teamOneScore == 15:
                 self.winner = self.teamOne.tournamentTeam
                 self.loser = self.teamTwo.tournamentTeam
+                self.game.winner_score = self.teamOneScore
+                self.game.loser_score = self.teamTwoScore
                 self.gameOver = True
             elif self.teamTwoScore == 15:
                 self.winner = self.teamTwo.tournamentTeam
                 self.loser = self.teamOne.tournamentTeam
+                self.game.winner_score = self.teamTwoScore
+                self.game.loser_score = self.teamOneScore
                 self.gameOver = True
             else:
                 self.setup_next_point()
@@ -146,13 +151,13 @@ class GameSimulation:
     def calculate_difference_in_teams_overall_rating(self):
         if self.teamOne.team.overall_rating > self.teamTwo.team.overall_rating:
             self.betterTeam = self.teamOne
-            self.difference_in_teams_overall_rating = self.teamOne.team.overall_rating - self.teamTwo.team.overall_rating
+            self.differenceInTeamsOverallRating = self.teamOne.team.overall_rating - self.teamTwo.team.overall_rating
         else:
             self.betterTeam = self.teamTwo
-            self.difference_in_teams_overall_rating = self.teamTwo.team.overall_rating - self.teamOne.team.overall_rating
+            self.differenceInTeamsOverallRating = self.teamTwo.team.overall_rating - self.teamOne.team.overall_rating
 
     def calculate_probability_for_winner(self):
-        self.probability_for_winner = self.difference_in_teams_overall_rating + 50
+        self.probabilityForWinner = self.differenceInTeamsOverallRating + 50
 
     def setup_next_point(self):
         if self.pointWinner == self.teamOne:

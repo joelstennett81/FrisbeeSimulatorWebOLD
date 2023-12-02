@@ -136,6 +136,8 @@ class Game(models.Model):
     game_type = models.CharField(max_length=50, choices=GAME_TYPE_CHOICES)
     winner = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='winner_games', null=True)
     loser = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='loser_games', null=True)
+    winner_score = models.PositiveIntegerField(default=0)
+    loser_score = models.PositiveIntegerField(default=0)
 
 
 class PlayerGameStat(models.Model):

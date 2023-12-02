@@ -5,23 +5,16 @@
 
     <h2>Bracket Games</h2>
     <ul>
-        {% for team in tournament.teams.all %}
-            <li>
-                {{ team }}
-            </li>
-        {% endfor %}
-    </ul>
-    <ul>
         {% for game in tournament.games.all %}
             <li>
-                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }} won
+                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }} won {{ game.winner_score }}- {{ game.loser_score }}
             </li>
         {% endfor %}
     </ul>
 
     <h2>Overall Winner</h2>
     <p>
-        The overall winner of the tournament is {{ tournament.winner.team }}
+        The overall winner of the tournament is {{ tournament.champion }}
     </p>
 
 {% endblock %}
