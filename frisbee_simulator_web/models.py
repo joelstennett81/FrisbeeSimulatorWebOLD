@@ -38,6 +38,12 @@ class Team(models.Model):
     mascot = models.CharField(max_length=50)
     players = models.ManyToManyField(Player, related_name='players_teams')
     overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    o_line_players = models.ManyToManyField(Player, related_name='o_line_players_teams')
+    d_line_players = models.ManyToManyField(Player, related_name='d_line_players_teams')
+    bench_players = models.ManyToManyField(Player, related_name='bench_players_teams')
+
+    def __str__(self):
+        return self.location + ' ' + self.mascot
 
 
 class Season(models.Model):
@@ -130,6 +136,8 @@ class Game(models.Model):
     game_type = models.CharField(max_length=50, choices=GAME_TYPE_CHOICES)
     winner = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='winner_games', null=True)
     loser = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='loser_games', null=True)
+    winner_score = models.PositiveIntegerField(default=0)
+    loser_score = models.PositiveIntegerField(default=0)
 
 
 class PlayerGameStat(models.Model):

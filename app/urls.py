@@ -14,5 +14,5 @@ urlpatterns = [
     path('tournaments/new/', tournaments.TournamentCreateView.as_view(), name='create_tournament'),
     path('tournaments/list/', tournaments.list_tournaments, name='list_teams'),
     path('tournaments/simulate/<int:tournament_id>/', tournaments.simulate_tournament, name='simulate_tournament'),
-
+    path('tournaments/results/<int:tournament_id>/', tournaments.tournament_results, name='tournament_results')
 ]

@@ -7,14 +7,14 @@
     <ul>
         {% for game in tournament.games.all %}
             <li>
-                {{ game.team_one.name }} vs {{ game.team_two.name }}: {{ game.winner.name }} won
+                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }} won {{ game.winner_score }}- {{ game.loser_score }}
             </li>
         {% endfor %}
     </ul>
 
     <h2>Overall Winner</h2>
     <p>
-        The overall winner of the tournament is {{ tournament.winner.name }}
+        The overall winner of the tournament is {{ tournament.champion }}
     </p>
 
 {% endblock %}
