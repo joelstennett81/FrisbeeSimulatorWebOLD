@@ -45,14 +45,11 @@ def list_tournaments(request):
 def rank_teams_for_pool_play(tournament):
     teams = list(tournament.teams.all())
     teams.sort(key=lambda team: (-team.overall_rating, team.location))
-    print('tournament team pre created')
     for i, team in enumerate(teams):
         pool_play_seed = i = 1
         tournament_team = TournamentTeam.objects.create(team=team, tournament=tournament, pool_play_seed=pool_play_seed,
                                                         bracket_play_seed=pool_play_seed, pool_play_wins=0)
-        print('tournament_team: ', tournament_team)
         tournament_team.save()
-    print('tournament team created')
 
 
 def simulate_four_team_pool(tournament):
@@ -204,7 +201,7 @@ def simulate_tournament(request, tournament_id):
     elif number_of_teams == 8:
         tournament_bracket = simulate_eight_team_bracket(tournament)
     else:
-        return render(request, 'tournaments/tournament_error.html', )
+        return render(request, 'tournaments/tournament_error.html' )
     tournament.champion = tournament_bracket.champion
     tournament.is_complete = True
     tournament.save()
@@ -220,13 +217,13 @@ def simulate_pool_play_game(game):
     gameSimulation = GameSimulation(game)
     gameSimulation.coin_flip()
     gameSimulation.simulate_full_game()
-    if gameSimulation.winner == gameSimulation.team_one:
-        game.winner = gameSimulation.team_one
-        game.loser = gameSimulation.team_two
+    if gameSimulation.winner == gameSimulation.teamOne:
+        game.winner = gameSimulation.teamOne.tournamentTeam
+        game.loser = gameSimulation.teamTwo.tournamentTeam
         point_differential = gameSimulation.teamOneScore - gameSimulation.teamTwoScore
     else:
-        game.winner = gameSimulation.team_two
-        game.loser = gameSimulation.team_one
+        game.winner = gameSimulation.teamTwo.tournamentTeam
+        game.loser = gameSimulation.teamOne.tournamentTeam
         point_differential = gameSimulation.teamTwoScore - gameSimulation.teamOneScore
     game.save()
     game.winner.pool_play_wins += 1

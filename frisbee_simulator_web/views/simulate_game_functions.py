@@ -3,9 +3,10 @@ import random
 from frisbee_simulator_web.models import TournamentTeam, Game, Team
 
 
-class TeamInGameSimulation(TournamentTeam):
+class TeamInGameSimulation:
     def __init__(self, tournamentTeam):
         super().__init__()
+        self.tournamentTeam = tournamentTeam
         self.team = tournamentTeam.team
         self.coinFlipChoice = None
         self.startPointWithDisc = None
@@ -32,21 +33,25 @@ class TeamInGameSimulation(TournamentTeam):
         self.benchP7 = self.team.bench_players.all()[6]
 
 
-class GameSimulation(Game):
+class GameSimulation:
     def __init__(self, game):
         super().__init__()
         self.game = game
-        self.teamOne = TeamInGameSimulation(game.team_one)
-        self.teamTwo = TeamInGameSimulation(game.team_two)
+        print('self.game.teamone: ', self.game.team_one)
+        self.teamOne = TeamInGameSimulation(self.game.team_one)
+        self.teamTwo = TeamInGameSimulation(self.game.team_two)
+        print('self.teamOne: ', self.teamOne)
+        print('self.teamTwo: ', self.teamTwo)
         self.sevenOnFieldForTeamOne = self.teamOne.team.o_line_players
         self.sevenOnFieldForTeamTwo = self.teamTwo.team.d_line_players
+        self.determiner = random.randint(1, 100)
         self.teamOneScore = 0
         self.teamTwoScore = 0
         self.discLocationY = 0
         self.betterTeam = 0
         self.differenceInTeamsOverallRating = 0
         self.probabilityForWinner = 0
-        self.winner = self.teamOne
+        self.winner = self.teamOne.tournamentTeam
         self.gameOver = False
 
     def coin_flip(self):
@@ -63,7 +68,6 @@ class GameSimulation(Game):
             print("Team 2 won the disc flip")
 
     def simulate_point(self):
-        self.determiner = random.randint(1, 100)
         self.pointWinner = 0  # 1 means team1, 2 means team2
 
         if self.teamOne.startPointWithDisc:
@@ -76,20 +80,25 @@ class GameSimulation(Game):
                 if self.determiner <= (self.probabilityForWinner + 10):
                     self.pointWinner = self.teamOne
                     self.teamOneScore += 1
+                    print('team 1 held as better team')
                 # Team 2 breaks and wins the point as worse team
                 else:
                     self.pointWinner = self.teamTwo
                     self.teamTwoScore += 1
+                    print('team 2 broke as worse team')
             elif self.betterTeam == self.teamTwo:
                 # Team 1 holds and wins the point as worse team
                 if self.determiner <= (100 - self.probabilityForWinner) + 10:
                     self.pointWinner = self.teamOne
                     self.teamOneScore += 1
+                    print('team 1 held as worse team ')
                 # Team 2 breaks as the better team
                 else:
                     self.pointWinner = self.teamTwo
                     self.teamTwoScore += 1
+                    print('team 2 broke as better team')
         else:
+            print('team 2 has disc to start')
             self.sevenOnFieldForTeamOne = self.teamOne.team.d_line_players
             self.sevenOnFieldForTeamTwo = self.teamTwo.team.o_line_players
             self.discLocationY = 70
@@ -98,26 +107,41 @@ class GameSimulation(Game):
                 if self.determiner <= (self.probabilityForWinner + 10):
                     self.pointWinner = self.teamTwo
                     self.teamTwoScore += 1
+                    print('team 2 holds as better team')
                 # Team 1 breaks and wins the point as worse team
                 else:
                     self.pointWinner = self.teamOne
                     self.teamOneScore += 1
+                    print('team 1 breaks as worse team')
             elif self.betterTeam == self.teamOne:
                 # Team 2 holds and wins the point as worse team
                 if self.determiner <= (100 - self.probabilityForWinner) + 10:
                     self.pointWinner = self.teamTwo
                     self.teamTwoScore += 1
+                    print('team 2 holds as worse team')
                 # Team 1 breaks as the better team
                 else:
                     self.pointWinner = self.teamOne
                     self.teamOneScore += 1
+                    print('team 1 breaks as better team')
 
     def simulate_full_game(self):
+        self.calculate_difference_in_teams_overall_rating()
         while not self.gameOver:
             self.simulate_point()
             print('team 1: ', self.teamOneScore)
             print('team 2: ', self.teamTwoScore)
-            self.determine_next_points_info()
+            if self.teamOneScore == 15:
+                self.winner = self.teamOne.tournamentTeam
+                self.loser = self.teamTwo.tournamentTeam
+                self.gameOver = True
+            elif self.teamTwoScore == 15:
+                self.winner = self.teamTwo.tournamentTeam
+                self.loser = self.teamOne.tournamentTeam
+                self.gameOver = True
+            else:
+                self.setup_next_point()
+        print('game is over')
 
     def calculate_difference_in_teams_overall_rating(self):
         if self.teamOne.team.overall_rating > self.teamTwo.team.overall_rating:
@@ -130,18 +154,12 @@ class GameSimulation(Game):
     def calculate_probability_for_winner(self):
         self.probability_for_winner = self.difference_in_teams_overall_rating + 50
 
-    def determine_next_points_info(self):
+    def setup_next_point(self):
         if self.pointWinner == self.teamOne:
             self.teamOne.startPointWithDisc = False
             self.teamTwo.startPointWithDisc = True
-            self.teamOneScore += 1
             self.discLocationY = 70
         elif self.pointWinner == self.teamTwo:
             self.teamOne.startPointWithDisc = True
             self.teamTwo.startPointWithDisc = False
-            self.teamTwoScore += 1
             self.discLocationY = 0
-        if (self.teamOneScore == 15) or (self.teamTwoScore == 15):
-            self.gameOver = True
-        else:
-            self.gameOver = False

@@ -42,6 +42,9 @@ class Team(models.Model):
     d_line_players = models.ManyToManyField(Player, related_name='d_line_players_teams')
     bench_players = models.ManyToManyField(Player, related_name='bench_players_teams')
 
+    def __str__(self):
+        return self.location + ' ' + self.mascot
+
 
 class Season(models.Model):
     SEASON_TYPE_CHOICES = [
