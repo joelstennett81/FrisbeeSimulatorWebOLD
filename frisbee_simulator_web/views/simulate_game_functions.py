@@ -10,6 +10,8 @@ class TeamInGameSimulation:
         self.team = tournamentTeam.team
         self.coinFlipChoice = None
         self.startPointWithDisc = None
+        self.startFirstHalfWithDisc = None
+        self.startSecondHalfWithDisc = None
         self.oLineP1 = self.team.o_line_players.all()[0]
         self.oLineP2 = self.team.o_line_players.all()[1]
         self.oLineP3 = self.team.o_line_players.all()[2]
@@ -52,21 +54,83 @@ class GameSimulation:
         self.loser = self.teamTwo.tournamentTeam
         self.pointWinner = self.teamOne
         self.gameOver = False
+        self.firstPointOfFirstHalf = False
+        self.firstPointOfSecondHalf = False
+        self.startsFirstHalfWithDisc = None
+        self.startsSecondHalfWithDisc = None
 
     def coin_flip(self):
         self.teamOne.coinFlipChoice = 1
         self.teamTwo.coinFlipChoice = 2
         coinFlip = random.randint(1, 2)
-        if coinFlip == 1:
-            self.teamOne.startPointWithDisc = True
-            self.teamTwo.startPointWithDisc = False
-            print("Team 1 won the disc flip")
-        else:
-            self.teamOne.startPointWithDisc = False
-            self.teamTwo.startPointWithDisc = True
-            print("Team 2 won the disc flip")
+        return coinFlip
 
-    def simulate_point(self):
+    def flip_team_start_with_disc_at_halftime(self):
+        if self.teamOne.startSecondHalfWithDisc:
+            self.teamOne.startPointWithDisc = True
+        elif self.teamTwo.startSecondHalfWithDisc:
+            self.teamTwo.startPointWithDisc = True
+
+    def simulate_point_by_player_rating(self):
+        self.pointWinner = 0  # 1 means team1, 2 means team2
+
+        if self.teamOne.startPointWithDisc:
+            print('teamOne has disc to start')
+            self.sevenOnFieldForTeamOne = self.teamOne.team.o_line_players
+            self.sevenOnFieldForTeamTwo = self.teamTwo.team.d_line_players
+            self.discLocationY = 0
+            if self.betterTeam == self.teamOne:
+                # Team 1 has better chance to hold as better team
+                self.determiner = random.randint(1, 100)
+                if self.determiner <= self.probabilityForWinner:
+                    self.pointWinner = self.teamOne
+                    self.teamOneScore += 1
+                    print('team 1 held as better team')
+                # Team 2 breaks and wins the point as worse team
+                else:
+                    self.pointWinner = self.teamTwo
+                    self.teamTwoScore += 1
+                    print('team 2 broke as worse team')
+            elif self.betterTeam == self.teamTwo:
+                # Team 1 holds and wins the point as worse team
+                if self.determiner <= (100 - self.probabilityForWinner):
+                    self.pointWinner = self.teamOne
+                    self.teamOneScore += 1
+                    print('team 1 held as worse team ')
+                # Team 2 breaks as the better team
+                else:
+                    self.pointWinner = self.teamTwo
+                    self.teamTwoScore += 1
+                    print('team 2 broke as better team')
+        else:
+            print('team 2 has disc to start')
+            self.sevenOnFieldForTeamOne = self.teamOne.team.d_line_players
+            self.sevenOnFieldForTeamTwo = self.teamTwo.team.o_line_players
+            self.discLocationY = 70
+            if self.betterTeam == self.teamTwo:
+                # Team 2 has better chance to hold as better team
+                if self.determiner <= self.probabilityForWinner:
+                    self.pointWinner = self.teamTwo
+                    self.teamTwoScore += 1
+                    print('team 2 holds as better team')
+                # Team 1 breaks and wins the point as worse team
+                else:
+                    self.pointWinner = self.teamOne
+                    self.teamOneScore += 1
+                    print('team 1 breaks as worse team')
+            elif self.betterTeam == self.teamOne:
+                # Team 2 holds and wins the point as worse team
+                if self.determiner <= (100 - self.probabilityForWinner):
+                    self.pointWinner = self.teamTwo
+                    self.teamTwoScore += 1
+                    print('team 2 holds as worse team')
+                # Team 1 breaks as the better team
+                else:
+                    self.pointWinner = self.teamOne
+                    self.teamOneScore += 1
+                    print('team 1 breaks as better team')
+
+    def simulate_point_by_team_rating(self):
         self.pointWinner = 0  # 1 means team1, 2 means team2
 
         if self.teamOne.startPointWithDisc:
@@ -128,8 +192,10 @@ class GameSimulation:
     def simulate_full_game(self):
         self.calculate_difference_in_teams_overall_rating()
         self.calculate_probability_for_winner()
+        self.simulate_point_by_team_rating()
+        self.setup_next_point()
         while not self.gameOver:
-            self.simulate_point()
+            self.simulate_point_by_team_rating()
             print('team 1: ', self.teamOneScore)
             print('team 2: ', self.teamTwoScore)
             if self.teamOneScore == 15:
@@ -160,11 +226,47 @@ class GameSimulation:
         self.probabilityForWinner = self.differenceInTeamsOverallRating + 50
 
     def setup_next_point(self):
-        if self.pointWinner == self.teamOne:
+        if self.teamOneScore == 0 and self.teamOneScore == 0:
+            self.setup_first_point_of_first_half()
+        if self.teamOneScore == 8 and self.teamTwoScore < 8:
+            self.setup_first_point_of_second_half()
+        elif self.teamOneScore < 8 and self.teamTwoScore == 8:
+            self.setup_first_point_of_second_half()
+        else:
+            self.firstPointOfFirstHalf = False
+            self.firstPointOfSecondHalf = False
+            if self.pointWinner == self.teamOne:
+                self.teamOne.startPointWithDisc = False
+                self.teamTwo.startPointWithDisc = True
+                self.discLocationY = 70
+            elif self.pointWinner == self.teamTwo:
+                self.teamOne.startPointWithDisc = True
+                self.teamTwo.startPointWithDisc = False
+                self.discLocationY = 0
+
+    def setup_first_point_of_first_half(self):
+        coinFlip = self.coin_flip()
+        self.firstPointOfFirstHalf = True
+        if coinFlip == 1:
+            self.teamOne.startPointWithDisc = True
+            self.teamOne.startFirstHalfWithDisc = True
+            self.teamOne.startSecondHalfWithDisc = False
+            self.teamTwo.startFirstHalfWithDisc = False
+            self.teamTwo.startSecondHalfWithDisc = True
+            self.teamTwo.startPointWithDisc = False
+        else:
             self.teamOne.startPointWithDisc = False
+            self.teamOne.startGameWithDisc = False
             self.teamTwo.startPointWithDisc = True
-            self.discLocationY = 70
-        elif self.pointWinner == self.teamTwo:
+            self.teamTwo.startGameWithDisc = True
+        self.firstPointOfFirstHalf = True
+        self.firstPointOfSecondHalf = False
+
+    def setup_first_point_of_second_half(self):
+        self.firstPointOfSecondHalf = True
+        if self.teamOne.startSecondHalfWithDisc:
             self.teamOne.startPointWithDisc = True
             self.teamTwo.startPointWithDisc = False
-            self.discLocationY = 0
+        elif self.teamTwo.startSecondHalfWithDisc:
+            self.teamOne.startPointWithDisc = False
+            self.teamTwo.startPointWithDisc = True

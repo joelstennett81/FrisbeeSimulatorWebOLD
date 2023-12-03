@@ -11,20 +11,20 @@ class Player(models.Model):
     weight = models.PositiveIntegerField(validators=[MinValueValidator(50), MaxValueValidator(450)])  # In pounds
     speed = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     jumping = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    flick_distance = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    flick_accuracy = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    backhand_accuracy = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    backhand_distance = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    cutter_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    handler_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     agility = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    handle_cuts = models.PositiveIntegerField(
+    deep_cut_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    under_cut_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    handle_mark_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    handle_cut_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    deep_cut_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    under_cut_offense = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)])
+    handle_cut_offense = models.PositiveIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(100)])  # Not sure how to use it
-    under_cuts = models.PositiveIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(100)])  # Under and deep cuts determine cut ability
-    deep_cuts = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    throw_ability = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    cut_ability = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    swing_throw_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    under_throw_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    short_huck_throw_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    deep_huck_throw_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
     teams = models.ManyToManyField('Team', related_name='teams_players')
     seasons = models.ManyToManyField('Season', related_name='seasons_players')

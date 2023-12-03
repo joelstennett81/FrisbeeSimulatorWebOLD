@@ -95,10 +95,10 @@ def generate_random_mascot():
 
 def calculate_player_rating(player):
     rating_attributes = [
-        player.speed, player.jumping, player.flick_distance, player.flick_accuracy,
-        player.backhand_accuracy, player.backhand_distance, player.cutter_defense,
-        player.handler_defense, player.agility, player.handle_cuts, player.under_cuts,
-        player.deep_cuts, player.throw_ability, player.throw_ability
+        player.speed, player.jumping, player.agility, player.deep_cut_defense, player.under_cut_defense,
+        player.handle_mark_defense, player.handle_cut_defense, player.deep_cut_offense, player.under_cut_offense,
+        player.handle_cut_offense, player.swing_throw_offense, player.under_throw_offense,
+        player.short_huck_throw_offense, player.deep_huck_throw_offense
     ]
     rating_sum = sum(rating_attributes)
     overall_rating = rating_sum / len(rating_attributes)
