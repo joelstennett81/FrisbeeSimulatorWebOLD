@@ -18,18 +18,9 @@ class TournamentCreateView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         number_of_teams = int(form.cleaned_data['number_of_teams'])
-        selected_teams = form.cleaned_data['teams']
-        selection_type = form.cleaned_data['selection_type']
-        if selection_type == 'manual':
-            if len(selected_teams) != number_of_teams:
-                form.add_error('teams', 'You must select the exact number of teams as specified.')
-                return self.form_invalid(form)
-            for team in selected_teams:
-                self.object.teams.add(team)
-        else:
-            for _ in range(number_of_teams):
-                team = create_random_team(self.request)
-                self.object.teams.add(team)
+        for _ in range(number_of_teams):
+            team = create_random_team(self.request)
+            self.object.teams.add(team)
         self.object.save()
         return response
 
@@ -112,6 +103,7 @@ def simulate_eight_team_pool(tournament):
 def simulate_pool_play_game(game):
     gameSimulation = GameSimulation(game)
     gameSimulation.coin_flip()
+    gameSimulation.simulationType = game.tournament.simulation_type
     gameSimulation.simulate_full_game()
     if gameSimulation.winner == gameSimulation.teamOne:
         game.winner = gameSimulation.teamOne.tournamentTeam

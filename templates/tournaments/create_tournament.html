@@ -5,12 +5,6 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <label> Manual
-            <input type="radio" name="selection_type" value="manual" checked>
-        </label>
-        <label>
-            <input type="radio" name="selection_type" value="random">
-        </label> Random
         <button type="submit">Create Tournament</button>
     </form>
     <br>

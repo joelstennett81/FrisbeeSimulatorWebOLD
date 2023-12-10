@@ -32,9 +32,4 @@ class TeamForm(forms.ModelForm):
 class TournamentForm(forms.ModelForm):
     class Meta:
         model = Tournament
-        fields = ['name', 'location', 'number_of_teams', 'teams']
-
-    def __init__(self, *args, **kwargs):
-        super(TournamentForm, self).__init__(*args, **kwargs)
-        self.fields['teams'] = forms.ModelMultipleChoiceField(queryset=Team.objects.all(), required=False)
-        self.fields['selection_type'] = forms.CharField(widget=forms.HiddenInput())
+        fields = ['name', 'location', 'number_of_teams', 'simulation_type']

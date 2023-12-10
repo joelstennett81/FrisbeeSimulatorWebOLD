@@ -17,20 +17,22 @@ def create_random_player(request):
         weight=random.randint(60, 90),
         speed=random.randint(60, 90),
         jumping=random.randint(60, 90),
-        flick_distance=random.randint(60, 90),
-        flick_accuracy=random.randint(60, 90),
-        backhand_accuracy=random.randint(60, 90),
-        backhand_distance=random.randint(60, 90),
-        cutter_defense=random.randint(60, 90),
-        handler_defense=random.randint(60, 90),
         agility=random.randint(60, 90),
-        handle_cuts=random.randint(60, 90),
-        under_cuts=random.randint(60, 90),
-        deep_cuts=random.randint(60, 90),
-        throw_ability=random.randint(60, 90),
-        cut_ability=random.randint(60, 90)
+        deep_huck_cut_defense=random.randint(60, 90),
+        short_huck_cut_defense=random.randint(60, 90),
+        under_cut_defense=random.randint(60, 90),
+        handle_mark_defense=random.randint(60, 90),
+        handle_cut_defense=random.randint(60, 90),
+        deep_huck_cut_offense=random.randint(60, 90),
+        short_huck_cut_offense=random.randint(60, 90),
+        under_cut_offense=random.randint(60, 90),
+        handle_cut_offense=random.randint(60, 90),
+        swing_throw_offense=random.randint(60, 90),
+        under_throw_offense=random.randint(60, 90),
+        short_huck_throw_offense=random.randint(60, 90),
+        deep_huck_throw_offense=random.randint(60, 90),
     )
-    player.overall = calculate_player_rating(player)
+    player.overall_rating = calculate_player_rating(player)
     player.save()
     return player
 
@@ -95,10 +97,10 @@ def generate_random_mascot():
 
 def calculate_player_rating(player):
     rating_attributes = [
-        player.speed, player.jumping, player.agility, player.deep_cut_defense, player.under_cut_defense,
-        player.handle_mark_defense, player.handle_cut_defense, player.deep_cut_offense, player.under_cut_offense,
-        player.handle_cut_offense, player.swing_throw_offense, player.under_throw_offense,
-        player.short_huck_throw_offense, player.deep_huck_throw_offense
+        player.speed, player.jumping, player.agility, player.deep_huck_cut_defense, player.short_huck_cut_defense,
+        player.under_cut_defense, player.handle_mark_defense, player.handle_cut_defense, player.deep_huck_cut_offense,
+        player.short_huck_cut_offense, player.under_cut_offense, player.handle_cut_offense, player.swing_throw_offense,
+        player.under_throw_offense, player.short_huck_throw_offense, player.deep_huck_throw_offense
     ]
     rating_sum = sum(rating_attributes)
     overall_rating = rating_sum / len(rating_attributes)
