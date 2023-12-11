@@ -11,20 +11,33 @@ class Player(models.Model):
     weight = models.PositiveIntegerField(validators=[MinValueValidator(50), MaxValueValidator(450)])  # In pounds
     speed = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     jumping = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    flick_distance = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    flick_accuracy = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    backhand_accuracy = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    backhand_distance = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    cutter_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    handler_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     agility = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    handle_cuts = models.PositiveIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(100)])  # Not sure how to use it
-    under_cuts = models.PositiveIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(100)])  # Under and deep cuts determine cut ability
-    deep_cuts = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    throw_ability = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    cut_ability = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    deep_huck_cut_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                        default=65)
+    short_huck_cut_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                         default=65)
+    under_cut_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                    default=65)
+    handle_mark_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                      default=65)
+    handle_cut_defense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                     default=65)
+    deep_huck_cut_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                        default=65)
+    short_huck_cut_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                         default=65)
+    under_cut_offense = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)], default=65)
+    handle_cut_offense = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)], default=65)  # Not sure how to use it
+    swing_throw_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                      default=65)
+    under_throw_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                      default=65)
+    short_huck_throw_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                           default=65)
+    deep_huck_throw_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                                          default=65)
     overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
     teams = models.ManyToManyField('Team', related_name='teams_players')
     seasons = models.ManyToManyField('Season', related_name='seasons_players')
@@ -68,9 +81,14 @@ class Tournament(models.Model):
         (20, '20'),
         (32, '32'),
     ]
+    SIMULATION_TYPE_CHOICES = [
+        ('player_rating', 'player_rating'),
+        ('team_rating', 'team_rating')
+    ]
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=50)
     number_of_teams = models.PositiveIntegerField(choices=NUMBER_OF_TEAMS_CHOICES, default=4)
+    simulation_type = models.CharField(choices=SIMULATION_TYPE_CHOICES, default='player_rating')
     teams = models.ManyToManyField(Team, related_name='teams_tournaments')
     champion = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     is_complete = models.BooleanField(default=False)
@@ -108,7 +126,7 @@ class TournamentTeam(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     pool_play_seed = models.PositiveIntegerField()
     bracket_play_seed = models.PositiveIntegerField(blank=True)
-    pool = models.ForeignKey(TournamentPool, on_delete=models.CASCADE,null=True)
+    pool = models.ForeignKey(TournamentPool, on_delete=models.CASCADE, null=True)
     bracket = models.ForeignKey(TournamentBracket, on_delete=models.CASCADE, null=True)
     pool_play_wins = models.PositiveIntegerField(default=0)
     pool_play_losses = models.PositiveIntegerField(default=0)
