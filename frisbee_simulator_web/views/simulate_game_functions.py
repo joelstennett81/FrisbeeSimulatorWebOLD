@@ -13,6 +13,7 @@ class TeamInGameSimulation:
         self.startPointWithDisc = None
         self.startFirstHalfWithDisc = None
         self.startSecondHalfWithDisc = None
+        self.score = 0
         self.oLineH1 = PlayerInPointSimulation(self.team.o_line_players.all()[0]).player
         self.oLineH2 = PlayerInPointSimulation(self.team.o_line_players.all()[1]).player
         self.oLineH3 = PlayerInPointSimulation(self.team.o_line_players.all()[2]).player
@@ -47,14 +48,14 @@ class TeamInGameSimulation:
 class GameSimulation:
     def __init__(self, game):
         super().__init__()
+        self.playDirectionCoinFlipResult = None
+        self.startWithDiscCoinFlipResult = None
         self.game = game
         self.teamOne = TeamInGameSimulation(self.game.team_one)
         self.teamTwo = TeamInGameSimulation(self.game.team_two)
         self.sevenOnFieldForTeamOne = self.teamOne.team.o_line_players
         self.sevenOnFieldForTeamTwo = self.teamTwo.team.d_line_players
         self.determiner = 0
-        self.teamOneScore = 0
-        self.teamTwoScore = 0
         self.discLocationY = 0
         self.betterTeam = 0
         self.differenceInTeamsOverallRating = 0
@@ -63,8 +64,8 @@ class GameSimulation:
         self.loser = self.teamTwo.tournamentTeam
         self.pointWinner = self.teamOne
         self.gameOver = False
-        self.startsFirstHalfWithDisc = None
-        self.startsSecondHalfWithDisc = None
+        self.teamWithDiscToStartFirstHalf = None
+        self.teamWithDiscToStartSecondHalf = None
         self.pointSimulation = PointSimulation(self)
         self.simulationType = 'player_rating'
         self.coinFlipResult = 0
@@ -72,12 +73,29 @@ class GameSimulation:
         self.isSecondHalf = False
         self.firstHalfPointsPlayed = 0
         self.secondHalfPointsPlayed = 0
+        self.firstPointOfGamePlayDirection = 0
+        self.playDirection = 0
 
     def coin_flip(self):
         self.teamOne.coinFlipChoice = 1
         self.teamTwo.coinFlipChoice = 2
-        coinFlip = random.randint(1, 2)
-        self.coinFlipResult = coinFlip
+        self.startWithDiscCoinFlipResult = random.randint(1, 2)
+        teamOneChoice = random.randint(1, 2)
+        if teamOneChoice == self.startWithDiscCoinFlipResult:
+            # team one won flip, receives disc to start
+            self.teamWithDiscToStartFirstHalf = self.teamOne
+            self.teamWithDiscToStartSecondHalf = self.teamTwo
+        else:
+            # team two won flip
+            self.teamWithDiscToStartFirstHalf = self.teamTwo
+            self.teamWithDiscToStartSecondHalf = self.teamOne
+        teamTwoChoice = random.randint(1, 2)
+        self.playDirectionCoinFlipResult = random.randint(1, 2)
+        if self.playDirectionCoinFlipResult == 1:
+            self.pointSimulation.playDirection = 1
+        else:
+            self.pointSimulation.playDirection = -1
+        self.firstPointOfGamePlayDirection = self.pointSimulation.playDirection
 
     def simulate_point(self):
         self.pointSimulation = PointSimulation(self)
@@ -91,69 +109,82 @@ class GameSimulation:
         while not self.gameOver:
             print('game isnt over, about to simulate point')
             self.simulate_point()
-            print('team 1: ', self.teamOneScore)
-            print('team 2: ', self.teamTwoScore)
-            if self.teamOneScore == 15:
+            print('team 1: ', self.teamOne.score)
+            print('team 2: ', self.teamTwo.score)
+            if self.teamOne.score == 15:
                 self.winner = self.teamOne.tournamentTeam
                 self.loser = self.teamTwo.tournamentTeam
-                self.game.winner_score = self.teamOneScore
-                self.game.loser_score = self.teamTwoScore
+                self.game.winner_score = self.teamOne.score
+                self.game.loser_score = self.teamTwo.score
                 self.gameOver = True
-            elif self.teamTwoScore == 15:
+            elif self.teamTwo.score == 15:
                 self.winner = self.teamTwo.tournamentTeam
                 self.loser = self.teamOne.tournamentTeam
-                self.game.winner_score = self.teamTwoScore
-                self.game.loser_score = self.teamOneScore
+                self.game.winner_score = self.teamTwo.score
+                self.game.loser_score = self.teamOne.score
                 self.gameOver = True
             else:
                 self.setup_next_point()
 
     def setup_next_point(self):
-        if self.teamOneScore == 8 and self.teamTwoScore < 8:
+        if self.teamOne.score == 8 and self.teamTwo.score < 8:
             if self.isFirstHalf:
                 self.setup_first_point_of_second_half()
                 return
-        elif self.teamOneScore < 8 and self.teamTwoScore == 8:
+        elif self.teamOne.score < 8 and self.teamTwo.score == 8:
             if self.isFirstHalf:
                 self.setup_first_point_of_second_half()
                 return
         if self.pointWinner == self.teamOne:
             self.teamOne.startPointWithDisc = False
             self.teamTwo.startPointWithDisc = True
-            self.discLocationY = 70
         elif self.pointWinner == self.teamTwo:
             self.teamOne.startPointWithDisc = True
             self.teamTwo.startPointWithDisc = False
-            self.discLocationY = 0
+        self.pointSimulation.flip_play_direction()
 
     def setup_first_point_of_first_half(self):
         self.isFirstHalf = True
         self.isSecondHalf = False
-        if self.coinFlipResult == 1:
-            self.teamOne.startPointWithDisc = True
-            self.teamOne.startFirstHalfWithDisc = True
-            self.teamOne.startSecondHalfWithDisc = False
-            self.teamOne.hasDisc = True
-            self.teamTwo.startFirstHalfWithDisc = False
-            self.teamTwo.startSecondHalfWithDisc = True
-            self.teamTwo.startPointWithDisc = False
-            self.teamTwo.hasDisc = False
+        self.isStartOfFirstHalf = True
+        self.isStartOfSecondHalf = False
+        self.teamWithDiscToStartFirstHalf.startPointWithDisc = True
+        self.teamWithDiscToStartFirstHalf.startFirstHalfWithDisc = True
+        self.teamWithDiscToStartFirstHalf.startSecondHalfWithDisc = False
+        self.teamWithDiscToStartFirstHalf.hasDisc = True
+        self.teamWithDiscToStartSecondHalf.startFirstHalfWithDisc = False
+        self.teamWithDiscToStartSecondHalf.startSecondHalfWithDisc = True
+        self.teamWithDiscToStartSecondHalf.startPointWithDisc = False
+        self.teamWithDiscToStartSecondHalf.hasDisc = False
+        if self.firstPointOfGamePlayDirection == 1:
+            # pull will go 70 -> 0, then play will go 0->70
+            self.pointSimulation.playDirection = 1
+            self.pointSimulation.discPrePullLocation = 70
+            self.pointSimulation.discCurrentLocation = 70
+            self.pointSimulation.discPostGoalLocation = 70
         else:
-            self.teamOne.startPointWithDisc = False
-            self.teamOne.startFirstHalfWithDisc = False
-            self.teamOne.startSecondHalfWithDisc = True
-            self.teamOne.hasDisc = False
-            self.teamTwo.startFirstHalfWithDisc = True
-            self.teamTwo.startSecondHalfWithDisc = False
-            self.teamTwo.startPointWithDisc = True
-            self.teamTwo.hasDisc = True
+            # pull will go 0 -> 70, then play will go 70->0
+            self.pointSimulation.playDirection = -1
+            self.pointSimulation.discPrePullLocation = 0
+            self.pointSimulation.discCurrentLocation = 0
+            self.pointSimulation.discPostGoalLocation = 0
 
     def setup_first_point_of_second_half(self):
         self.isFirstHalf = False
         self.isSecondHalf = True
-        if self.teamOne.startSecondHalfWithDisc:
-            self.teamOne.startPointWithDisc = True
-            self.teamTwo.startPointWithDisc = False
-        elif self.teamTwo.startSecondHalfWithDisc:
-            self.teamOne.startPointWithDisc = False
-            self.teamTwo.startPointWithDisc = True
+        self.isStartOfFirstHalf = False
+        self.isStartOfSecondHalf = True
+        self.teamWithDiscToStartSecondHalf.startPointWithDisc = True
+        self.teamWithDiscToStartFirstHalf.startPointWithDisc = False
+        if self.firstPointOfGamePlayDirection == 1:
+            # pull will go 70 -> 0, then play will go 0->70
+            self.pointSimulation.playDirection = 1
+            self.pointSimulation.discPrePullLocation = 70
+            self.pointSimulation.discCurrentLocation = 70
+            self.pointSimulation.discPostGoalLocation = 70
+        else:
+            # pull will go 0 -> 70, then play will go 70->0
+            self.pointSimulation.playDirection = -1
+            self.pointSimulation.discPrePullLocation = 0
+            self.pointSimulation.discCurrentLocation = 0
+            self.pointSimulation.discPostGoalLocation = 0

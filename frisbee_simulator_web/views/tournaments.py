@@ -108,11 +108,11 @@ def simulate_pool_play_game(game):
     if gameSimulation.winner == gameSimulation.teamOne:
         game.winner = gameSimulation.teamOne.tournamentTeam
         game.loser = gameSimulation.teamTwo.tournamentTeam
-        point_differential = gameSimulation.teamOneScore - gameSimulation.teamTwoScore
+        point_differential = gameSimulation.teamOne.score - gameSimulation.teamTwo.score
     else:
         game.winner = gameSimulation.teamTwo.tournamentTeam
         game.loser = gameSimulation.teamOne.tournamentTeam
-        point_differential = gameSimulation.teamTwoScore - gameSimulation.teamOneScore
+        point_differential = gameSimulation.teamTwo.score - gameSimulation.teamOne.score
     game.save()
     game.winner.pool_play_wins += 1
     game.loser.pool_play_losses += 1
