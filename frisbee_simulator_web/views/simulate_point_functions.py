@@ -2,9 +2,10 @@ import random
 
 
 class PlayerInPointSimulation:
-    def __init__(self, player):
+    def __init__(self, team, game, player):
         super().__init__()
-        self.team = None
+        self.team = team
+        self.game = game
         self.player = player
         self.onOffense = None
         self.onDefense = None
@@ -12,6 +13,55 @@ class PlayerInPointSimulation:
         self.playerGuarding = None
         self.guardingDisc = None
         self.guardingPlayerBeingThrownTo = None
+        self.gameStats = PlayerGameStatsInGameSimulation(game=self.game, player=self.player)
+
+
+class PlayerGameStatsInGameSimulation:
+    def __init__(self, game, player):
+        super().__init__()
+        self.game = game
+        self.player = player
+        self.goals = 0
+        self.assists = 0
+        self.swingPassesThrown = 0
+        self.swingPassesCompleted = 0
+        self.underPassesThrown = 0
+        self.underPassesCompleted = 0
+        self.shortHucksThrown = 0
+        self.shortHucksCompleted = 0
+        self.deepHucksThrown = 0
+        self.deepHucksCompleted = 0
+        self.throwingYards = 0
+        self.receivingYards = 0
+        self.turnoversForced = 0
+        self.throwaways = 0
+        self.drops = 0
+        self.callahans = 0
+        self.pulls = 0
+
+
+class PlayerTournamentStatsInGameSimulation:
+    def __init__(self, tournament, player):
+        super().__init__()
+        self.tournament = tournament
+        self.player = player
+        self.goals = 0
+        self.assists = 0
+        self.swingPassesThrown = 0
+        self.swingPassesCompleted = 0
+        self.underPassesThrown = 0
+        self.underPassesCompleted = 0
+        self.shortHucksThrown = 0
+        self.shortHucksCompleted = 0
+        self.deepHucksThrown = 0
+        self.deepHucksCompleted = 0
+        self.throwingYards = 0
+        self.receivingYards = 0
+        self.turnoversForced = 0
+        self.throwaways = 0
+        self.drops = 0
+        self.callahans = 0
+        self.pulls = 0
 
 
 class PointSimulation:
@@ -20,7 +70,6 @@ class PointSimulation:
         # simulate by team rating variables:
         self.randomYardsThrown = None
         self.randomReceiver = None
-        self.throw_type = None
         self.differenceInTeamsOverallRating = None
         self.determiner = None
         self.probabilityForWinner = None
@@ -48,7 +97,7 @@ class PointSimulation:
         self.throwChoice = None
         self.probabilityThrowIsCompleted = None
         self.assistThrower = None
-        self.goalThrower = None
+        self.goalScorer = None
         self.throwerNumber = None
         self.simulationType = 'player_rating'
         self.oLineOnField = None
@@ -147,62 +196,62 @@ class PointSimulation:
 
     def determine_receiver_options(self):
         print('player with disc: ', self.playerWithDisc)
-        print('throw type: ', self.throw_type)
+        print('throw type: ', self.throwChoice)
         self.receiverOptions = []
         if self.playerWithDisc == self.sevenOnFieldForOffense[0]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.receiverOptions = [self.sevenOnFieldForOffense[1], self.sevenOnFieldForOffense[2]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[3], self.sevenOnFieldForOffense[4]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[3], self.sevenOnFieldForOffense[4],
                                         self.sevenOnFieldForOffense[5], self.sevenOnFieldForOffense[6]]
         elif self.playerWithDisc == self.sevenOnFieldForOffense[1]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.receiverOptions = [self.sevenOnFieldForOffense[0], self.sevenOnFieldForOffense[2]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[4], self.sevenOnFieldForOffense[5]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[3], self.sevenOnFieldForOffense[4],
                                         self.sevenOnFieldForOffense[5], self.sevenOnFieldForOffense[6]]
         elif self.playerWithDisc == self.sevenOnFieldForOffense[2]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.receiverOptions = [self.sevenOnFieldForOffense[0], self.sevenOnFieldForOffense[1]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[5], self.sevenOnFieldForOffense[6]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[3], self.sevenOnFieldForOffense[4],
                                         self.sevenOnFieldForOffense[5], self.sevenOnFieldForOffense[6]]
         elif self.playerWithDisc == self.sevenOnFieldForOffense[3]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.receiverOptions = [self.sevenOnFieldForOffense[0], self.sevenOnFieldForOffense[1]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[4], self.sevenOnFieldForOffense[5]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[4], self.sevenOnFieldForOffense[5],
                                         self.sevenOnFieldForOffense[6]]
         elif self.playerWithDisc == self.sevenOnFieldForOffense[4]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.receiverOptions = [self.sevenOnFieldForOffense[0], self.sevenOnFieldForOffense[1]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[3], self.sevenOnFieldForOffense[5]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[3], self.sevenOnFieldForOffense[5],
                                         self.sevenOnFieldForOffense[6]]
         elif self.playerWithDisc == self.sevenOnFieldForOffense[5]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.receiverOptions = [self.sevenOnFieldForOffense[1], self.sevenOnFieldForOffense[2]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[4], self.sevenOnFieldForOffense[6]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[3], self.sevenOnFieldForOffense[4],
                                         self.sevenOnFieldForOffense[6]]
         elif self.playerWithDisc == self.sevenOnFieldForOffense[6]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.receiverOptions = [self.sevenOnFieldForOffense[0], self.sevenOnFieldForOffense[1]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[4], self.sevenOnFieldForOffense[5]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.receiverOptions = [self.sevenOnFieldForOffense[3], self.sevenOnFieldForOffense[4],
                                         self.sevenOnFieldForOffense[5]]
         else:
@@ -210,61 +259,113 @@ class PointSimulation:
 
     def determine_defender_options(self):
         if self.playerGuardingDisc == self.sevenOnFieldForDefense[0]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.defenderOptions = [self.sevenOnFieldForDefense[1], self.sevenOnFieldForDefense[2]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[3], self.sevenOnFieldForDefense[4]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[3], self.sevenOnFieldForDefense[4],
                                         self.sevenOnFieldForDefense[5], self.sevenOnFieldForDefense[6]]
         elif self.playerGuardingDisc == self.sevenOnFieldForDefense[1]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.defenderOptions = [self.sevenOnFieldForDefense[0], self.sevenOnFieldForDefense[2]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[4], self.sevenOnFieldForDefense[5]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[3], self.sevenOnFieldForDefense[4],
                                         self.sevenOnFieldForDefense[5], self.sevenOnFieldForDefense[6]]
         elif self.playerGuardingDisc == self.sevenOnFieldForDefense[2]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.defenderOptions = [self.sevenOnFieldForDefense[0], self.sevenOnFieldForDefense[1]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[5], self.sevenOnFieldForDefense[6]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[3], self.sevenOnFieldForDefense[4],
                                         self.sevenOnFieldForDefense[5], self.sevenOnFieldForDefense[6]]
         elif self.playerGuardingDisc == self.sevenOnFieldForDefense[3]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.defenderOptions = [self.sevenOnFieldForDefense[0], self.sevenOnFieldForDefense[1]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[4], self.sevenOnFieldForDefense[5]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[4], self.sevenOnFieldForDefense[5],
                                         self.sevenOnFieldForDefense[6]]
         elif self.playerGuardingDisc == self.sevenOnFieldForDefense[4]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.defenderOptions = [self.sevenOnFieldForDefense[0], self.sevenOnFieldForDefense[1]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[3], self.sevenOnFieldForDefense[5]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[3], self.sevenOnFieldForDefense[5],
                                         self.sevenOnFieldForDefense[6]]
         elif self.playerGuardingDisc == self.sevenOnFieldForDefense[5]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.defenderOptions = [self.sevenOnFieldForDefense[1], self.sevenOnFieldForDefense[2]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[4], self.sevenOnFieldForDefense[6]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[3], self.sevenOnFieldForDefense[4],
                                         self.sevenOnFieldForDefense[6]]
         elif self.playerGuardingDisc == self.sevenOnFieldForDefense[6]:
-            if self.throw_type == 'swing':
+            if self.throwChoice == 'swing':
                 self.defenderOptions = [self.sevenOnFieldForDefense[0], self.sevenOnFieldForDefense[1]]
-            elif self.throw_type == 'under' or self.throw_type == 'short_huck':
+            elif self.throwChoice == 'under' or self.throwChoice == 'short_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[4], self.sevenOnFieldForDefense[5]]
-            elif self.throw_type == 'deep_huck':
+            elif self.throwChoice == 'deep_huck':
                 self.defenderOptions = [self.sevenOnFieldForDefense[3], self.sevenOnFieldForDefense[4],
                                         self.sevenOnFieldForDefense[5]]
+
+    def simulate_swing_throw(self):
+        self.throwChoice = 'swing'
+        self.determine_receiver_options()
+        self.determine_defender_options()
+        self.randomReceiver = random.randint(0, len(self.receiverOptions) - 1)
+        self.playerBeingThrownTo = self.receiverOptions[self.randomReceiver]
+        self.playerGuardingPlayerBeingThrownTo = self.defenderOptions[self.randomReceiver]
+        self.probabilityThrowIsCompleted = (random.randint(1, 100) +
+                                            self.playerWithDisc.player.swing_throw_offense + self.playerBeingThrownTo.player.handle_cut_offense
+                                            - self.playerGuardingDisc.player.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.player.handle_cut_defense)
+        self.randomYardsThrown = random.randint(-5, 5)
+        self.simulate_result_of_throw()
+
+    def simulate_under_throw(self):
+        self.throwChoice = 'under'
+        self.determine_receiver_options()
+        self.determine_defender_options()
+        self.randomReceiver = random.randint(0, len(self.receiverOptions) - 1)
+        self.playerBeingThrownTo = self.receiverOptions[self.randomReceiver]
+        self.playerGuardingPlayerBeingThrownTo = self.defenderOptions[self.randomReceiver]
+        self.probabilityThrowIsCompleted = (random.randint(1, 100) +
+                                            self.playerWithDisc.player.under_throw_offense + self.playerBeingThrownTo.player.under_cut_offense
+                                            - self.playerGuardingDisc.player.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.player.under_cut_defense)
+        self.randomYardsThrown = random.randint(5, 15)
+        self.simulate_result_of_throw()
+
+    def simulate_short_huck_throw(self):
+        self.throwChoice = 'short_huck'
+        self.determine_receiver_options()
+        self.determine_defender_options()
+        self.randomReceiver = random.randint(0, len(self.receiverOptions) - 1)
+        self.playerBeingThrownTo = self.receiverOptions[self.randomReceiver]
+        self.playerGuardingPlayerBeingThrownTo = self.defenderOptions[self.randomReceiver]
+        self.probabilityThrowIsCompleted = (random.randint(1, 100) +
+                                            self.playerWithDisc.player.short_huck_throw_offense + self.playerBeingThrownTo.player.short_huck_cut_offense
+                                            - self.playerGuardingDisc.player.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.player.short_huck_cut_defense)
+        self.randomYardsThrown = random.randint(15, 30)
+        self.simulate_result_of_throw()
+
+    def simulate_deep_huck_throw(self):
+        self.throwChoice = 'deep_huck'
+        self.determine_receiver_options()
+        self.determine_defender_options()
+        self.randomReceiver = random.randint(0, len(self.receiverOptions) - 1)
+        self.playerBeingThrownTo = self.receiverOptions[self.randomReceiver]
+        self.playerGuardingPlayerBeingThrownTo = self.defenderOptions[self.randomReceiver]
+        self.probabilityThrowIsCompleted = (random.randint(1, 100) +
+                                            self.playerWithDisc.player.deep_huck_throw_offense + self.playerBeingThrownTo.player.deep_huck_cut_offense
+                                            - self.playerGuardingDisc.player.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.player.deep_huck_cut_defense)
+        self.randomYardsThrown = random.randint(30, 70)
+        self.simulate_result_of_throw()
 
     def simulate_result_of_throw(self):
         print(str(self.playerWithDisc) + ' tries to throw to: ' + str(self.playerBeingThrownTo) + ' for ' + str(
@@ -273,40 +374,54 @@ class PointSimulation:
         if self.probabilityThrowIsCompleted < self.throwStartingProbability:
             # play direction is either positive or negative
             self.discCurrentLocation += self.randomYardsThrown * self.playDirection
-            print('team ' + str(self.teamOnOffenseCurrently) + ' completed ' + str(self.throw_type) + ' at this location: ' + str(
+            print('team ' + str(self.teamOnOffenseCurrently) + ' completed ' + str(
+                self.throwChoice) + ' at this location: ' + str(
                 self.discCurrentLocation))
             if self.discCurrentLocation < -20:
                 # turnover, disc goes to goal line at location 0 and team 2 has disc
                 self.discCurrentLocation = 0
+                self.assign_completions(isCompletion=False)
+                self.assign_turnovers_forced()
                 self.switch_teams_due_to_turnover()
             elif (self.playDirection == 1) and (70 < self.discCurrentLocation < 90):
                 self.assistThrower = self.playerWithDisc
-                self.goalThrower = self.playerBeingThrownTo
+                self.goalScorer = self.playerBeingThrownTo
                 self.pointWinner = self.teamOnOffenseCurrently
                 self.teamOnOffenseCurrently.score += 1
                 self.discPostGoalLocation = 70
+                self.assign_completions(isCompletion=True)
+                self.assign_completion_yardage()
+                self.assign_goals_and_assists()
                 print('Team ' + str(self.teamOnOffenseCurrently) + 'Scored! ' + str(
-                    self.assistThrower) + ' threw the assist to ' + str(self.goalThrower))
+                    self.assistThrower) + ' threw the assist to ' + str(self.goalScorer))
                 self.pointOver = True
             elif (self.playDirection == -1) and (-20 < self.discCurrentLocation < 0):
                 self.assistThrower = self.playerWithDisc
-                self.goalThrower = self.playerBeingThrownTo
+                self.goalScorer = self.playerBeingThrownTo
                 self.pointWinner = self.teamOnOffenseCurrently
                 self.teamOnOffenseCurrently.score += 1
                 self.discPostGoalLocation = 0
+                self.assign_completion_yardage()
+                self.assign_goals_and_assists()
+                self.assign_completions(isCompletion=True)
                 print('Team ' + str(self.teamOnOffenseCurrently) + 'Scored! ' + str(
-                    self.assistThrower) + ' threw the assist to ' + str(self.goalThrower))
+                    self.assistThrower) + ' threw the assist to ' + str(self.goalScorer))
                 self.pointOver = True
             elif self.discCurrentLocation > 90:
+                self.playerWithDisc.gameStats.throwaways += 1
                 self.discCurrentLocation = 70
+                self.assign_completions(isCompletion=False)
                 self.switch_teams_due_to_turnover()
             else:
+                self.playerWithDisc.gameStats.throwingYards += self.randomYardsThrown
+                self.playerBeingThrownTo.gameStats.receivingYards += self.randomYardsThrown
                 self.playerWithDisc = self.playerBeingThrownTo
                 self.playerGuardingDisc = self.playerGuardingPlayerBeingThrownTo
-            print('team two completed ' + str(self.throw_type) + ' at this location: ' + str(self.discCurrentLocation))
+            print('team two completed ' + str(self.throwChoice) + ' at this location: ' + str(self.discCurrentLocation))
         else:
             print('throw was dropped')
-            # Disc still moves, even if it is dropped, have to handle if disc lands in middle of end zone or way out of bounds
+            # Disc still moves, even if it is dropped, have to handle if disc lands in middle of end zone
+            # or way out of bounds
             if self.discCurrentLocation < -20:
                 # turnover, disc goes to goal line at location 0 and team 2 has disc
                 self.discCurrentLocation = 0
@@ -319,59 +434,8 @@ class PointSimulation:
             else:
                 self.discCurrentLocation += self.randomYardsThrown * self.playDirection
             # throw was either dropped or thrown away
+            self.assign_drops()
             self.switch_teams_due_to_turnover()
-
-    def simulate_swing_throw(self):
-        self.throw_type = 'swing'
-        self.determine_receiver_options()
-        self.determine_defender_options()
-        self.randomReceiver = random.randint(0, len(self.receiverOptions) - 1)
-        self.playerBeingThrownTo = self.receiverOptions[self.randomReceiver]
-        self.playerGuardingPlayerBeingThrownTo = self.defenderOptions[self.randomReceiver]
-        self.probabilityThrowIsCompleted = (random.randint(1, 100) +
-                                            self.playerWithDisc.swing_throw_offense + self.playerBeingThrownTo.handle_cut_offense
-                                            - self.playerGuardingDisc.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.handle_cut_defense)
-        self.randomYardsThrown = random.randint(-5, 5)
-        self.simulate_result_of_throw()
-
-    def simulate_under_throw(self):
-        self.throw_type = 'under'
-        self.determine_receiver_options()
-        self.determine_defender_options()
-        self.randomReceiver = random.randint(0, len(self.receiverOptions) - 1)
-        self.playerBeingThrownTo = self.receiverOptions[self.randomReceiver]
-        self.playerGuardingPlayerBeingThrownTo = self.defenderOptions[self.randomReceiver]
-        self.probabilityThrowIsCompleted = (random.randint(1, 100) +
-                                            self.playerWithDisc.under_throw_offense + self.playerBeingThrownTo.under_cut_offense
-                                            - self.playerGuardingDisc.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.under_cut_defense)
-        self.randomYardsThrown = random.randint(5, 15)
-        self.simulate_result_of_throw()
-
-    def simulate_short_huck_throw(self):
-        self.throw_type = 'short_huck'
-        self.determine_receiver_options()
-        self.determine_defender_options()
-        self.randomReceiver = random.randint(0, len(self.receiverOptions) - 1)
-        self.playerBeingThrownTo = self.receiverOptions[self.randomReceiver]
-        self.playerGuardingPlayerBeingThrownTo = self.defenderOptions[self.randomReceiver]
-        self.probabilityThrowIsCompleted = (random.randint(1, 100) +
-                                            self.playerWithDisc.short_huck_throw_offense + self.playerBeingThrownTo.short_huck_cut_offense
-                                            - self.playerGuardingDisc.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.short_huck_cut_defense)
-        self.randomYardsThrown = random.randint(15, 30)
-        self.simulate_result_of_throw()
-
-    def simulate_deep_huck_throw(self):
-        self.throw_type = 'deep_huck'
-        self.determine_receiver_options()
-        self.determine_defender_options()
-        self.randomReceiver = random.randint(0, len(self.receiverOptions) - 1)
-        self.playerBeingThrownTo = self.receiverOptions[self.randomReceiver]
-        self.playerGuardingPlayerBeingThrownTo = self.defenderOptions[self.randomReceiver]
-        self.probabilityThrowIsCompleted = (random.randint(1, 100) +
-                                            self.playerWithDisc.deep_huck_throw_offense + self.playerBeingThrownTo.deep_huck_cut_offense
-                                            - self.playerGuardingDisc.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.deep_huck_cut_defense)
-        self.randomYardsThrown = random.randint(30, 70)
-        self.simulate_result_of_throw()
 
     def simulate_point_by_player_rating(self):
         # four pass options:
@@ -401,6 +465,84 @@ class PointSimulation:
                 self.throwChoice = 'deep_huck'
                 self.throwStartingProbability = 55
                 self.simulate_deep_huck_throw()
+
+    def switch_teams_due_to_turnover(self):
+        if self.teamOnOffenseCurrently == self.teamOne:
+            print('team 2 now has disc')
+            self.teamOnOffenseCurrently = self.teamTwo
+            self.teamOnDefenseCurrently = self.teamOne
+            self.sevenOnFieldForOffense = self.teamTwo.sevenOnField
+            self.sevenOnFieldForDefense = self.teamOne.sevenOnField
+            self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
+            self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
+        else:
+            print('team 1 now has disc')
+            self.teamOnOffenseCurrently = self.teamOne
+            self.teamOnDefenseCurrently = self.teamTwo
+            self.sevenOnFieldForOffense = self.teamOne.sevenOnField
+            self.sevenOnFieldForDefense = self.teamTwo.sevenOnField
+            self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
+            self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
+        self.flip_play_direction()
+
+    def assign_completions(self, isCompletion):
+        if self.throwChoice == 'swing':
+            self.playerWithDisc.gameStats.swingPassesThrown += 1
+            if isCompletion:
+                self.playerWithDisc.gameStats.swingPassesCompleted += 1
+        elif self.throwChoice == 'under':
+            self.playerWithDisc.gameStats.underPassesThrown += 1
+            if isCompletion:
+                self.playerWithDisc.gameStats.underPassesCompleted += 1
+        elif self.throwChoice == 'short_huck':
+            self.playerWithDisc.gameStats.shortHucksThrown += 1
+            if isCompletion:
+                self.playerWithDisc.gameStats.shortHucksCompleted += 1
+        elif self.throwChoice == 'deep_huck':
+            self.playerWithDisc.gameStats.deepHucksThrown += 1
+            if isCompletion:
+                self.playerWithDisc.gameStats.deepHucksCompleted += 1
+
+    def assign_drops(self):
+        self.playerBeingThrownTo.gameStats.drops += 1
+
+    def assign_completion_yardage(self):
+        self.playerWithDisc.gameStats.throwingYards += self.randomYardsThrown
+        self.playerBeingThrownTo.gameStats.receivingYards += self.randomYardsThrown
+
+    def assign_goals_and_assists(self):
+        self.playerWithDisc.gameStats.assists += 1
+        self.playerBeingThrownTo.gameStats.goals += 1
+
+    def assign_turnovers_forced(self):
+        if self.throwChoice == 'swing':
+            if (self.playerGuardingDisc.player.handle_mark_defense - self.playerWithDisc.player.swing_throw_offense) > (
+                    self.playerGuardingPlayerBeingThrownTo.player.handle_cut_defense - self.playerBeingThrownTo.player.handle_cut_offense):
+                # Give the D to the mark, because they have a better rating difference than the downfield defender
+                self.playerGuardingDisc.gameStats.turnoversForced += 1
+            else:
+                self.playerGuardingPlayerBeingThrownTo.gameStats.turnoversForced += 1
+        elif self.throwChoice == 'under':
+            if (self.playerGuardingDisc.player.handle_mark_defense - self.playerWithDisc.player.under_throw_offense) > (
+                    self.playerGuardingPlayerBeingThrownTo.player.under_cut_defense - self.playerBeingThrownTo.player.under_cut_offense):
+                # Give the D to the mark, because they have a better rating difference than the downfield defender
+                self.playerGuardingDisc.gameStats.turnoversForced += 1
+            else:
+                self.playerGuardingPlayerBeingThrownTo.gameStats.turnoversForced += 1
+        elif self.throwChoice == 'short_huck':
+            if (self.playerGuardingDisc.player.handle_mark_defense - self.playerWithDisc.player.short_huck_throw_offense) > (
+                    self.playerGuardingPlayerBeingThrownTo.player.short_huck_cut_defense - self.playerBeingThrownTo.player.short_huck_cut_offense):
+                # Give the D to the mark, because they have a better rating difference than the downfield defender
+                self.playerGuardingDisc.gameStats.turnoversForced += 1
+            else:
+                self.playerGuardingPlayerBeingThrownTo.gameStats.turnoversForced += 1
+        elif self.throwChoice == 'deep_huck':
+            if (self.playerGuardingDisc.player.handle_mark_defense - self.playerWithDisc.player.deep_huck_throw_offense) > (
+                    self.playerGuardingPlayerBeingThrownTo.player.deep_huck_cut_defense - self.playerBeingThrownTo.player.deep_huck_cut_offense):
+                # Give the D to the mark, because they have a better rating difference than the downfield defender
+                self.playerGuardingDisc.gameStats.turnoversForced += 1
+            else:
+                self.playerGuardingPlayerBeingThrownTo.gameStats.turnoversForced += 1
 
     def simulate_point_by_team_rating(self):
         if self.teamOne.startPointWithDisc:
@@ -473,22 +615,3 @@ class PointSimulation:
 
     def calculate_probability_for_winner(self):
         self.probabilityForWinner = self.differenceInTeamsOverallRating + 50
-
-    def switch_teams_due_to_turnover(self):
-        if self.teamOnOffenseCurrently == self.teamOne:
-            print('team 2 now has disc')
-            self.teamOnOffenseCurrently = self.teamTwo
-            self.teamOnDefenseCurrently = self.teamOne
-            self.sevenOnFieldForOffense = self.teamTwo.sevenOnField
-            self.sevenOnFieldForDefense = self.teamOne.sevenOnField
-            self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
-            self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
-        else:
-            print('team 1 now has disc')
-            self.teamOnOffenseCurrently = self.teamOne
-            self.teamOnDefenseCurrently = self.teamTwo
-            self.sevenOnFieldForOffense = self.teamOne.sevenOnField
-            self.sevenOnFieldForDefense = self.teamTwo.sevenOnField
-            self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
-            self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
-        self.flip_play_direction()

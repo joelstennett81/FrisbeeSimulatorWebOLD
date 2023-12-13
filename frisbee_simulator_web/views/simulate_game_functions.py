@@ -1,46 +1,52 @@
 import random
 
-from frisbee_simulator_web.models import TournamentTeam, Game, Team
-from frisbee_simulator_web.views.simulate_point_functions import PointSimulation, PlayerInPointSimulation
+from frisbee_simulator_web.models import TournamentTeam, Game, Team, PlayerGameStat
+from frisbee_simulator_web.views.simulate_point_functions import PointSimulation, PlayerInPointSimulation, \
+    PlayerGameStatsInGameSimulation
 
 
 class TeamInGameSimulation:
-    def __init__(self, tournamentTeam):
+    def __init__(self, tournamentTeam, game):
         super().__init__()
         self.tournamentTeam = tournamentTeam
         self.team = tournamentTeam.team
+        self.game = game
         self.coinFlipChoice = None
         self.startPointWithDisc = None
         self.startFirstHalfWithDisc = None
         self.startSecondHalfWithDisc = None
         self.score = 0
-        self.oLineH1 = PlayerInPointSimulation(self.team.o_line_players.all()[0]).player
-        self.oLineH2 = PlayerInPointSimulation(self.team.o_line_players.all()[1]).player
-        self.oLineH3 = PlayerInPointSimulation(self.team.o_line_players.all()[2]).player
-        self.oLineC1 = PlayerInPointSimulation(self.team.o_line_players.all()[3]).player
-        self.oLineC2 = PlayerInPointSimulation(self.team.o_line_players.all()[4]).player
-        self.oLineC3 = PlayerInPointSimulation(self.team.o_line_players.all()[5]).player
-        self.oLineC4 = PlayerInPointSimulation(self.team.o_line_players.all()[6]).player
-        self.dLineH1 = PlayerInPointSimulation(self.team.d_line_players.all()[0]).player
-        self.dLineH2 = PlayerInPointSimulation(self.team.d_line_players.all()[1]).player
-        self.dLineH3 = PlayerInPointSimulation(self.team.d_line_players.all()[2]).player
-        self.dLineC1 = PlayerInPointSimulation(self.team.d_line_players.all()[3]).player
-        self.dLineC2 = PlayerInPointSimulation(self.team.d_line_players.all()[4]).player
-        self.dLineC3 = PlayerInPointSimulation(self.team.d_line_players.all()[5]).player
-        self.dLineC4 = PlayerInPointSimulation(self.team.d_line_players.all()[6]).player
-        self.benchH1 = PlayerInPointSimulation(self.team.bench_players.all()[0]).player
-        self.benchH2 = PlayerInPointSimulation(self.team.bench_players.all()[1]).player
-        self.benchH3 = PlayerInPointSimulation(self.team.bench_players.all()[2]).player
-        self.benchC1 = PlayerInPointSimulation(self.team.bench_players.all()[3]).player
-        self.benchC2 = PlayerInPointSimulation(self.team.bench_players.all()[4]).player
-        self.benchC3 = PlayerInPointSimulation(self.team.bench_players.all()[5]).player
-        self.benchC4 = PlayerInPointSimulation(self.team.bench_players.all()[6]).player
+        self.oLineH1 = PlayerInPointSimulation(self.team, self.game, self.team.o_line_players.all()[0])
+        self.oLineH2 = PlayerInPointSimulation(self.team, self.game, self.team.o_line_players.all()[1])
+        self.oLineH3 = PlayerInPointSimulation(self.team, self.game, self.team.o_line_players.all()[2])
+        self.oLineC1 = PlayerInPointSimulation(self.team, self.game, self.team.o_line_players.all()[3])
+        self.oLineC2 = PlayerInPointSimulation(self.team, self.game, self.team.o_line_players.all()[4])
+        self.oLineC3 = PlayerInPointSimulation(self.team, self.game, self.team.o_line_players.all()[5])
+        self.oLineC4 = PlayerInPointSimulation(self.team, self.game, self.team.o_line_players.all()[6])
+        self.dLineH1 = PlayerInPointSimulation(self.team, self.game, self.team.d_line_players.all()[0])
+        self.dLineH2 = PlayerInPointSimulation(self.team, self.game, self.team.d_line_players.all()[1])
+        self.dLineH3 = PlayerInPointSimulation(self.team, self.game, self.team.d_line_players.all()[2])
+        self.dLineC1 = PlayerInPointSimulation(self.team, self.game, self.team.d_line_players.all()[3])
+        self.dLineC2 = PlayerInPointSimulation(self.team, self.game, self.team.d_line_players.all()[4])
+        self.dLineC3 = PlayerInPointSimulation(self.team, self.game, self.team.d_line_players.all()[5])
+        self.dLineC4 = PlayerInPointSimulation(self.team, self.game, self.team.d_line_players.all()[6])
+        self.benchH1 = PlayerInPointSimulation(self.team, self.game, self.team.bench_players.all()[0])
+        self.benchH2 = PlayerInPointSimulation(self.team, self.game, self.team.bench_players.all()[1])
+        self.benchH3 = PlayerInPointSimulation(self.team, self.game, self.team.bench_players.all()[2])
+        self.benchC1 = PlayerInPointSimulation(self.team, self.game, self.team.bench_players.all()[3])
+        self.benchC2 = PlayerInPointSimulation(self.team, self.game, self.team.bench_players.all()[4])
+        self.benchC3 = PlayerInPointSimulation(self.team, self.game, self.team.bench_players.all()[5])
+        self.benchC4 = PlayerInPointSimulation(self.team, self.game, self.team.bench_players.all()[6])
         self.oLinePlayers = [self.oLineH1, self.oLineH2, self.oLineH3, self.oLineC1, self.oLineC2, self.oLineC3,
                              self.oLineC4]
         self.dLinePlayers = [self.dLineH1, self.dLineH2, self.dLineH3, self.dLineC1, self.dLineC2, self.dLineC3,
                              self.dLineC4]
         self.benchPlayers = [self.benchH1, self.benchH2, self.benchH3, self.benchC1, self.benchC2, self.benchC3,
                              self.benchC4]
+        self.allPlayers = [self.oLineH1, self.oLineH2, self.oLineH3, self.oLineC1, self.oLineC2, self.oLineC3,
+                           self.oLineC4, self.dLineH1, self.dLineH2, self.dLineH3, self.dLineC1, self.dLineC2,
+                           self.dLineC3, self.dLineC4, self.benchH1, self.benchH2, self.benchH3, self.benchC1,
+                           self.benchC2, self.benchC3, self.benchC4]
         self.sevenOnField = None
         self.hasDisc = None
 
@@ -51,8 +57,8 @@ class GameSimulation:
         self.playDirectionCoinFlipResult = None
         self.startWithDiscCoinFlipResult = None
         self.game = game
-        self.teamOne = TeamInGameSimulation(self.game.team_one)
-        self.teamTwo = TeamInGameSimulation(self.game.team_two)
+        self.teamOne = TeamInGameSimulation(self.game.team_one, self.game)
+        self.teamTwo = TeamInGameSimulation(self.game.team_two, self.game)
         self.sevenOnFieldForTeamOne = self.teamOne.team.o_line_players
         self.sevenOnFieldForTeamTwo = self.teamTwo.team.d_line_players
         self.determiner = 0
@@ -125,6 +131,8 @@ class GameSimulation:
                 self.gameOver = True
             else:
                 self.setup_next_point()
+        self.save_game_player_stats_for_team(self.teamOne)
+        self.save_game_player_stats_for_team(self.teamTwo)
 
     def setup_next_point(self):
         if self.teamOne.score == 8 and self.teamTwo.score < 8:
@@ -188,3 +196,31 @@ class GameSimulation:
             self.pointSimulation.discPrePullLocation = 0
             self.pointSimulation.discCurrentLocation = 0
             self.pointSimulation.discPostGoalLocation = 0
+
+    def save_game_player_stats_for_team(self, team):
+        for player in team.allPlayers:
+            # player is of type PlayerInPointSimulation
+            game = player.gameStats.game
+            game.save()
+            playerGameStats = PlayerGameStat.objects.create(
+                game=player.gameStats.game,
+                player=player.gameStats.player,
+                goals=player.gameStats.goals,
+                assists=player.gameStats.assists,
+                swing_passes_thrown=player.gameStats.swingPassesThrown,
+                swing_passes_completed=player.gameStats.swingPassesCompleted,
+                under_passes_thrown=player.gameStats.underPassesThrown,
+                under_passes_completed=player.gameStats.underPassesCompleted,
+                short_hucks_thrown=player.gameStats.shortHucksThrown,
+                short_hucks_completed=player.gameStats.shortHucksCompleted,
+                deep_hucks_thrown=player.gameStats.deepHucksThrown,
+                deep_hucks_completed=player.gameStats.deepHucksCompleted,
+                throwing_yards=player.gameStats.throwingYards,
+                receiving_yards=player.gameStats.receivingYards,
+                turnovers_forced=player.gameStats.turnoversForced,
+                throwaways=player.gameStats.throwaways,
+                drops=player.gameStats.drops,
+                callahans=player.gameStats.callahans,
+                pulls=player.gameStats.pulls
+            )
+            playerGameStats.save()
