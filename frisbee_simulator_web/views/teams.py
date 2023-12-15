@@ -13,13 +13,13 @@ class TeamCreateView(CreateView):
     success_url = '/teams/list/'
 
 
-def create_random_team(request):
+def create_random_team():
     team = Team(
         location=generate_random_city(50),
         mascot=generate_random_mascot()
     )
     team.save()
-    players = [create_random_player(request) for _ in range(21)]
+    players = [create_random_player() for _ in range(21)]
     team.players.set(players)
     team.o_line_players.set([player.id for player in players[:7]])
     team.d_line_players.set([player.id for player in players[7:14]])

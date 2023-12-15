@@ -158,7 +158,40 @@ class Game(models.Model):
     loser_score = models.PositiveIntegerField(default=0)
 
 
+class Point(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='game_points')
+    team_one = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_one_points')
+    team_two = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_two_points')
+    winner = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='winner_points', null=True)
+    loser = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='loser_points', null=True)
+    point_number_in_game = models.PositiveIntegerField(default=0)
+
+
+class PlayerPointStat(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='point_stats_for_game')
+    point = models.ForeignKey(Point, on_delete=models.CASCADE, related_name='player_stats')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='point_stats')
+    goals = models.PositiveIntegerField(default=0)
+    assists = models.PositiveIntegerField(default=0)
+    swing_passes_thrown = models.PositiveIntegerField(default=0)
+    swing_passes_completed = models.PositiveIntegerField(default=0)
+    under_passes_thrown = models.PositiveIntegerField(default=0)
+    under_passes_completed = models.PositiveIntegerField(default=0)
+    short_hucks_thrown = models.PositiveIntegerField(default=0)
+    short_hucks_completed = models.PositiveIntegerField(default=0)
+    deep_hucks_thrown = models.PositiveIntegerField(default=0)
+    deep_hucks_completed = models.PositiveIntegerField(default=0)
+    throwing_yards = models.IntegerField(default=0)
+    receiving_yards = models.IntegerField(default=0)
+    turnovers_forced = models.PositiveIntegerField(default=0)
+    throwaways = models.PositiveIntegerField(default=0)
+    drops = models.PositiveIntegerField(default=0)
+    callahans = models.PositiveIntegerField(default=0)
+    pulls = models.PositiveIntegerField(default=0)
+
+
 class PlayerGameStat(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='game_stats_for_tournament')
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='player_stats')
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='game_stats')
     goals = models.PositiveIntegerField(default=0)

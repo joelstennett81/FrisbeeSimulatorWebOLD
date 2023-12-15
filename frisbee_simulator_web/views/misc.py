@@ -1,6 +1,4 @@
 import random
-import string
-
 from django.db.models import Avg
 from faker import Faker
 from frisbee_simulator_web.models import Player
@@ -8,7 +6,7 @@ from frisbee_simulator_web.models import Player
 fake = Faker()
 
 
-def create_random_player(request):
+def create_random_player():
     player = Player(
         first_name=generate_random_first_name(6),
         last_name=generate_random_last_name(50),
@@ -52,10 +50,10 @@ def generate_random_city(length):
 def generate_random_mascot():
     animals = ['Aardvarks', 'Albatrosses', 'Alligators', 'Alpacas', 'Ants', 'Anteaters', 'Antelopes', 'Apes',
                'Armadillos', 'Asp', 'Baboons', 'Badgers', 'Barracudas', 'Bass', 'Bats', 'Bears', 'Beavers', 'Bees',
-               'Bisons', 'Boars', 'Buffaloes', 'Butterflies', 'Camels', 'Carp', 'Caterpillars', 'Cheetahs', 'Chickens',
+               'Bison', 'Boars', 'Buffaloes', 'Butterflies', 'Camels', 'Carp', 'Caterpillars', 'Cheetahs', 'Chickens',
                'Chimpanzees', 'Cobras', 'Cockroaches', 'Cods', 'Cougars', 'Cows', 'Coyotes', 'Crabs', 'Cranes',
-               'Crocodiles', 'Crows', 'Deers',
-               'Dingos', 'Dolphins', 'Donkeys', 'Doves', 'Dragonflies', 'Ducks', 'Eagles', 'Echidnas', 'Eels',
+               'Crocodiles', 'Crows', 'Deer',
+               'Dingos', 'Dolphins', 'Donkeys', 'Doves', 'Dragonflies', 'Ducks', 'Eagles', 'Echidna', 'Eels',
                'Elephants',
                'Emus', 'Falcons', 'Ferrets', 'Fishes', 'Flamingos', 'Flies', 'Foxes', 'Frogs', 'Gazelles', 'Geckos',
                'Gerbils', 'Giraffes',
@@ -64,11 +62,11 @@ def generate_random_mascot():
                'Geese', 'Gorillas', 'Grasshoppers', 'Grizzlies', 'Guinea pigs', 'Hamsters', 'Hares', 'Hawks',
                'Hippopotamuses',
                'Horses', 'Hummingbirds', 'Hyenas', 'Iguanas', 'Impalas', 'Jackals', 'Jaguars', 'Jellyfish', 'Kangaroos',
-               'Koalas', 'Koi', 'Komodo dragons', 'Koupreys', 'Kudus', 'Ladybirds', 'Lapwings', 'Lemurs', 'Leopards',
+               'Koalas', 'Koi', 'Komodo dragons', 'Kou-preys', 'Kudus', 'Ladybirds', 'Lapwings', 'Lemurs', 'Leopards',
                'Lions',
                'Llamas', 'Lobsters', 'Loris', 'Louses', 'Lynxes', 'Mallards', 'Mammoths', 'Manatees', 'Mandrills',
                'Mantises',
-               'Martens', 'Meerkats', 'Minks', 'Moles', 'Mongooses', 'Monkeys', 'Mooses', 'Mosquitoes', 'Moths', 'Mice',
+               'Martens', 'Meerkats', 'Minks', 'Moles', 'Mongooses', 'Monkeys', 'Moose', 'Mosquitoes', 'Moths', 'Mice',
                'Mules',
                'Narwhals', 'Newts', 'Nightingales', 'Octopuses', 'Okapis', 'Opossums', 'Ostriches', 'Otters', 'Owls',
                'Oxes',
@@ -78,7 +76,7 @@ def generate_random_mascot():
                'Puffins',
                'Pumas', 'Pythons', 'Quails', 'Queleas', 'Quokkas', 'Rabbits', 'Raccoons', 'Rails', 'Rams', 'Rats',
                'Ravens',
-               'Red deers', 'Red pandas', 'Reindeers', 'Rhinoceroses', 'Right whales', 'Roadrunners', 'Rooks',
+               'Red deer', 'Red pandas', 'Reindeer', 'Rhinoceroses', 'Right whales', 'Roadrunners', 'Rooks',
                'Rottweilers',
                'Ruffs', 'Salamanders', 'Salmon', 'Sandpipers', 'Sardines', 'Scorpions', 'Seahorses', 'Seals', 'Sharks',
                'Sheep',
@@ -108,5 +106,4 @@ def calculate_player_rating(player):
 
 
 def calculate_team_rating(team):
-    players = team.players
     return team.players.all().aggregate(Avg('overall_rating')).get('overall_rating__avg')
