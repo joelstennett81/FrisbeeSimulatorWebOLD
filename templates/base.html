@@ -1,26 +1,39 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+<style>
+
+</style>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}Frisbee Simulator{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'frisbee_simulator_web/css/custom.css' %}">
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="{% url 'create_player' %}">Create Player</a></li>
-                <li><a href="{% url 'create_team' %}">Create Team</a></li>
-                <li><a href="{% url 'create_tournament' %}">Create Tournament</a></li>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">My Tournament App</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'list_players' %}">View Players</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list_teams' %}">View Teams</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list_tournaments' %}">View Tournaments</a></li>
             </ul>
-        </nav>
-    </header>
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
-    <footer>
-        <p>© 2021 My Website</p>
-    </footer>
+        </div>
+    </nav>
+</header>
+<main class="container">
+    {% block content %}
+    {% endblock %}
+</main>
+<footer class="footer bg-light text-center">
+    <p>© 2021 My Tournament App</p>
+</footer>
+<!-- Add Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

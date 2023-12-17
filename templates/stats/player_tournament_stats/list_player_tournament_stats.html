@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <table id="player_team_stat_table">
+        <thead>
+        <tr>
+            <th>Player</th>
+            <th>Goals</th>
+            <th>Assists</th>
+            <th>Swing Passes Thrown</th>
+            <th>Swing Passes Completed</th>
+            <th>Under Passes Thrown</th>
+            <th>Under Passes Completed</th>
+            <th>Short Hucks Thrown</th>
+            <th>Short Hucks Completed</th>
+            <th>Deep Hucks Thrown</th>
+            <th>Deep Hucks Completed</th>
+            <th>Throwing Yards</th>
+            <th>Receiving Yards</th>
+            <th>Turnovers Forced</th>
+            <th>Throwaways</th>
+            <th>Drops</th>
+            <th>Callahans</th>
+            <th>Pulls</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for playerTeamStat in playerTeamStats %}
+            <tr>
+                <td>
+                    <a href="{% url 'detail_player_tournament_stats' playerTeamStat.tournament.id playerTeamStat.player.id %}">{{ playerTeamStat.player }}</a>
+                </td>
+                <td>{{ playerTeamStat.goals }}</td>
+                <td>{{ playerTeamStat.assists }}</td>
+                <td>{{ playerTeamStat.swing_passes_thrown }}</td>
+                <td>{{ playerTeamStat.swing_passes_completed }}</td>
+                <td>{{ playerTeamStat.under_passes_thrown }}</td>
+                <td>{{ playerTeamStat.under_passes_completed }}</td>
+                <td>{{ playerTeamStat.short_hucks_thrown }}</td>
+                <td>{{ playerTeamStat.short_hucks_completed }}</td>
+                <td>{{ playerTeamStat.deep_hucks_thrown }}</td>
+                <td>{{ playerTeamStat.deep_hucks_completed }}</td>
+                <td>{{ playerTeamStat.throwing_yards }}</td>
+                <td>{{ playerTeamStat.receiving_yards }}</td>
+                <td>{{ playerTeamStat.turnovers_forced }}</td>
+                <td>{{ playerTeamStat.throwaways }}</td>
+                <td>{{ playerTeamStat.drops }}</td>
+                <td>{{ playerTeamStat.callahans }}</td>
+                <td>{{ playerTeamStat.pulls }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function () {
+            $('#player_team_stat_table').DataTable();
+        });
+    </script>
+{% endblock %}

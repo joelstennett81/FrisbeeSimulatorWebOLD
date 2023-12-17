@@ -1,9 +1,8 @@
 from itertools import chain
 from django.shortcuts import render
 from django.views.generic.edit import CreateView
-from frisbee_simulator_web.models import Tournament, TournamentTeam, Game, TournamentPool, TournamentBracket
+from frisbee_simulator_web.models import Tournament
 from frisbee_simulator_web.forms import TournamentForm
-from frisbee_simulator_web.views.simulate_game_functions import GameSimulation
 from frisbee_simulator_web.views.simulate_tournament_functions import TournamentSimulation
 from frisbee_simulator_web.views.teams import create_random_team
 
