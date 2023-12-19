@@ -25,21 +25,21 @@ button:hover {
 }
 
 /* Modern table design */
-#player-table {
+.common-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-#player-table th, #player-table td {
+.common-table th, #player-table td {
     border: 1px solid #ddd;
     padding: 8px;
 }
 
-#player-table tr:nth-child(even){background-color: #f2f2f2;}
+.common-table tr:nth-child(even){background-color: #f2f2f2;}
 
-#player-table tr:hover {background-color: #ddd;}
+.common-table tr:hover {background-color: #ddd;}
 
-#player-table th {
+.common-table th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;

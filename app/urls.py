@@ -21,4 +21,4 @@ urlpatterns = [
          name='list_player_tournament_stats'),
     path('stats/detail_player_tournament_stats/<int:tournament_id>/<int:player_id>/',
          stats.detail_player_tournament_stats, name='detail_player_tournament_stats'),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
