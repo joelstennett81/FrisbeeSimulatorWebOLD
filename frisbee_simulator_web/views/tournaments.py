@@ -19,7 +19,6 @@ class TournamentCreateView(CreateView):
         response = super().form_valid(form)
         number_of_teams = int(form.cleaned_data['number_of_teams'])
         for _ in range(number_of_teams):
-            print('creating team')
             team = create_random_team()
             self.object.teams.add(team)
         self.object.save()
