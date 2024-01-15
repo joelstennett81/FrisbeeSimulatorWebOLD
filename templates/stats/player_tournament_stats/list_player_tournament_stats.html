@@ -1,61 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Player Tourney Stats</h1>
-    <table id="player_team_stat_table" class="common-table">
-        <thead>
-        <tr>
-            <th>Player</th>
-            <th>Goals</th>
-            <th>Assists</th>
-            <th>Swing Passes Thrown</th>
-            <th>Swing Passes Completed</th>
-            <th>Under Passes Thrown</th>
-            <th>Under Passes Completed</th>
-            <th>Short Hucks Thrown</th>
-            <th>Short Hucks Completed</th>
-            <th>Deep Hucks Thrown</th>
-            <th>Deep Hucks Completed</th>
-            <th>Throwing Yards</th>
-            <th>Receiving Yards</th>
-            <th>Turnovers Forced</th>
-            <th>Throwaways</th>
-            <th>Drops</th>
-            <th>Callahans</th>
-            <th>Pulls</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for playerTournamentStat in playerTournamentStats %}
-            <tr>
-                <td>
-                    <a href="{% url 'detail_player_tournament_stats' playerTournamentStat.tournament.id playerTournamentStat.player.id %}">{{ playerTournamentStat.player }}</a>
-                </td>
-                <td>{{ playerTournamentStat.goals }}</td>
-                <td>{{ playerTournamentStat.assists }}</td>
-                <td>{{ playerTournamentStat.swing_passes_thrown }}</td>
-                <td>{{ playerTournamentStat.swing_passes_completed }}</td>
-                <td>{{ playerTournamentStat.under_passes_thrown }}</td>
-                <td>{{ playerTournamentStat.under_passes_completed }}</td>
-                <td>{{ playerTournamentStat.short_hucks_thrown }}</td>
-                <td>{{ playerTournamentStat.short_hucks_completed }}</td>
-                <td>{{ playerTournamentStat.deep_hucks_thrown }}</td>
-                <td>{{ playerTournamentStat.deep_hucks_completed }}</td>
-                <td>{{ playerTournamentStat.throwing_yards }}</td>
-                <td>{{ playerTournamentStat.receiving_yards }}</td>
-                <td>{{ playerTournamentStat.turnovers_forced }}</td>
-                <td>{{ playerTournamentStat.throwaways }}</td>
-                <td>{{ playerTournamentStat.drops }}</td>
-                <td>{{ playerTournamentStat.callahans }}</td>
-                <td>{{ playerTournamentStat.pulls }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <script>
-        $(document).ready(function () {
-            $('#player_team_stat_table').DataTable();
-        });
-    </script>
+    <div class="container py-4">
+        <h1 class="mb-4">Player Tournament Stats</h1>
+        <div class="table-responsive">
+            <table id="team-table" class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Player</th>
+                    <th>Goals</th>
+                    <th>Assists</th>
+                    <th>Throwing Yards</th>
+                    <th>Receiving Yards</th>
+                    <th>Turnovers Forced</th>
+                    <th>Throwaways</th>
+                    <th>Drops</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for playerTournamentStat in playerTournamentStats %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'detail_player_tournament_stats' playerTournamentStat.tournament.id playerTournamentStat.player.id %}">{{ playerTournamentStat.player }}</a>
+                        </td>
+                        <td>{{ playerTournamentStat.goals }}</td>
+                        <td>{{ playerTournamentStat.assists }}</td>
+                        <td>{{ playerTournamentStat.throwing_yards }}</td>
+                        <td>{{ playerTournamentStat.receiving_yards }}</td>
+                        <td>{{ playerTournamentStat.turnovers_forced }}</td>
+                        <td>{{ playerTournamentStat.throwaways }}</td>
+                        <td>{{ playerTournamentStat.drops }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#player_team_stat_table').DataTable();
+            });
+        </script>
+    </div>
 {% endblock %}
+
+

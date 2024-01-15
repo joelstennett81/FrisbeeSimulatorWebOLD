@@ -1,6 +1,7 @@
 from django import forms
 from .models import Player, Team, Tournament
-from .views.misc import calculate_player_rating, calculate_team_rating
+from .views.misc import calculate_overall_rating, calculate_team_rating, calculate_handle_offense_rating, \
+    calculate_handle_defense_rating, calculate_cutter_offense_rating, calculate_cutter_defense_rating
 
 
 class PlayerForm(forms.ModelForm):
@@ -10,7 +11,12 @@ class PlayerForm(forms.ModelForm):
 
     def save(self, commit=True):
         player = super().save(commit=False)
-        player.overall_rating = calculate_player_rating(player)
+        player.overall_rating = calculate_overall_rating(player)
+        player.overall_handle_offense_rating = calculate_handle_offense_rating(player)
+        player.overall_handle_defense_rating = calculate_handle_defense_rating(player)
+        player.overall_cutter_offense_rating = calculate_cutter_offense_rating(player)
+        player.overall_cutter_defense_rating = calculate_cutter_defense_rating(player)
+
         if commit:
             player.save()
         return player

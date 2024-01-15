@@ -30,7 +30,7 @@ def create_random_player():
         short_huck_throw_offense=random.randint(60, 90),
         deep_huck_throw_offense=random.randint(60, 90),
     )
-    player.overall_rating = calculate_player_rating(player)
+    player.overall_rating = calculate_overall_rating(player)
     player.save()
     return player
 
@@ -93,7 +93,7 @@ def generate_random_mascot():
     return random.choice(animals)
 
 
-def calculate_player_rating(player):
+def calculate_overall_rating(player):
     rating_attributes = [
         player.speed, player.jumping, player.agility, player.deep_huck_cut_defense, player.short_huck_cut_defense,
         player.under_cut_defense, player.handle_mark_defense, player.handle_cut_defense, player.deep_huck_cut_offense,
@@ -103,6 +103,43 @@ def calculate_player_rating(player):
     rating_sum = sum(rating_attributes)
     overall_rating = rating_sum / len(rating_attributes)
     return overall_rating
+
+
+def calculate_handle_offense_rating(player):
+    rating_attributes = [
+        player.handle_cut_offense, player.swing_throw_offense, player.under_throw_offense,
+        player.short_huck_throw_offense, player.deep_huck_throw_offense
+    ]
+    rating_sum = sum(rating_attributes)
+    overall_handle_offense_rating = rating_sum / len(rating_attributes)
+    return overall_handle_offense_rating
+
+
+def calculate_handle_defense_rating(player):
+    rating_attributes = [
+        player.handle_mark_defense, player.handle_cut_defense
+    ]
+    rating_sum = sum(rating_attributes)
+    overall_handle_defense_rating = rating_sum / len(rating_attributes)
+    return overall_handle_defense_rating
+
+
+def calculate_cutter_offense_rating(player):
+    rating_attributes = [
+        player.deep_huck_cut_offense, player.short_huck_cut_offense, player.under_cut_offense,
+    ]
+    rating_sum = sum(rating_attributes)
+    overall_cutter_offense_rating = rating_sum / len(rating_attributes)
+    return overall_cutter_offense_rating
+
+
+def calculate_cutter_defense_rating(player):
+    rating_attributes = [
+        player.deep_huck_cut_defense, player.short_huck_cut_defense, player.under_cut_defense
+    ]
+    rating_sum = sum(rating_attributes)
+    overall_cutter_defense_rating = rating_sum / len(rating_attributes)
+    return overall_cutter_defense_rating
 
 
 def calculate_team_rating(team):

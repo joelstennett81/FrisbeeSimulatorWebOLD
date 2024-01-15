@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView
 
 from frisbee_simulator_web.forms import PlayerForm
@@ -14,7 +14,7 @@ class PlayerCreateView(CreateView):
 
 
 def random_player(request):
-    player = create_random_player(request)
+    player = create_random_player()
     player.save()
     return redirect('list_players')
 
@@ -22,3 +22,8 @@ def random_player(request):
 def list_players(request):
     players = Player.objects.all()
     return render(request, 'players/list_players.html', {'players': players})
+
+
+def detail_player(request, pk):
+   player = get_object_or_404(Player, pk=pk)
+   return render(request, 'players/detail_player.html', {'player': player})

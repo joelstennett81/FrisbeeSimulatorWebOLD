@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Create a Tournament</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create Tournament</button>
-    </form>
-    <br>
+    <div class="container py-4">
+        <h1 class="mb-4">Create New Tournament</h1>
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+        <br>
+    </div>
 {% endblock %}
