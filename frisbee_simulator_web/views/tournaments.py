@@ -34,19 +34,7 @@ def list_tournaments(request):
 def simulate_tournament(request, tournament_id):
     tournament = Tournament.objects.get(id=tournament_id)
     tournamentSimulation = TournamentSimulation(tournament)
-    tournamentSimulation.rank_teams_for_pool_play()
-    if tournamentSimulation.numberOfTeams == 4:
-        tournamentSimulation.simulate_four_team_pool()
-        tournamentSimulation.simulate_four_team_bracket()
-    elif tournamentSimulation.numberOfTeams:
-        tournamentSimulation.simulate_eight_team_pool()
-        tournamentSimulation.simulate_eight_team_bracket()
-    else:
-        return render(request, 'tournaments/tournament_error.html')
-    tournament.champion = tournamentSimulation.champion
-    print('tournament.champion: ', tournament.champion)
-    tournament.is_complete = True
-    tournament.save()
+    tournamentSimulation.simulate_tournament(request, tournament_id)
     return render(request, 'tournaments/tournament_results.html', {'tournament': tournament})
 
 

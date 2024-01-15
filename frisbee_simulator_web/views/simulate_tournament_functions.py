@@ -220,16 +220,16 @@ class TournamentSimulation:
         poolTwo = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=4)
         for tournament_team in tournament_teams:
             if tournament_team.pool_play_seed in [1, 4, 5, 8]:
-                poolOne.teams.add(tournament_team.team)
+                poolOne.teams.add(tournament_team)
             else:
-                poolTwo.teams.add(tournament_team.team)
+                poolTwo.teams.add(tournament_team)
         poolOne.save()
         poolTwo.save()
         for i in range(3):  # 3 rounds for 4 teams each
             for j in range(2):  # 2 matches per round
-                game1 = Game(home_team=poolOne.teams.all()[j], away_team=poolOne.teams.all()[3 - j],
+                game1 = Game(team_one=poolOne.teams.all()[j], team_two=poolOne.teams.all()[3 - j],
                              tournament=self.tournament, game_type='Pool Play')
-                game2 = Game(home_team=poolTwo.teams.all()[j], away_team=poolTwo.teams.all()[3 - j],
+                game2 = Game(team_one=poolTwo.teams.all()[j], team_two=poolTwo.teams.all()[3 - j],
                              tournament=self.tournament, game_type='Pool Play')
                 game1.save()
                 game2.save()
@@ -306,7 +306,7 @@ class TournamentSimulation:
         self.simulate_bracket_game(game_four)
         tournament_bracket.champion = game_four.winner
         tournament_bracket.save()
-        return tournament_bracket
+        self.champion = tournament_bracket.champion.team
 
     def simulate_eight_team_bracket(self):
         tournament_pools = TournamentPool.objects.filter(tournament=self.tournament)
@@ -347,7 +347,8 @@ class TournamentSimulation:
         game_six = Game.objects.create(team_one=game_three.loser, team_two=game_four.loser, tournament=self.tournament,
                                        game_type='Loser-Semifinal')
         self.simulate_bracket_game(game_six)
-        game_seven = Game.objects.create(team_one=game_five.winner, team_two=game_six.winner, tournament=self.tournament,
+        game_seven = Game.objects.create(team_one=game_five.winner, team_two=game_six.winner,
+                                         tournament=self.tournament,
                                          game_type='Fifth-Place-Final')
         self.simulate_bracket_game(game_seven)
         game_eight = Game.objects.create(team_one=game_five.loser, team_two=game_six.loser, tournament=self.tournament,
@@ -357,18 +358,20 @@ class TournamentSimulation:
         game_nine = Game.objects.create(team_one=game_one.winner, team_two=game_two.winner, tournament=self.tournament,
                                         game_type='Semifinal')
         self.simulate_bracket_game(game_nine)
-        game_ten = Game.objects.create(team_one=game_three.winner, team_two=game_four.winner, tournament=self.tournament,
+        game_ten = Game.objects.create(team_one=game_three.winner, team_two=game_four.winner,
+                                       tournament=self.tournament,
                                        game_type='Semifinal')
         self.simulate_bracket_game(game_ten)
         game_eleven = Game.objects.create(team_one=game_nine.loser, team_two=game_ten.loser, tournament=self.tournament,
                                           game_type='Third-Place')
         self.simulate_bracket_game(game_eleven)
-        game_twelve = Game.objects.create(team_one=game_nine.winner, team_two=game_ten.winner, tournament=self.tournament,
+        game_twelve = Game.objects.create(team_one=game_nine.winner, team_two=game_ten.winner,
+                                          tournament=self.tournament,
                                           game_type='Championship')
         self.simulate_bracket_game(game_twelve)
         tournament_bracket.champion = game_twelve.winner
         tournament_bracket.save()
-        return tournament_bracket
+        self.champion = tournament_bracket.champion
 
     def simulate_tournament(self, request, tournament_id):
         tournament = Tournament.objects.get(id=tournament_id)
@@ -376,77 +379,56 @@ class TournamentSimulation:
         self.rank_teams_for_pool_play()
         self.simulate_four_team_pool()
         if number_of_teams == 4:
-            tournament_bracket = self.simulate_four_team_bracket()
+            self.simulate_four_team_bracket()
         elif number_of_teams == 8:
-            tournament_bracket = self.simulate_eight_team_bracket(tournament)
+            self.simulate_eight_team_bracket()
         else:
             return render(request, 'tournaments/tournament_error.html')
-        tournament.champion = tournament_bracket.champion.team
+        tournament.champion = self.champion
         tournament.is_complete = True
         tournament.save()
         self.save_tournament_player_stats_from_game_player_stats()
 
     def save_tournament_player_stats_from_game_player_stats(self):
         for gameSimulation in self.gameSimulationsList:
-            for gameSimulationPlayer in gameSimulation.teamInGameSimulationOne.allPlayers:
-                gameStats = PlayerGameStat.objects.filter(player=gameSimulationPlayer.player,
-                                                          tournament=self.tournament)
-                # Update the player's game stats
-                playerTournamentStat = PlayerTournamentStat.objects.create(
-                    tournament=self.tournament,
-                    player=gameSimulationPlayer.player,
-                    goals=gameStats.aggregate(Sum('goals'))['goals__sum'],
-                    assists=gameStats.aggregate(Sum('assists'))['assists__sum'],
-                    swing_passes_thrown=gameStats.aggregate(Sum('swing_passes_thrown'))[
-                        'swing_passes_thrown__sum'],
-                    swing_passes_completed=gameStats.aggregate(Sum('swing_passes_completed'))[
-                        'swing_passes_completed__sum'],
-                    under_passes_thrown=gameStats.aggregate(Sum('under_passes_thrown'))['under_passes_thrown__sum'],
-                    under_passes_completed=gameStats.aggregate(Sum('under_passes_completed'))[
-                        'under_passes_completed__sum'],
-                    short_hucks_thrown=gameStats.aggregate(Sum('short_hucks_thrown'))['short_hucks_thrown__sum'],
-                    short_hucks_completed=gameStats.aggregate(Sum('short_hucks_completed'))[
-                        'short_hucks_completed__sum'],
-                    deep_hucks_thrown=gameStats.aggregate(Sum('deep_hucks_thrown'))['deep_hucks_thrown__sum'],
-                    deep_hucks_completed=gameStats.aggregate(Sum('deep_hucks_completed'))[
-                        'deep_hucks_completed__sum'],
-                    throwing_yards=gameStats.aggregate(Sum('throwing_yards'))['throwing_yards__sum'],
-                    receiving_yards=gameStats.aggregate(Sum('receiving_yards'))['receiving_yards__sum'],
-                    turnovers_forced=gameStats.aggregate(Sum('turnovers_forced'))['turnovers_forced__sum'],
-                    throwaways=gameStats.aggregate(Sum('throwaways'))['throwaways__sum'],
-                    drops=gameStats.aggregate(Sum('drops'))['drops__sum'],
-                    callahans=gameStats.aggregate(Sum('callahans'))['callahans__sum'],
-                    pulls=gameStats.aggregate(Sum('pulls'))['pulls__sum'],
-                )
-                playerTournamentStat.save()
-            for gameSimulationPlayer in gameSimulation.teamInGameSimulationTwo.allPlayers:
-                gameStats = PlayerGameStat.objects.filter(player=gameSimulationPlayer.player,
-                                                          tournament=self.tournament)
-                # Update the player's game stats
-                playerTournamentStat = PlayerTournamentStat.objects.create(
-                    tournament=self.tournament,
-                    player=gameSimulationPlayer.player,
-                    goals=gameStats.aggregate(Sum('goals'))['goals__sum'],
-                    assists=gameStats.aggregate(Sum('assists'))['assists__sum'],
-                    swing_passes_thrown=gameStats.aggregate(Sum('swing_passes_thrown'))[
-                        'swing_passes_thrown__sum'],
-                    swing_passes_completed=gameStats.aggregate(Sum('swing_passes_completed'))[
-                        'swing_passes_completed__sum'],
-                    under_passes_thrown=gameStats.aggregate(Sum('under_passes_thrown'))['under_passes_thrown__sum'],
-                    under_passes_completed=gameStats.aggregate(Sum('under_passes_completed'))[
-                        'under_passes_completed__sum'],
-                    short_hucks_thrown=gameStats.aggregate(Sum('short_hucks_thrown'))['short_hucks_thrown__sum'],
-                    short_hucks_completed=gameStats.aggregate(Sum('short_hucks_completed'))[
-                        'short_hucks_completed__sum'],
-                    deep_hucks_thrown=gameStats.aggregate(Sum('deep_hucks_thrown'))['deep_hucks_thrown__sum'],
-                    deep_hucks_completed=gameStats.aggregate(Sum('deep_hucks_completed'))[
-                        'deep_hucks_completed__sum'],
-                    throwing_yards=gameStats.aggregate(Sum('throwing_yards'))['throwing_yards__sum'],
-                    receiving_yards=gameStats.aggregate(Sum('receiving_yards'))['receiving_yards__sum'],
-                    turnovers_forced=gameStats.aggregate(Sum('turnovers_forced'))['turnovers_forced__sum'],
-                    throwaways=gameStats.aggregate(Sum('throwaways'))['throwaways__sum'],
-                    drops=gameStats.aggregate(Sum('drops'))['drops__sum'],
-                    callahans=gameStats.aggregate(Sum('callahans'))['callahans__sum'],
-                    pulls=gameStats.aggregate(Sum('pulls'))['pulls__sum'],
-                )
-                playerTournamentStat.save()
+            for teamInGameSimulation in [gameSimulation.teamInGameSimulationOne,
+                                         gameSimulation.teamInGameSimulationTwo]:
+                for gameSimulationPlayer in teamInGameSimulation.allPlayers:
+                    gameStats = PlayerGameStat.objects.filter(player=gameSimulationPlayer.player,
+                                                              tournament=self.tournament)
+                    playerTournamentStat, created = PlayerTournamentStat.objects.get_or_create(
+                        tournament=self.tournament,
+                        player=gameSimulationPlayer.player,
+                    )
+                    playerTournamentStat.goals += gameStats.aggregate(Sum('goals'))['goals__sum']
+                    playerTournamentStat.assists += gameStats.aggregate(Sum('assists'))['assists__sum']
+                    playerTournamentStat.swing_passes_thrown += gameStats.aggregate(Sum('swing_passes_thrown'))[
+                        'swing_passes_thrown__sum']
+                    playerTournamentStat.swing_passes_completed += gameStats.aggregate(Sum('swing_passes_completed'))[
+                        'swing_passes_completed__sum']
+                    playerTournamentStat.under_passes_thrown += gameStats.aggregate(Sum('under_passes_thrown'))[
+                        'under_passes_thrown__sum']
+                    playerTournamentStat.under_passes_completed += gameStats.aggregate(Sum('under_passes_completed'))[
+                        'under_passes_completed__sum']
+                    playerTournamentStat.short_hucks_thrown += gameStats.aggregate(Sum('short_hucks_thrown'))[
+                        'short_hucks_thrown__sum']
+                    playerTournamentStat.short_hucks_completed += gameStats.aggregate(Sum('short_hucks_completed'))[
+                        'short_hucks_completed__sum']
+                    playerTournamentStat.deep_hucks_thrown += gameStats.aggregate(Sum('deep_hucks_thrown'))[
+                        'deep_hucks_thrown__sum']
+                    playerTournamentStat.deep_hucks_completed += gameStats.aggregate(Sum('deep_hucks_completed'))[
+                        'deep_hucks_completed__sum']
+                    playerTournamentStat.throwing_yards += gameStats.aggregate(Sum('throwing_yards'))[
+                        'throwing_yards__sum']
+                    playerTournamentStat.receiving_yards += gameStats.aggregate(Sum('receiving_yards'))[
+                        'receiving_yards__sum']
+                    playerTournamentStat.turnovers_forced += gameStats.aggregate(Sum('turnovers_forced'))[
+                        'turnovers_forced__sum']
+                    playerTournamentStat.throwaways += gameStats.aggregate(Sum('throwaways'))[
+                        'throwaways__sum']
+                    playerTournamentStat.drops += gameStats.aggregate(Sum('drops'))['drops__sum']
+                    playerTournamentStat.callahans += gameStats.aggregate(Sum('callahans'))[
+                        'callahans__sum']
+                    playerTournamentStat.pulls += gameStats.aggregate(Sum('pulls'))['pulls__sum']
+                    playerTournamentStat.save()
+

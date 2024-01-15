@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <h1>Player Tourney Stats</h1>
     <table id="player_team_stat_table" class="common-table">
         <thead>
         <tr>
@@ -28,28 +26,28 @@
         </tr>
         </thead>
         <tbody>
-        {% for playerTeamStat in playerTeamStats %}
+        {% for playerTournamentStat in playerTournamentStats %}
             <tr>
                 <td>
-                    <a href="{% url 'detail_player_tournament_stats' playerTeamStat.tournament.id playerTeamStat.player.id %}">{{ playerTeamStat.player }}</a>
+                    <a href="{% url 'detail_player_tournament_stats' playerTournamentStat.tournament.id playerTournamentStat.player.id %}">{{ playerTournamentStat.player }}</a>
                 </td>
-                <td>{{ playerTeamStat.goals }}</td>
-                <td>{{ playerTeamStat.assists }}</td>
-                <td>{{ playerTeamStat.swing_passes_thrown }}</td>
-                <td>{{ playerTeamStat.swing_passes_completed }}</td>
-                <td>{{ playerTeamStat.under_passes_thrown }}</td>
-                <td>{{ playerTeamStat.under_passes_completed }}</td>
-                <td>{{ playerTeamStat.short_hucks_thrown }}</td>
-                <td>{{ playerTeamStat.short_hucks_completed }}</td>
-                <td>{{ playerTeamStat.deep_hucks_thrown }}</td>
-                <td>{{ playerTeamStat.deep_hucks_completed }}</td>
-                <td>{{ playerTeamStat.throwing_yards }}</td>
-                <td>{{ playerTeamStat.receiving_yards }}</td>
-                <td>{{ playerTeamStat.turnovers_forced }}</td>
-                <td>{{ playerTeamStat.throwaways }}</td>
-                <td>{{ playerTeamStat.drops }}</td>
-                <td>{{ playerTeamStat.callahans }}</td>
-                <td>{{ playerTeamStat.pulls }}</td>
+                <td>{{ playerTournamentStat.goals }}</td>
+                <td>{{ playerTournamentStat.assists }}</td>
+                <td>{{ playerTournamentStat.swing_passes_thrown }}</td>
+                <td>{{ playerTournamentStat.swing_passes_completed }}</td>
+                <td>{{ playerTournamentStat.under_passes_thrown }}</td>
+                <td>{{ playerTournamentStat.under_passes_completed }}</td>
+                <td>{{ playerTournamentStat.short_hucks_thrown }}</td>
+                <td>{{ playerTournamentStat.short_hucks_completed }}</td>
+                <td>{{ playerTournamentStat.deep_hucks_thrown }}</td>
+                <td>{{ playerTournamentStat.deep_hucks_completed }}</td>
+                <td>{{ playerTournamentStat.throwing_yards }}</td>
+                <td>{{ playerTournamentStat.receiving_yards }}</td>
+                <td>{{ playerTournamentStat.turnovers_forced }}</td>
+                <td>{{ playerTournamentStat.throwaways }}</td>
+                <td>{{ playerTournamentStat.drops }}</td>
+                <td>{{ playerTournamentStat.callahans }}</td>
+                <td>{{ playerTournamentStat.pulls }}</td>
             </tr>
         {% endfor %}
         </tbody>
