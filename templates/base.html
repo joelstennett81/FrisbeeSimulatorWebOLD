@@ -18,7 +18,7 @@
 <body>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">My Tournament App</a>
+        <a class="navbar-brand" href="{% url 'home' %}">My Tournament App</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" href="{% url 'list_players' %}">View Players</a></li>
@@ -35,5 +35,6 @@
 <footer class="footer bg-light text-center">
     <p>© 2021 My Tournament App</p>
 </footer>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

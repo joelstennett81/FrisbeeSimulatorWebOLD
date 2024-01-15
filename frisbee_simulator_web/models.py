@@ -39,6 +39,10 @@ class Player(models.Model):
     deep_huck_throw_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
                                                           default=65)
     overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    overall_handle_offense_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    overall_handle_defense_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    overall_cutter_offense_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    overall_cutter_defense_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
     teams = models.ManyToManyField('Team', related_name='teams_players')
     seasons = models.ManyToManyField('Season', related_name='seasons_players')
 

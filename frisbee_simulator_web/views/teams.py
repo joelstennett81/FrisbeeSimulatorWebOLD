@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView
 from frisbee_simulator_web.forms import TeamForm
 from frisbee_simulator_web.models import Team
-from frisbee_simulator_web.views.misc import create_random_player, calculate_player_rating, \
+from frisbee_simulator_web.views.misc import create_random_player, calculate_overall_rating, \
     generate_random_city, generate_random_mascot
 
 
@@ -25,9 +25,16 @@ def create_random_team():
     team.d_line_players.set([player.id for player in players[7:14]])
     team.bench_players.set([player.id for player in players[14:]])
     team.save()
+    team.overall_rating = calculate_overall_rating(team)
+    team.save()
     return team
 
 
 def list_teams(request):
     teams = Team.objects.all()
     return render(request, 'teams/list_teams.html', {'teams': teams})
+
+
+def detail_team(request, pk):
+    team = get_object_or_404(Team, pk=pk)
+    return render(request, 'teams/detail_team.html', {'team': team})
