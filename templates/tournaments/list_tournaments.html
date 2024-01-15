@@ -4,7 +4,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8"
             src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-    <table id="tournament-table">
+    <a href="{% url 'create_tournament' %}">Create Tournament</a>
+    <table id="tournament-table" class="common-table">
         <thead>
         <tr>
             <th>Name</th>
@@ -21,7 +22,8 @@
                 <td>{{ tournament.number_of_teams }}</td>
                 <td>
                     {% if tournament.is_complete %}
-                        <a href="{% url 'tournament_results' tournament.id %}">Show Results</a>
+                        <a href="{% url 'tournament_results' tournament.id %}">Show Team Results</a>
+                        <a href="{% url 'list_player_tournament_stats' tournament.id %}">Show Player Tournament Stats</a>
                     {% else %}
                         <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Tournament</a>
                     {% endif %}

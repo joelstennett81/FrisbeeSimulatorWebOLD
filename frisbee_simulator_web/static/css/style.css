@@ -1,0 +1,48 @@
+body {
+    background-color: #EFFAFD; /* Pale blue */
+    color: #4A8BDF; /* Royal blue */
+    font-family: 'Arial', sans-serif; /* Modern, clean font */
+}
+
+.navbar {
+    background-color: #A0006D; /* Eggplant */
+    color: #fff; /* White */
+}
+
+.footer {
+    background-color: #4A8BDF; /* Royal blue */
+    color: #fff; /* White */
+}
+
+/* Use oversized fonts for headings */
+h1, h2, h3, h4, h5, h6 {
+    font-size: 2em;
+}
+
+/* Add interactive elements */
+button:hover {
+    transform: scale(1.1);
+}
+
+/* Modern table design */
+.common-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.common-table th, #player-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.common-table tr:nth-child(even){background-color: #f2f2f2;}
+
+.common-table tr:hover {background-color: #ddd;}
+
+.common-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4A8BDF;
+    color: white;
+}
