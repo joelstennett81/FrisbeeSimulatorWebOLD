@@ -49,6 +49,8 @@ class TeamForm(forms.ModelForm):
 
 
 class TournamentForm(forms.ModelForm):
+    teams = forms.ModelMultipleChoiceField(queryset=Team.objects.all(), required=False)
+
     class Meta:
         model = Tournament
         fields = ['name', 'location', 'number_of_teams', 'simulation_type', 'is_public']
