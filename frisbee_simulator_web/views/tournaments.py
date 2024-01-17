@@ -16,12 +16,22 @@ class TournamentCreateView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         self.object.is_public = form.cleaned_data['is_public']
-        number_of_teams = int(form.cleaned_data['number_of_teams'])
         self.object.created_by = self.request.user
-        for _ in range(number_of_teams):
-            team = create_random_team(self.request)
-            team.is_public = form.cleaned_data['is_public']
-            self.object.teams.add(team)
+
+        # Check if teams were selected in the form
+        teams = form.cleaned_data['teams']
+        if not teams:
+            # No teams were selected, create random teams
+            number_of_teams = int(form.cleaned_data['number_of_teams'])
+            for _ in range(number_of_teams):
+                team = create_random_team(self.request)
+                team.is_public = form.cleaned_data['is_public']
+                self.object.teams.add(team)
+        else:
+            # Teams were selected, add them to the tournament
+            for team in teams:
+                self.object.teams.add(team)
+
         self.object.save()
         return response
 
