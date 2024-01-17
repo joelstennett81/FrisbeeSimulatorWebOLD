@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
@@ -39,10 +40,16 @@ class Player(models.Model):
     deep_huck_throw_offense = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)],
                                                           default=65)
     overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
-    overall_handle_offense_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
-    overall_handle_defense_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
-    overall_cutter_offense_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
-    overall_cutter_defense_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    overall_handle_offense_rating = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    overall_handle_defense_rating = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    overall_cutter_offense_rating = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    overall_cutter_defense_rating = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    is_public = models.BooleanField(default=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     teams = models.ManyToManyField('Team', related_name='teams_players')
     seasons = models.ManyToManyField('Season', related_name='seasons_players')
 
@@ -58,6 +65,8 @@ class Team(models.Model):
     o_line_players = models.ManyToManyField(Player, related_name='o_line_players_teams')
     d_line_players = models.ManyToManyField(Player, related_name='d_line_players_teams')
     bench_players = models.ManyToManyField(Player, related_name='bench_players_teams')
+    is_public = models.BooleanField(default=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.location + ' ' + self.mascot
@@ -73,6 +82,8 @@ class Season(models.Model):
     ]
     season_type = models.CharField(max_length=50, choices=SEASON_TYPE_CHOICES)
     year = models.IntegerField(validators=[MinValueValidator(1950), MaxValueValidator(2100)])
+    is_public = models.BooleanField(default=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     teams = models.ManyToManyField(Team, related_name='teams_seasons')
     players = models.ManyToManyField(Player, related_name='players_seasons')
 
@@ -96,6 +107,8 @@ class Tournament(models.Model):
     teams = models.ManyToManyField(Team, related_name='teams_tournaments')
     champion = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     is_complete = models.BooleanField(default=False)
+    is_public = models.BooleanField(default=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 
 class TournamentPool(models.Model):
@@ -160,6 +173,8 @@ class Game(models.Model):
     loser = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='loser_games', null=True)
     winner_score = models.PositiveIntegerField(default=0)
     loser_score = models.PositiveIntegerField(default=0)
+    is_public = models.BooleanField(default=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 
 class Point(models.Model):
