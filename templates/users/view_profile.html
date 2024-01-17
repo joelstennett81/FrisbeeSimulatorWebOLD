@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">My Profile</h1>
+        <p>Username: {{ profile.user.username }}</p>
+        <p>Email: {{ profile.email }}</p>
+        <p>Date of Birth: {{ profile.date_of_birth }}</p>
+        <button onclick="location.href='{% url 'edit_profile' %}'">Edit Profile</button>
+    </div>
+{% endblock %}

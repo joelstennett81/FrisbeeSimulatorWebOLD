@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Player, Team, Tournament
+from .models import Player, Team, Tournament, Profile
 from .views.misc import calculate_overall_team_rating, calculate_overall_player_rating, calculate_handle_offense_rating, \
     calculate_handle_defense_rating, calculate_cutter_offense_rating, calculate_cutter_defense_rating
 
@@ -11,6 +11,12 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'password1', 'password2']
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['email', 'date_of_birth']
 
 
 class LoginForm(forms.Form):
