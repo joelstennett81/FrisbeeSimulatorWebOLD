@@ -1,6 +1,4 @@
-from itertools import chain
-
-from django.db.models import Sum, F
+from django.db.models import F
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.edit import CreateView
 from frisbee_simulator_web.models import Tournament, PlayerTournamentStat
@@ -17,9 +15,12 @@ class TournamentCreateView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
+        self.object.is_public = form.cleaned_data['is_public']
         number_of_teams = int(form.cleaned_data['number_of_teams'])
+        self.object.created_by = self.request.user
         for _ in range(number_of_teams):
-            team = create_random_team()
+            team = create_random_team(self.request)
+            team.is_public = form.cleaned_data['is_public']
             self.object.teams.add(team)
         self.object.save()
         return response
@@ -50,7 +51,9 @@ def tournament_results(request, tournament_id):
     top_receiving_yards = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(
         F('receiving_yards').desc())[:3]
     return render(request, 'tournaments/tournament_results.html',
-                  {'tournament': tournament, 'top_assists': top_assists, 'top_goals': top_goals, 'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards, 'top_receiving_yards': top_receiving_yards})
+                  {'tournament': tournament, 'top_assists': top_assists, 'top_goals': top_goals,
+                   'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
+                   'top_receiving_yards': top_receiving_yards})
 
 
 def detail_tournament(request, pk):

@@ -14,7 +14,7 @@ class PlayerCreateView(CreateView):
 
 
 def random_player(request):
-    player = create_random_player()
+    player = create_random_player(request)
     player.save()
     return redirect('list_players')
 
@@ -25,5 +25,5 @@ def list_players(request):
 
 
 def detail_player(request, pk):
-   player = get_object_or_404(Player, pk=pk)
-   return render(request, 'players/detail_player.html', {'player': player})
+    player = get_object_or_404(Player, pk=pk)
+    return render(request, 'players/detail_player.html', {'player': player})

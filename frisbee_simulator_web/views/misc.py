@@ -6,7 +6,7 @@ from frisbee_simulator_web.models import Player
 fake = Faker()
 
 
-def create_random_player():
+def create_random_player(request):
     player = Player(
         first_name=generate_random_first_name(6),
         last_name=generate_random_last_name(50),
@@ -30,7 +30,12 @@ def create_random_player():
         short_huck_throw_offense=random.randint(60, 90),
         deep_huck_throw_offense=random.randint(60, 90),
     )
-    player.overall_rating = calculate_overall_rating(player)
+    player.overall_rating = calculate_overall_player_rating(player)
+    player.overall_handle_offense_rating = calculate_handle_offense_rating(player)
+    player.overall_handle_defense_rating = calculate_handle_defense_rating(player)
+    player.overall_cutter_offense_rating = calculate_cutter_offense_rating(player)
+    player.overall_cutter_defense_rating = calculate_cutter_defense_rating(player)
+    player.created_by = request.user
     player.save()
     return player
 
@@ -93,7 +98,7 @@ def generate_random_mascot():
     return random.choice(animals)
 
 
-def calculate_overall_rating(player):
+def calculate_overall_player_rating(player):
     rating_attributes = [
         player.speed, player.jumping, player.agility, player.deep_huck_cut_defense, player.short_huck_cut_defense,
         player.under_cut_defense, player.handle_mark_defense, player.handle_cut_defense, player.deep_huck_cut_offense,
@@ -142,5 +147,5 @@ def calculate_cutter_defense_rating(player):
     return overall_cutter_defense_rating
 
 
-def calculate_team_rating(team):
+def calculate_overall_team_rating(team):
     return team.players.all().aggregate(Avg('overall_rating')).get('overall_rating__avg')

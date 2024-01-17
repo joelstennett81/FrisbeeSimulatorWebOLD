@@ -1,12 +1,16 @@
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from django.urls import path
-from frisbee_simulator_web.views import players, teams, tournaments, home, stats
+from frisbee_simulator_web.views import players, teams, tournaments, home, stats, users
 
 urlpatterns = [
     path('', home.home, name='home'),
     path('admin/', admin.site.urls),
+    path('login/', users.user_login, name='login'),
+    path('register/', users.user_register, name='register'),
+    path('logout/', users.user_logout, name='logout'),
     path('players/new/', players.PlayerCreateView.as_view(), name='create_player'),
     path('players/random/', players.random_player, name='random_player'),
     path('players/list/', players.list_players, name='list_players'),
