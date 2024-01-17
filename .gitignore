@@ -24,3 +24,4 @@ app/__pycache__/urls.cpython-312.pyc
 *.pyc
 frisbee_simulator_web/__pycache__/forms.cpython-312.pyc
 *.pyc
+*.pyc
