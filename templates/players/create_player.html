@@ -11,9 +11,5 @@
             <button type="submit" class="btn btn-primary">Create</button>
         </form>
         <br>
-        <form method="post" action="{% url 'random_player' %}" class="needs-validation" novalidate>
-            {% csrf_token %}
-            <button type="submit" class="btn btn-secondary">Create Random Player</button>
-        </form>
     </div>
 {% endblock %}

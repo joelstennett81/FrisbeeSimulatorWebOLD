@@ -1,4 +1,5 @@
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView
 from frisbee_simulator_web.forms import TeamForm
 from frisbee_simulator_web.models import Team
@@ -12,6 +13,18 @@ class TeamCreateView(CreateView):
     template_name = 'teams/create_team.html'
     success_url = '/teams/list/'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+
+@login_required(login_url='/login/')
+def random_team(request):
+    team = create_random_team(request)
+    team.save()
+    return redirect('list_teams')
+
 
 def create_random_team(request):
     team = Team(
@@ -19,13 +32,16 @@ def create_random_team(request):
         mascot=generate_random_mascot()
     )
     team.save()
-    players = [create_random_player(request) for _ in range(21)]
+    o_line_players = [create_random_player(request, "OLINE") for _ in range(7)]
+    d_line_players = [create_random_player(request, "DLINE") for _ in range(7)]
+    bench_players = [create_random_player(request, "BENCH") for _ in range(7)]
+    players = o_line_players + d_line_players + bench_players
     for player in players:
         player.is_public = team.is_public
     team.players.set(players)
-    team.o_line_players.set([player.id for player in players[:7]])
-    team.d_line_players.set([player.id for player in players[7:14]])
-    team.bench_players.set([player.id for player in players[14:]])
+    team.o_line_players.set(o_line_players)
+    team.d_line_players.set(d_line_players)
+    team.bench_players.set(bench_players)
     team.created_by = request.user
     team.save()
     team.overall_rating = calculate_overall_team_rating(team)

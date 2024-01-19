@@ -16,7 +16,7 @@ def user_register(request):
             user = form.save()
             Profile.objects.create(user=user)  # create a new Profile instance for the user
             login(request, user)
-            return redirect('/complete_profile/')
+            return redirect('/profile/edit/')
     else:
         form = UserCreationForm()
     return render(request, 'users/register.html', {'form': form})

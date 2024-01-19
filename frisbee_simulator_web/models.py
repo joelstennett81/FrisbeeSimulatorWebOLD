@@ -14,8 +14,8 @@ class Player(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     jersey_number = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)])
-    height = models.PositiveIntegerField(validators=[MinValueValidator(48), MaxValueValidator(90)])  # In inches
-    weight = models.PositiveIntegerField(validators=[MinValueValidator(50), MaxValueValidator(450)])  # In pounds
+    height_in_inches = models.PositiveIntegerField(validators=[MinValueValidator(48), MaxValueValidator(90)])  # In inches
+    weight_in_lbs = models.PositiveIntegerField(validators=[MinValueValidator(50), MaxValueValidator(450)])  # In pounds
     speed = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     jumping = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     agility = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
@@ -55,6 +55,12 @@ class Player(models.Model):
     overall_cutter_defense_rating = models.PositiveIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
     is_public = models.BooleanField(default=False)
+    PRIMARY_LINE_CHOICES = [
+        ('OFFENSE', 'OFFENSE'),
+        ('DEFENSE', 'DEFENSE'),
+        ('BENCH', 'BENCH'),
+    ]
+    primary_line = models.CharField(max_length=50, choices=PRIMARY_LINE_CHOICES, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     teams = models.ManyToManyField('Team', related_name='teams_players')
     seasons = models.ManyToManyField('Season', related_name='seasons_players')
@@ -64,10 +70,10 @@ class Player(models.Model):
 
 
 class Team(models.Model):
-    location = models.CharField(max_length=50)
-    mascot = models.CharField(max_length=50)
+    location = models.CharField(max_length=50, null=True)
+    mascot = models.CharField(max_length=50, null=True)
     players = models.ManyToManyField(Player, related_name='players_teams')
-    overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
+    overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0, null=True)
     o_line_players = models.ManyToManyField(Player, related_name='o_line_players_teams')
     d_line_players = models.ManyToManyField(Player, related_name='d_line_players_teams')
     bench_players = models.ManyToManyField(Player, related_name='bench_players_teams')

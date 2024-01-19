@@ -1,22 +1,20 @@
 from django.contrib import admin
 from django.urls import path
 from frisbee_simulator_web.views import players, teams, tournaments, home, stats, users
-from frisbee_simulator_web.views.users import ProfileDetailView, ProfileEditView
 
 urlpatterns = [
     path('', home.home, name='home'),
     path('admin/', admin.site.urls),
     path('login/', users.user_login, name='login'),
     path('register/', users.user_register, name='register'),
-    path('profile/view/', ProfileDetailView.as_view(), name='view_profile'),
-    path('profile/edit/', ProfileEditView.as_view(), name='edit_profile'),
+    path('profile/view/', users.ProfileDetailView.as_view(), name='view_profile'),
+    path('profile/edit/', users.ProfileEditView.as_view(), name='edit_profile'),
     path('logout/', users.user_logout, name='logout'),
     path('players/new/', players.PlayerCreateView.as_view(), name='create_player'),
-    path('players/random/', players.random_player, name='random_player'),
     path('players/list/', players.list_players, name='list_players'),
     path('players/detail/<int:pk>/', players.detail_player, name='detail_player'),
     path('teams/new/', teams.TeamCreateView.as_view(), name='create_team'),
-    path('teams/random/', teams.create_random_team, name='random_team'),
+    path('teams/random/', teams.random_team, name='random_team'),
     path('teams/list/', teams.list_teams, name='list_teams'),
     path('teams/detail/<int:pk>/', teams.detail_team, name='detail_team'),
     path('tournaments/new/', tournaments.TournamentCreateView.as_view(), name='create_tournament'),
