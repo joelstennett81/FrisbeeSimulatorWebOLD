@@ -84,7 +84,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=50)),
                 ('location', models.CharField(max_length=50)),
-                ('number_of_teams', models.PositiveIntegerField(choices=[(4, '4'), (8, '8'), (16, '16'), (20, '20'), (32, '32')], default=4)),
+                ('number_of_teams', models.PositiveIntegerField(choices=[(4, '4'), (8, '8'), (16, '16')], default=4)),
                 ('simulation_type', models.CharField(choices=[('player_rating', 'player_rating'), ('team_rating', 'team_rating')], default='player_rating')),
                 ('is_complete', models.BooleanField(default=False)),
                 ('champion', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='frisbee_simulator_web.team')),
