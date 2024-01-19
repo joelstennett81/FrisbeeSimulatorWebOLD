@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView
 
@@ -13,17 +14,13 @@ class PlayerCreateView(CreateView):
     success_url = '/players/list/'
 
 
-def random_player(request):
-    player = create_random_player(request)
-    player.save()
-    return redirect('list_players')
-
-
+@login_required(login_url='/login/')
 def list_players(request):
     players = Player.objects.all()
     return render(request, 'players/list_players.html', {'players': players})
 
 
+@login_required(login_url='/login/')
 def detail_player(request, pk):
     player = get_object_or_404(Player, pk=pk)
     return render(request, 'players/detail_player.html', {'player': player})

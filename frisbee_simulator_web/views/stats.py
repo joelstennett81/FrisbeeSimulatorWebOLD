@@ -6,9 +6,6 @@ from frisbee_simulator_web.models import Tournament, PlayerTournamentStat, Playe
 def list_player_tournament_stats(request, tournament_id):
     tournament = Tournament.objects.get(id=tournament_id)
     playerTournamentStats = PlayerTournamentStat.objects.filter(tournament=tournament)
-    for playerTournamentStat in playerTournamentStats:
-        print(
-            'tourney stat: ' + playerTournamentStat.player.first_name + ' ' + playerTournamentStat.player.last_name + ' ' + str(playerTournamentStat.goals))
     return render(request,
                   'stats/player_tournament_stats/list_player_tournament_stats.html',
                   {'playerTournamentStats': playerTournamentStats})
