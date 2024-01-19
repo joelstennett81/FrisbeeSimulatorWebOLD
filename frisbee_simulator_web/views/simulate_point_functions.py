@@ -177,7 +177,6 @@ class PointSimulation:
     def simulate_point(self):
         self.determine_who_starts_point_with_disc()
         if self.simulationType == 'player_rating':
-            print('We are simulating point by player rating')
             self.put_correct_players_on_field()
             self.determine_starting_disc_location_before_pull()
             self.determine_who_catches_pull()
@@ -185,13 +184,11 @@ class PointSimulation:
             self.simulate_point_by_player_rating()
             self.save_player_point_stats_in_database(self.game)
         else:
-            print('we are simulating point by team rating')
             self.calculate_difference_in_teams_overall_rating()
             self.calculate_probability_for_winner()
             self.simulate_point_by_team_rating()
 
     def determine_who_starts_point_with_disc(self):
-        print('determining who starts point with disc')
         if self.teamInPointSimulationOne.startPointWithDisc:
             print('Team One starts with Disc')
             self.teamOnOffenseCurrently = self.teamInPointSimulationOne
@@ -206,7 +203,6 @@ class PointSimulation:
             print('neither team starts with disc')
 
     def put_correct_players_on_field(self):
-        print('in putting correct players on field')
         if self.teamInPointSimulationOne.startPointWithDisc:
             self.teamInPointSimulationOne.sevenOnField = self.teamInPointSimulationOne.oLinePlayers
             self.teamInPointSimulationTwo.sevenOnField = self.teamInPointSimulationTwo.dLinePlayers
@@ -221,7 +217,6 @@ class PointSimulation:
             print('error with correct players on field')
 
     def determine_starting_disc_location_before_pull(self):
-        print('in determining starting disc location before pull')
         # team catches in endzone at 0, then disc starts at 0, and is pulled to 70
         if self.discPostGoalLocation == 0:
             self.discCurrentLocation = 0
@@ -232,20 +227,18 @@ class PointSimulation:
             self.discPrePullLocation = 70
 
     def determine_who_catches_pull(self):
-        print('determine who catches pull')
         self.receiverOptions = [self.sevenOnFieldForOffense[0], self.sevenOnFieldForOffense[1],
                                 self.sevenOnFieldForOffense[2]]
         self.defenderOptions = [self.sevenOnFieldForDefense[0], self.sevenOnFieldForDefense[1],
                                 self.sevenOnFieldForDefense[2]]
         self.randomReceiver = random.randint(0, 2)
         self.playerWithDisc = self.receiverOptions[self.randomReceiver]
-        print('player with disc catching pull: ', self.playerWithDisc)
+        print('player catching pull: ', self.playerWithDisc)
         self.playerGuardingDisc = self.defenderOptions[self.randomReceiver]
         self.determine_receiver_options()
         self.determine_defender_options()
 
     def determine_where_pull_is_caught(self):
-        print('determining where pull is caught')
         if self.discPrePullLocation == 70:
             random_start = random.randint(-10, 15)
         else:

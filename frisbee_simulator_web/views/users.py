@@ -51,7 +51,6 @@ def user_login(request):
             user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
-                print('login successful')
                 return redirect('home')
     else:
         form = LoginForm()
