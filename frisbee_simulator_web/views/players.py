@@ -11,13 +11,19 @@ class PlayerCreateView(CreateView):
     model = Player
     form_class = PlayerForm
     template_name = 'players/create_player.html'
-    success_url = '/players/list/'
+    success_url = '/players/'
 
 
 @login_required(login_url='/login/')
-def list_players(request):
-    players = Player.objects.all()
+def list_players(request, is_public=None):
+    if is_public is None:
+        players = Player.objects.filter(created_by=request.user.profile)
+    elif is_public:
+        players = Player.objects.filter(is_public=True).order_by('created_by')
+    else:
+        players = Player.objects.filter(created_by=request.user.profile)
     return render(request, 'players/list_players.html', {'players': players})
+
 
 
 @login_required(login_url='/login/')

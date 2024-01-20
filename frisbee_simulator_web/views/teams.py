@@ -42,7 +42,7 @@ def create_random_team(request):
     team.o_line_players.set(o_line_players)
     team.d_line_players.set(d_line_players)
     team.bench_players.set(bench_players)
-    team.created_by = request.user
+    team.created_by = request.user.profile
     team.save()
     team.overall_rating = calculate_overall_team_rating(team)
     team.save()

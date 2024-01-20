@@ -158,7 +158,7 @@ class TournamentSimulation:
         game.loser.pool_play_losses += 1
         game.loser.pool_play_point_differential = point_differential
         game.loser.pool_play_point_differential = point_differential * (-1)
-        game.created_by = request.user
+        game.created_by = request.user.profile
         game.save()
         return game
 
@@ -181,7 +181,7 @@ class TournamentSimulation:
         game.loser.bracket_play_losses += 1
         game.loser.pool_play_point_differential = point_differential
         game.loser.pool_play_point_differential = point_differential * (-1)
-        game.created_by = request.user
+        game.created_by = request.user.profile
         game.save()
         return game
 
@@ -198,7 +198,7 @@ class TournamentSimulation:
             team.bracket_play_seed = i
             team.save()
         teams_in_bracket = tournament_bracket.teams.all()
-        created_by = request.user
+        created_by = request.user.profile
         game_one = Game(team_one=teams_in_bracket[0], team_two=teams_in_bracket[3],
                         tournament=tournament_bracket.tournament,
                         game_type='Semifinal', created_by=created_by)
@@ -248,7 +248,7 @@ class TournamentSimulation:
             team.save()
         print('tournament bracket teams: ', tournament_bracket.teams.all())
         teams_in_bracket = tournament_bracket.teams.all()
-        created_by = request.user
+        created_by = request.user.profile
         game_one = Game.objects.create(team_one=teams_in_bracket[0], team_two=teams_in_bracket[7],
                                        tournament=self.tournament,
                                        game_type='Quarterfinal', created_by=created_by)
@@ -316,7 +316,7 @@ class TournamentSimulation:
             team.bracket_play_seed = i
             team.save()
         teams_in_bracket = tournament_bracket.teams.all()
-        created_by = request.user
+        created_by = request.user.profile
         game_one = Game.objects.create(team_one=teams_in_bracket[0], team_two=teams_in_bracket[7],
                                        tournament=self.tournament,
                                        game_type='9th-Place Quarterfinal', created_by=created_by)

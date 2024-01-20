@@ -36,7 +36,7 @@ def create_random_player(request, primary_line):
     player.overall_cutter_offense_rating = calculate_cutter_offense_rating(player)
     player.overall_cutter_defense_rating = calculate_cutter_defense_rating(player)
     player.overall_rating = calculate_overall_player_rating(player)
-    player.created_by = request.user
+    player.created_by = request.user.profile
     player.save()
     return player
 
