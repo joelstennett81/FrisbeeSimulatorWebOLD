@@ -9,3 +9,12 @@ run:
   command: sh startup.sh
   network:
     port: 8000
+  environmentVariables:
+    DJANGO_ENV: production
+    DATABASE_NAME: arn:aws:secretsmanager:us-east-1:812305448415:secret:prod/frisbee-simulator-web-db-DswLQq
+    DATABASE_USER: arn:aws:secretsmanager:us-east-1:812305448415:secret:prod/frisbee-simulator-web-db-DswLQq
+    DATABASE_PASSWORD: arn:aws:secretsmanager:us-east-1:812305448415:secret:prod/frisbee-simulator-web-db-DswLQq
+    DATABASE_HOST: arn:aws:secretsmanager:us-east-1:812305448415:secret:prod/frisbee-simulator-web-db-DswLQq
+    DATABASE_PORT: arn:aws:secretsmanager:us-east-1:812305448415:secret:prod/frisbee-simulator-web-db-DswLQq
+    SECRET_KEY: django-insecure-lw=ycgj6*psm4=ss$su!+!d)r9%v2v6o)%^07+0vdxfx6knvll
+    DEBUG_SETTING: False
