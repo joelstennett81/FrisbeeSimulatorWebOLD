@@ -107,8 +107,6 @@ class Tournament(models.Model):
         (4, '4'),
         (8, '8'),
         (16, '16'),
-        (20, '20'),
-        (32, '32'),
     ]
     SIMULATION_TYPE_CHOICES = [
         ('player_rating', 'player_rating'),

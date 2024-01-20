@@ -70,7 +70,6 @@ class TeamForm(forms.ModelForm):
         o_line_players = cleaned_data.get('o_line_players')
         d_line_players = cleaned_data.get('d_line_players')
         bench_players = cleaned_data.get('bench_players')
-        is_public = cleaned_data.get('is_public')
         if o_line_players and len(o_line_players) > 7:
             raise ValidationError("You cannot choose more than 7 O Line players")
         if d_line_players and len(d_line_players) > 7:
@@ -88,7 +87,6 @@ class TeamForm(forms.ModelForm):
             o_line_players = list(self.cleaned_data['o_line_players'])
             d_line_players = list(self.cleaned_data['d_line_players'])
             bench_players = list(self.cleaned_data['bench_players'])
-            is_public = self.cleaned_data['is_public']
 
             # Calculate the number of players needed for each line
             o_line_needed = max(0, 7 - len(o_line_players))
@@ -109,7 +107,7 @@ class TeamForm(forms.ModelForm):
             team.bench_players.set(bench_players)
             players = o_line_players + d_line_players + bench_players
             for player in players:
-                player.is_public = is_public
+                player.is_public = team.is_public
             team.players.set(players)
             team.save()
             team.overall_rating = calculate_overall_team_rating(team)

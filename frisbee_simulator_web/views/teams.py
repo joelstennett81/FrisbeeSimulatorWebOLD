@@ -11,7 +11,7 @@ class TeamCreateView(CreateView):
     model = Team
     form_class = TeamForm
     template_name = 'teams/create_team.html'
-    success_url = '/teams/list/'
+    success_url = '/teams/'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -49,11 +49,18 @@ def create_random_team(request):
     return team
 
 
-def list_teams(request):
-    teams = Team.objects.all()
+@login_required(login_url='/login/')
+def list_teams(request, is_public=None):
+    if is_public is None:
+        teams = Team.objects.filter(created_by=request.user.profile)
+    elif is_public:
+        teams = Team.objects.filter(is_public=True).order_by('created_by')
+    else:
+        teams = Team.objects.filter(created_by=request.user.profile)
     return render(request, 'teams/list_teams.html', {'teams': teams})
 
 
+@login_required(login_url='/login/')
 def detail_team(request, pk):
     team = get_object_or_404(Team, pk=pk)
     return render(request, 'teams/detail_team.html', {'team': team})
