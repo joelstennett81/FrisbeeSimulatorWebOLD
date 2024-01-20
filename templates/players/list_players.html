@@ -4,6 +4,8 @@
     <div class="container py-4">
         <h1 class="mb-4">Players</h1>
         <a href="{% url 'create_player' %}" class="btn btn-primary mb-4">Create Player</a>
+{#        <button onclick="window.location.href='{% url 'list_public_players' %}'">List Public Players</button>#}
+{#        <button onclick="window.location.href='{% url 'list_players' %}'">List Personal Players</button>#}
         <div class="table-responsive">
             <table id="player-table" class="table table-striped table-bordered">
                 <thead class="thead-dark">

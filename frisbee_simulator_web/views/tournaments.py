@@ -12,12 +12,17 @@ class TournamentCreateView(CreateView):
     model = Tournament
     form_class = TournamentForm
     template_name = 'tournaments/create_tournament.html'
-    success_url = '/tournaments/list/'
+    success_url = '/tournaments/'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
     def form_valid(self, form):
         response = super().form_valid(form)
         self.object.is_public = form.cleaned_data['is_public']
-        self.object.created_by = self.request.user
+        self.object.created_by = self.request.user.profile
 
         # Check if teams were selected in the form
         teams = form.cleaned_data['teams']
@@ -43,8 +48,14 @@ class TournamentCreateView(CreateView):
         return super().form_invalid(form)
 
 
-def list_tournaments(request):
-    tournaments = Tournament.objects.all()
+@login_required(login_url='/login/')
+def list_tournaments(request, is_public=None):
+    if is_public is None:
+        tournaments = Tournament.objects.filter(created_by=request.user.profile)
+    elif is_public:
+        tournaments = Tournament.objects.filter(is_public=True).order_by('created_by')
+    else:
+        tournaments = Tournament.objects.filter(created_by=request.user.profile)
     return render(request, 'tournaments/list_tournaments.html', {'tournaments': tournaments})
 
 
@@ -55,6 +66,7 @@ def simulate_tournament(request, tournament_id):
     return render(request, 'tournaments/tournament_results.html', {'tournament': tournament})
 
 
+@login_required(login_url='/login/')
 def tournament_results(request, tournament_id):
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     top_assists = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('assists').desc())[:3]
@@ -70,6 +82,7 @@ def tournament_results(request, tournament_id):
                    'top_receiving_yards': top_receiving_yards})
 
 
+@login_required(login_url='/login/')
 def detail_tournament(request, pk):
     tournament = get_object_or_404(Tournament, pk=pk)
     return render(request, 'tournaments/detail_tournament.html', {'tournament': tournament})

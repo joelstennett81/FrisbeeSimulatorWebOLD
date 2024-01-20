@@ -14,7 +14,8 @@ class Player(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     jersey_number = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)])
-    height_in_inches = models.PositiveIntegerField(validators=[MinValueValidator(48), MaxValueValidator(90)])  # In inches
+    height_in_inches = models.PositiveIntegerField(
+        validators=[MinValueValidator(48), MaxValueValidator(90)])  # In inches
     weight_in_lbs = models.PositiveIntegerField(validators=[MinValueValidator(50), MaxValueValidator(450)])  # In pounds
     speed = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     jumping = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
@@ -61,7 +62,7 @@ class Player(models.Model):
         ('BENCH', 'BENCH'),
     ]
     primary_line = models.CharField(max_length=50, choices=PRIMARY_LINE_CHOICES, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     teams = models.ManyToManyField('Team', related_name='teams_players')
     seasons = models.ManyToManyField('Season', related_name='seasons_players')
 
@@ -73,12 +74,13 @@ class Team(models.Model):
     location = models.CharField(max_length=50, null=True)
     mascot = models.CharField(max_length=50, null=True)
     players = models.ManyToManyField(Player, related_name='players_teams')
-    overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0, null=True)
+    overall_rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0,
+                                                 null=True)
     o_line_players = models.ManyToManyField(Player, related_name='o_line_players_teams')
     d_line_players = models.ManyToManyField(Player, related_name='d_line_players_teams')
     bench_players = models.ManyToManyField(Player, related_name='bench_players_teams')
     is_public = models.BooleanField(default=False)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.location + ' ' + self.mascot
@@ -95,7 +97,7 @@ class Season(models.Model):
     season_type = models.CharField(max_length=50, choices=SEASON_TYPE_CHOICES)
     year = models.IntegerField(validators=[MinValueValidator(1950), MaxValueValidator(2100)])
     is_public = models.BooleanField(default=False)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     teams = models.ManyToManyField(Team, related_name='teams_seasons')
     players = models.ManyToManyField(Player, related_name='players_seasons')
 
@@ -105,8 +107,6 @@ class Tournament(models.Model):
         (4, '4'),
         (8, '8'),
         (16, '16'),
-        (20, '20'),
-        (32, '32'),
     ]
     SIMULATION_TYPE_CHOICES = [
         ('player_rating', 'player_rating'),
@@ -120,7 +120,7 @@ class Tournament(models.Model):
     champion = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     is_complete = models.BooleanField(default=False)
     is_public = models.BooleanField(default=False)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
 
 
 class TournamentPool(models.Model):
@@ -186,7 +186,7 @@ class Game(models.Model):
     winner_score = models.PositiveIntegerField(default=0)
     loser_score = models.PositiveIntegerField(default=0)
     is_public = models.BooleanField(default=False)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
 
 
 class Point(models.Model):
