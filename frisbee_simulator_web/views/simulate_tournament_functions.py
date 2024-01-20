@@ -1,5 +1,5 @@
 from itertools import chain, count
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.shortcuts import render
 
 from frisbee_simulator_web.models import PlayerTournamentStat, TournamentTeam, TournamentPool, Game, TournamentBracket, \
@@ -44,100 +44,34 @@ class TournamentSimulation:
                                                             bracket_play_seed=pool_play_seed, pool_play_wins=0)
             tournament_team.save()
 
+    def generate_pools_and_games(self, request, num_teams):
+        tournament_teams = TournamentTeam.objects.filter(tournament=self.tournament)[:num_teams]
+        num_pools = num_teams // 4
+        pools = []
+        for i in range(num_pools):
+            start_index = i * 4
+            pool_teams = tournament_teams[start_index:start_index + 4]
+            pool = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=len(pool_teams))
+            pool.teams.set(pool_teams)
+            pool.save()
+            pools.append(pool)
+        for pool in pools:
+            teams_in_pool = pool.teams.all()
+            for i in range(len(teams_in_pool)):
+                for j in range(i + 1, len(teams_in_pool)):
+                    game = Game(team_one=teams_in_pool[i], team_two=teams_in_pool[j],
+                                tournament=self.tournament,
+                                game_type='Pool Play')
+                    self.simulate_pool_play_game(request, game)
+
     def simulate_four_team_pool(self, request):
-        tournament_teams = TournamentTeam.objects.filter(tournament=self.tournament)
-        pool = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=4)
-        pool.teams.set(tournament_teams)
-        pool.save()
-        teams_in_pool = pool.teams.all()
-        game_one = Game(team_one=teams_in_pool[0], team_two=teams_in_pool[1],
-                        tournament=self.tournament,
-                        game_type='Pool Play')
-        game_two = Game(team_one=teams_in_pool[0], team_two=teams_in_pool[2],
-                        tournament=self.tournament,
-                        game_type='Pool Play')
-        game_three = Game(team_one=teams_in_pool[0], team_two=teams_in_pool[3],
-                          tournament=self.tournament,
-                          game_type='Pool Play')
-        game_four = Game(team_one=teams_in_pool[1], team_two=teams_in_pool[2],
-                         tournament=self.tournament,
-                         game_type='Pool Play')
-        game_five = Game(team_one=teams_in_pool[1], team_two=teams_in_pool[3],
-                         tournament=self.tournament,
-                         game_type='Pool Play')
-        game_six = Game(team_one=teams_in_pool[2], team_two=teams_in_pool[3],
-                        tournament=self.tournament,
-                        game_type='Pool Play')
-        self.simulate_pool_play_game(request, game_one)
-        self.simulate_pool_play_game(request, game_two)
-        self.simulate_pool_play_game(request, game_three)
-        self.simulate_pool_play_game(request, game_four)
-        self.simulate_pool_play_game(request, game_five)
-        self.simulate_pool_play_game(request, game_six)
+        self.generate_pools_and_games(request, 4)
 
     def simulate_eight_team_pool(self, request):
-        tournament_teams = TournamentTeam.objects.filter(tournament=self.tournament)
-        poolOneTeams = [tournament_teams[0], tournament_teams[3], tournament_teams[4], tournament_teams[7]]
-        poolTwoTeams = [tournament_teams[1], tournament_teams[2], tournament_teams[5], tournament_teams[6]]
-        poolOne = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=4)
-        poolTwo = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=4)
-        poolOne.teams.set(poolOneTeams)
-        poolTwo.teams.set(poolTwoTeams)
-        poolOne.save()
-        poolTwo.save()
-        for i in range(3):  # 3 rounds for 4 teams each
-            for j in range(2):  # 2 matches per round
-                game1 = Game(team_one=poolOne.teams.all()[j], team_two=poolOne.teams.all()[3 - j],
-                             tournament=self.tournament, game_type='Pool Play')
-                game2 = Game(team_one=poolTwo.teams.all()[j], team_two=poolTwo.teams.all()[3 - j],
-                             tournament=self.tournament, game_type='Pool Play')
-                game1.save()
-                game2.save()
-                self.simulate_pool_play_game(request, game1)
-                self.simulate_pool_play_game(request, game2)
-                game1.save()
-                game2.save()
+        self.generate_pools_and_games(request, 8)
 
     def simulate_sixteen_team_pool(self, request):
-        tournament_teams = TournamentTeam.objects.filter(tournament=self.tournament)
-        poolOneTeams = [tournament_teams[0], tournament_teams[7], tournament_teams[11], tournament_teams[12]]
-        poolTwoTeams = [tournament_teams[1], tournament_teams[6], tournament_teams[10], tournament_teams[13]]
-        poolThreeTeams = [tournament_teams[2], tournament_teams[5], tournament_teams[9], tournament_teams[14]]
-        poolFourTeams = [tournament_teams[3], tournament_teams[4], tournament_teams[8], tournament_teams[15]]
-        poolOne = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=4)
-        poolTwo = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=4)
-        poolThree = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=4)
-        poolFour = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=4)
-        poolOne.teams.set(poolOneTeams)
-        poolTwo.teams.set(poolTwoTeams)
-        poolThree.teams.set(poolThreeTeams)
-        poolFour.teams.set(poolFourTeams)
-        poolOne.save()
-        poolTwo.save()
-        poolThree.save()
-        poolFour.save()
-        for i in range(3):  # 3 rounds for 4 teams each
-            for j in range(2):  # 2 matches per round
-                game1 = Game(team_one=poolOne.teams.all()[j], team_two=poolOne.teams.all()[3 - j],
-                             tournament=self.tournament, game_type='Pool Play')
-                game2 = Game(team_one=poolTwo.teams.all()[j], team_two=poolTwo.teams.all()[3 - j],
-                             tournament=self.tournament, game_type='Pool Play')
-                game3 = Game(team_one=poolThree.teams.all()[j], team_two=poolThree.teams.all()[3 - j],
-                             tournament=self.tournament, game_type='Pool Play')
-                game4 = Game(team_one=poolFour.teams.all()[j], team_two=poolFour.teams.all()[3 - j],
-                             tournament=self.tournament, game_type='Pool Play')
-                game1.save()
-                game2.save()
-                game3.save()
-                game4.save()
-                self.simulate_pool_play_game(request, game1)
-                self.simulate_pool_play_game(request, game2)
-                self.simulate_pool_play_game(request, game3)
-                self.simulate_pool_play_game(request, game4)
-                game1.save()
-                game2.save()
-                game3.save()
-                game4.save()
+        self.generate_pools_and_games(request, 16)
 
     def simulate_pool_play_game(self, request, game):
         gameSimulation = GameSimulation(self.tournament, game)
@@ -145,20 +79,30 @@ class TournamentSimulation:
         gameSimulation.simulationType = game.tournament.simulation_type
         gameSimulation.simulate_full_game()
         self.gameSimulationsList.append(gameSimulation)
+
+        # Calculate pool play stats
         if gameSimulation.winner == gameSimulation.teamInGameSimulationOne:
             game.winner = gameSimulation.teamInGameSimulationOne.tournamentTeam
             game.loser = gameSimulation.teamInGameSimulationTwo.tournamentTeam
-            point_differential = gameSimulation.teamInGameSimulationOne.score - gameSimulation.teamInGameSimulationTwo.score
+            point_differential = abs(
+                gameSimulation.teamInGameSimulationOne.score - gameSimulation.teamInGameSimulationTwo.score)
+            TournamentTeam.objects.filter(pk=game.winner.pk).update(pool_play_wins=F('pool_play_wins') + 1,
+                                                                    pool_play_point_differential=F(
+                                                                        'pool_play_point_differential') + point_differential)
+            TournamentTeam.objects.filter(pk=game.loser.pk).update(pool_play_losses=F('pool_play_losses') + 1,
+                                                                   pool_play_point_differential=F(
+                                                                       'pool_play_point_differential') - point_differential)
         else:
             game.winner = gameSimulation.teamInGameSimulationTwo.tournamentTeam
             game.loser = gameSimulation.teamInGameSimulationOne.tournamentTeam
-            point_differential = gameSimulation.teamInGameSimulationTwo.score - gameSimulation.teamInGameSimulationOne.score
-        game.save()
-        game.winner.pool_play_wins += 1
-        game.loser.pool_play_losses += 1
-        game.loser.pool_play_point_differential = point_differential
-        game.loser.pool_play_point_differential = point_differential * (-1)
-        game.created_by = request.user.profile
+            point_differential = abs(
+                gameSimulation.teamInGameSimulationTwo.score - gameSimulation.teamInGameSimulationOne.score)
+            TournamentTeam.objects.filter(pk=game.winner.pk).update(pool_play_wins=F('pool_play_wins') + 1,
+                                                                    pool_play_point_differential=F(
+                                                                        'pool_play_point_differential') + point_differential)
+            TournamentTeam.objects.filter(pk=game.loser.pk).update(pool_play_losses=F('pool_play_losses') + 1,
+                                                                   pool_play_point_differential=F(
+                                                                       'pool_play_point_differential') - point_differential)
         game.save()
         return game
 
@@ -168,19 +112,17 @@ class TournamentSimulation:
         gameSimulation.simulationType = game.tournament.simulation_type
         gameSimulation.simulate_full_game()
         self.gameSimulationsList.append(gameSimulation)
+        # Determine the winner and loser
         if gameSimulation.winner == gameSimulation.tournamentTeamOne:
             game.winner = gameSimulation.tournamentTeamOne
             game.loser = gameSimulation.tournamentTeamTwo
-            point_differential = gameSimulation.teamInGameSimulationOne.score - gameSimulation.teamInGameSimulationTwo.score
         else:
             game.winner = gameSimulation.tournamentTeamTwo
             game.loser = gameSimulation.tournamentTeamOne
-            point_differential = gameSimulation.teamInGameSimulationTwo.score - gameSimulation.teamInGameSimulationOne.score
-        game.save()
+        # Increment the winner and loser's statistics
         game.winner.bracket_play_wins += 1
         game.loser.bracket_play_losses += 1
-        game.loser.pool_play_point_differential = point_differential
-        game.loser.pool_play_point_differential = point_differential * (-1)
+        game.save()
         game.created_by = request.user.profile
         game.save()
         return game
@@ -240,13 +182,11 @@ class TournamentSimulation:
                                                                   bracket_type='Championship')
         else:
             print('ERROR with number of TEAMS')
-
         tournament_bracket.teams.set(teamsInBracket)
         tournament_bracket.save()
         for i, team in enumerate(teamsInBracket, start=1):
             team.bracket_play_seed = i
             team.save()
-        print('tournament bracket teams: ', tournament_bracket.teams.all())
         teams_in_bracket = tournament_bracket.teams.all()
         created_by = request.user.profile
         game_one = Game.objects.create(team_one=teams_in_bracket[0], team_two=teams_in_bracket[7],
@@ -364,27 +304,6 @@ class TournamentSimulation:
         self.simulate_bracket_game(request, game_twelve)
         tournament_bracket.champion = game_twelve.winner
         tournament_bracket.save()
-
-    def simulate_tournament(self, request, tournament_id):
-        tournament = Tournament.objects.get(id=tournament_id)
-        number_of_teams = tournament.number_of_teams
-        self.rank_teams_for_pool_play()
-        if number_of_teams == 4:
-            self.simulate_four_team_pool(request)
-            self.simulate_four_team_bracket(request)
-        elif number_of_teams == 8:
-            self.simulate_eight_team_pool(request)
-            self.simulate_eight_team_winners_bracket(request, number_of_teams)
-        elif number_of_teams == 16:
-            self.simulate_sixteen_team_pool(request)
-            self.simulate_eight_team_winners_bracket(request, number_of_teams)
-            self.simulate_eight_team_losers_bracket(request)
-        else:
-            return render(request, 'tournaments/tournament_error.html')
-        tournament.champion = self.champion
-        tournament.is_complete = True
-        tournament.save()
-        self.save_tournament_player_stats_from_game_player_stats()
 
     def save_tournament_player_stats_from_game_player_stats(self):
         for gameSimulation in self.gameSimulationsList:

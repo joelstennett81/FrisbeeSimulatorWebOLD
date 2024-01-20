@@ -176,7 +176,6 @@ class GameSimulation:
         self.isFirstHalf = True
         self.isSecondHalf = False
         while not self.gameOver:
-            print('game isnt over, about to simulate point')
             self.pointCounter += 1
             self.simulate_point()
             print('team 1: ', self.teamInGameSimulationOne.score)

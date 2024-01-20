@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import F
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.views.generic.edit import CreateView
-from frisbee_simulator_web.models import Tournament, PlayerTournamentStat
+from frisbee_simulator_web.models import Tournament, PlayerTournamentStat, TournamentTeam
 from frisbee_simulator_web.forms import TournamentForm
 from frisbee_simulator_web.views.simulate_tournament_functions import TournamentSimulation
 from frisbee_simulator_web.views.teams import create_random_team
@@ -62,13 +63,42 @@ def list_tournaments(request, is_public=None):
 def simulate_tournament(request, tournament_id):
     tournament = Tournament.objects.get(id=tournament_id)
     tournamentSimulation = TournamentSimulation(tournament)
-    tournamentSimulation.simulate_tournament(request, tournament_id)
-    return render(request, 'tournaments/tournament_results.html', {'tournament': tournament})
+    number_of_teams = tournament.number_of_teams
+    tournamentSimulation.rank_teams_for_pool_play()
+    if number_of_teams == 4:
+        tournamentSimulation.simulate_four_team_pool(request)
+        tournamentSimulation.simulate_four_team_bracket(request)
+    elif number_of_teams == 8:
+        tournamentSimulation.simulate_eight_team_pool(request)
+        tournamentSimulation.simulate_eight_team_winners_bracket(request, number_of_teams)
+    elif number_of_teams == 16:
+        tournamentSimulation.simulate_sixteen_team_pool(request)
+        tournamentSimulation.simulate_eight_team_winners_bracket(request, number_of_teams)
+        tournamentSimulation.simulate_eight_team_losers_bracket(request)
+    else:
+        return render(request, 'tournaments/tournament_error.html')
+
+    tournament.champion = tournamentSimulation.champion
+    tournament.is_complete = True
+    tournament.save()
+    tournamentSimulation.save_tournament_player_stats_from_game_player_stats()
+    return redirect(reverse('tournament_results', kwargs={'tournament_id': tournament_id}))
 
 
 @login_required(login_url='/login/')
 def tournament_results(request, tournament_id):
     tournament = get_object_or_404(Tournament, pk=tournament_id)
+    number_of_teams = tournament.number_of_teams
+    teams = TournamentTeam.objects.filter(tournament=tournament)
+    teams_stats = []
+    for team in teams:
+        team_stats = {
+            'team': team,
+            'pool_play_wins': team.pool_play_wins,
+            'pool_play_losses': team.pool_play_losses,
+            'pool_play_point_differential': team.pool_play_point_differential
+        }
+        teams_stats.append(team_stats)
     top_assists = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('assists').desc())[:3]
     top_goals = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('goals').desc())[:3]
     top_throwaways = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('throwaways').desc())[:3]
@@ -76,10 +106,19 @@ def tournament_results(request, tournament_id):
         F('throwing_yards').desc())[:3]
     top_receiving_yards = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(
         F('receiving_yards').desc())[:3]
-    return render(request, 'tournaments/tournament_results.html',
-                  {'tournament': tournament, 'top_assists': top_assists, 'top_goals': top_goals,
-                   'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
-                   'top_receiving_yards': top_receiving_yards})
+    print('number of teams for showing results: ', number_of_teams)
+    context = {'tournament': tournament, 'teams_stats': teams_stats, 'top_assists': top_assists,
+               'top_goals': top_goals,
+               'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
+               'top_receiving_yards': top_receiving_yards}
+    if number_of_teams == 4:
+        return render(request, 'tournaments/four_team_tournament_results.html', context)
+    elif number_of_teams == 8:
+        return render(request, 'tournaments/eight_team_tournament_results.html', context)
+    elif number_of_teams == 16:
+        return render(request, 'tournaments/eight_team_tournament_results.html', context)
+    else:
+        return render(request, 'tournaments/tournament_error.html')
 
 
 @login_required(login_url='/login/')
