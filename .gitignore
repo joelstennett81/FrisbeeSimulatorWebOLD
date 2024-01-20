@@ -7,3 +7,4 @@ media
 staticfiles
 apprunner.yaml
 env
+.env
