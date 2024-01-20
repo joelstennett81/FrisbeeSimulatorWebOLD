@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-lw=ycgj6*psm4=ss$su!+!d)r9%v2v6o)%^07+0vdxfx6knvll
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1",".awsapprunner.com"]
+ALLOWED_HOSTS = ["127.0.0.1", ".awsapprunner.com"]
+CSRF_TRUSTED_ORIGINS = ['https://eyjmcwkvjx.us-east-1.awsapprunner.com']
 
 # Application definition
 
