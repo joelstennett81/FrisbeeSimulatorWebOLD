@@ -14,6 +14,11 @@ class TournamentCreateView(CreateView):
     template_name = 'tournaments/create_tournament.html'
     success_url = '/tournaments/'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def form_valid(self, form):
         response = super().form_valid(form)
         self.object.is_public = form.cleaned_data['is_public']

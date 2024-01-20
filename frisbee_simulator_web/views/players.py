@@ -13,6 +13,11 @@ class PlayerCreateView(CreateView):
     template_name = 'players/create_player.html'
     success_url = '/players/'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'request': self.request})
+        return kwargs
+
 
 @login_required(login_url='/login/')
 def list_players(request, is_public=None):
@@ -23,7 +28,6 @@ def list_players(request, is_public=None):
     else:
         players = Player.objects.filter(created_by=request.user.profile)
     return render(request, 'players/list_players.html', {'players': players})
-
 
 
 @login_required(login_url='/login/')

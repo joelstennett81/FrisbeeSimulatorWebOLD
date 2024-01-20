@@ -27,13 +27,15 @@ class LoginForm(forms.Form):
 
 
 class PlayerForm(forms.ModelForm):
-    teams = forms.ModelMultipleChoiceField(queryset=Team.objects.all(), required=False)
-
     class Meta:
         model = Player
         exclude = ['teams', 'seasons', 'overall_rating', 'overall_handle_offense_rating',
                    'overall_handle_defense_rating', 'overall_cutter_offense_rating', 'overall_cutter_defense_rating',
                    'created_by']
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
 
     def save(self, commit=True):
         player = super().save(commit=False)
@@ -42,20 +44,16 @@ class PlayerForm(forms.ModelForm):
         player.overall_handle_defense_rating = calculate_handle_defense_rating(player)
         player.overall_cutter_offense_rating = calculate_cutter_offense_rating(player)
         player.overall_cutter_defense_rating = calculate_cutter_defense_rating(player)
+        player.created_by = self.request.user.profile
         if commit:
             player.save()
-            teams = self.cleaned_data['teams']
-            if teams:
-                player.teams.set(teams)
         return player
 
 
 class TeamForm(forms.ModelForm):
-    o_line_players = forms.ModelMultipleChoiceField(queryset=Player.objects.filter(primary_line='OFFENSE'),
-                                                    required=False)
-    d_line_players = forms.ModelMultipleChoiceField(queryset=Player.objects.filter(primary_line='DEFENSE'),
-                                                    required=False)
-    bench_players = forms.ModelMultipleChoiceField(queryset=Player.objects.filter(primary_line='BENCH'), required=False)
+    o_line_players = forms.ModelMultipleChoiceField(queryset=Player.objects.none(), required=False)
+    d_line_players = forms.ModelMultipleChoiceField(queryset=Player.objects.none(), required=False)
+    bench_players = forms.ModelMultipleChoiceField(queryset=Player.objects.none(), required=False)
 
     class Meta:
         model = Team
@@ -64,6 +62,12 @@ class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
+        self.fields['o_line_players'].queryset = Player.objects.filter(primary_line='OFFENSE',
+                                                                       created_by=self.request.user.profile)
+        self.fields['d_line_players'].queryset = Player.objects.filter(primary_line='DEFENSE',
+                                                                       created_by=self.request.user.profile)
+        self.fields['bench_players'].queryset = Player.objects.filter(primary_line='BENCH',
+                                                                      created_by=self.request.user.profile)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -81,6 +85,7 @@ class TeamForm(forms.ModelForm):
 
     def save(self, commit=True):
         team = super().save(commit=False)
+        team.created_by = self.request.user.profile
 
         if commit:
             team.save()
@@ -116,15 +121,23 @@ class TeamForm(forms.ModelForm):
 
 
 class TournamentForm(forms.ModelForm):
-    teams = forms.ModelMultipleChoiceField(queryset=Team.objects.all(), required=False)
+    teams = forms.ModelMultipleChoiceField(queryset=Team.objects.none(),
+                                           required=False)
 
     class Meta:
         model = Tournament
         fields = ['name', 'location', 'number_of_teams', 'simulation_type', 'is_public']
         exclude = ['created_by']
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        self.fields['teams'].queryset = Team.objects.filter(created_by=self.request.user.profile)
+
     def save(self, commit=True):
         tournament = super().save(commit=False)
+        tournament.created_by = self.request.user.profile
+
         if commit:
             tournament.save()
         return tournament
