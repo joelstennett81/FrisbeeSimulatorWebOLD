@@ -202,6 +202,9 @@ class Point(models.Model):
     winner = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='winner_points', null=True)
     loser = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='loser_points', null=True)
     point_number_in_game = models.PositiveIntegerField(default=0)
+    print_statements = models.CharField(max_length=50000, null=True)
+    team_one_score_post_point = models.IntegerField(default=0)
+    team_two_score_post_point = models.IntegerField(default=0)
 
 
 class PlayerPointStat(models.Model):

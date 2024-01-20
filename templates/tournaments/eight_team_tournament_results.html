@@ -9,7 +9,8 @@
             <ul class="list-group list-group-flush">
                 {% for team_stat in teams_stats %}
                     <li class="list-group-item">
-                        {{ team_stat.team.team }}: {{ team_stat.pool_play_wins }} wins, {{ team_stat.pool_play_losses }}
+                        {{ team_stat.team.team }}: {{ team_stat.pool_play_wins }}
+                        wins, {{ team_stat.pool_play_losses }}
                         losses, Point Differential: {{ team_stat.pool_play_point_differential }}
                     </li>
                 {% endfor %}
@@ -22,8 +23,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Pool Play' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -47,8 +50,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Championship' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -63,8 +68,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Semifinal' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -79,8 +86,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Quarterfinal' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -95,8 +104,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Third-Place' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -111,8 +122,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Loser-Semifinal' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -127,8 +140,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Fifth-Place-Final' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -143,8 +158,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Seventh-Place-Final' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}

@@ -27,6 +27,8 @@ urlpatterns = [
     path('tournaments/simulate/<int:tournament_id>/', tournaments.simulate_tournament,
          name='simulate_tournament'),
     path('tournaments/results/<int:tournament_id>/', tournaments.tournament_results, name='tournament_results'),
+    path('games/detail/<int:pk>/', tournaments.detail_game, name='detail_game'),
+    path('points/detail/<int:pk>/', tournaments.detail_point, name='detail_point'),
     path('stats/list_player_tournament_stats/<int:tournament_id>/', stats.list_player_tournament_stats,
          name='list_player_tournament_stats'),
     path('stats/detail_player_tournament_stats/<int:tournament_id>/<int:player_id>/',

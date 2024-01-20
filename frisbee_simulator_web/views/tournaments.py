@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.db.models import F
+from django.db.models import F, Prefetch
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic.edit import CreateView
-from frisbee_simulator_web.models import Tournament, PlayerTournamentStat, TournamentTeam
+from frisbee_simulator_web.models import Tournament, PlayerTournamentStat, TournamentTeam, Game, Point
 from frisbee_simulator_web.forms import TournamentForm
 from frisbee_simulator_web.views.simulate_tournament_functions import TournamentSimulation
 from frisbee_simulator_web.views.teams import create_random_team
@@ -125,3 +125,16 @@ def tournament_results(request, tournament_id):
 def detail_tournament(request, pk):
     tournament = get_object_or_404(Tournament, pk=pk)
     return render(request, 'tournaments/detail_tournament.html', {'tournament': tournament})
+
+
+@login_required(login_url='/login/')
+def detail_game(request, pk):
+    game = get_object_or_404(Game, pk=pk)
+    game = Game.objects.prefetch_related(Prefetch('game_points', queryset=Point.objects.order_by('id'))).get(pk=pk)
+    return render(request, 'tournaments/detail_game.html', {'game': game})
+
+
+@login_required(login_url='/login/')
+def detail_point(request, pk):
+    point = get_object_or_404(Point, pk=pk)
+    return render(request, 'tournaments/detail_point.html', {'point': point})
