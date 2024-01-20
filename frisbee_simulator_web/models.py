@@ -170,11 +170,17 @@ class Game(models.Model):
         ('Pre-Quarterfinal', 'Pre-Quarterfinal'),
         ('Quarterfinal', 'Quarterfinal'),
         ('Loser-Semifinal', 'Loser-Semifinal'),
+        ('Fifth-Place-Final', 'Fifth-Place-Final'),
+        ('Seventh-Place-Final', 'Seventh-Place-Final'),
         ('Semifinal', 'Semifinal'),
         ('Championship', 'Championship'),
-        ('Third-Place-Final', 'Third-Place-Final'),
-        ('Fifth-Place-Final', 'Fifth-Place-Final'),
-        ('Seventh-Place-Final', 'Seventh-Place-Final')
+        ('9th-Place Quarterfinal', '9th-Place Quarterfinal'),
+        ('13th-Place Semifinal', '13th-Place Semifinal'),
+        ('15th-Place Final', '15th-Place Final'),
+        ('9th-Place Semifinal', '9th-Place Semifinal'),
+        ('11th-Place Final', '11th-Place Final'),
+        ('9th-Place Final', '9th-Place Final'),
+
     ]
     date = models.DateTimeField(default=timezone.now)
     team_one = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_one_games')
@@ -196,6 +202,9 @@ class Point(models.Model):
     winner = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='winner_points', null=True)
     loser = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='loser_points', null=True)
     point_number_in_game = models.PositiveIntegerField(default=0)
+    print_statements = models.CharField(max_length=50000, null=True)
+    team_one_score_post_point = models.IntegerField(default=0)
+    team_two_score_post_point = models.IntegerField(default=0)
 
 
 class PlayerPointStat(models.Model):

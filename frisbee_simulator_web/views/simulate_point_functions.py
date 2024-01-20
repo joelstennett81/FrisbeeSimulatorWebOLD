@@ -173,6 +173,7 @@ class PointSimulation:
         self.discPostGoalLocation = None
         self.playDirection = None  # Positive means going from 0-> 70, Negative means going from 0<-70
         self.teamWithDiscToStartGame = None
+        self.pointPrintStatement = ''
 
     def simulate_point(self):
         self.determine_who_starts_point_with_disc()
@@ -190,12 +191,12 @@ class PointSimulation:
 
     def determine_who_starts_point_with_disc(self):
         if self.teamInPointSimulationOne.startPointWithDisc:
-            print('Team One starts with Disc')
+            self.pointPrintStatement += (str(self.teamInPointSimulationOne.team.mascot) + ' starts with Disc \n')
             self.teamOnOffenseCurrently = self.teamInPointSimulationOne
             self.teamOnDefenseCurrently = self.teamInPointSimulationTwo
             self.teamInPointSimulationOne.hasDisc = True
         elif self.teamInPointSimulationTwo.startPointWithDisc:
-            print('team 2 starts with disc')
+            self.pointPrintStatement += (str(self.teamInPointSimulationTwo.team.mascot) + ' starts with Disc \n')
             self.teamOnOffenseCurrently = self.teamInPointSimulationTwo
             self.teamOnDefenseCurrently = self.teamInPointSimulationOne
             self.teamInPointSimulationTwo.hasDisc = True
@@ -233,7 +234,7 @@ class PointSimulation:
                                 self.sevenOnFieldForDefense[2]]
         self.randomReceiver = random.randint(0, 2)
         self.playerWithDisc = self.receiverOptions[self.randomReceiver]
-        print('player catching pull: ', self.playerWithDisc)
+        self.pointPrintStatement += (str(self.playerWithDisc) + ' is catching the pull \n')
         self.playerGuardingDisc = self.defenderOptions[self.randomReceiver]
         self.determine_receiver_options()
         self.determine_defender_options()
@@ -244,11 +245,10 @@ class PointSimulation:
         else:
             random_start = random.randint(55, 80)
         self.discCurrentLocation = random_start
-        print('disc starts at: ', self.discCurrentLocation)
+        self.pointPrintStatement += ('The disc starts at: ' + str(self.discCurrentLocation) + 'yard line \n')
 
     def determine_receiver_options(self):
-        print('player with disc: ', self.playerWithDisc)
-        print('throw type: ', self.throwChoice)
+        self.pointPrintStatement += (str(self.playerWithDisc.player.last_name) + ' has the disc \n')
         self.receiverOptions = []
         if self.playerWithDisc == self.sevenOnFieldForOffense[0]:
             if self.throwChoice == 'swing':
@@ -420,14 +420,14 @@ class PointSimulation:
         self.simulate_result_of_throw()
 
     def simulate_result_of_throw(self):
-        print(str(self.playerWithDisc) + ' tries to throw to: ' + str(self.playerBeingThrownTo) + ' for ' + str(
-            self.randomYardsThrown) + 'yards')
+        self.pointPrintStatement += (str(self.playerWithDisc.player.last_name) + ' tries to throw to: ' + str(self.playerBeingThrownTo.player.last_name) + ' for ' + str(
+            self.randomYardsThrown) + 'yards \n')
         if self.probabilityThrowIsCompleted < self.throwStartingProbability:
             # play direction is either positive or negative
             self.discCurrentLocation += self.randomYardsThrown * self.playDirection
-            print('team ' + str(self.teamOnOffenseCurrently) + ' completed ' + str(
+            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' completed ' + str(
                 self.throwChoice) + ' at this location: ' + str(
-                self.discCurrentLocation))
+                self.discCurrentLocation) + '\n')
             if self.discCurrentLocation < -20:
                 # turnover, disc goes to goal line at location 0 and team 2 has disc
                 self.discCurrentLocation = 0
@@ -444,8 +444,8 @@ class PointSimulation:
                 self.assign_completions(isCompletion=True)
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
-                print('Team ' + str(self.teamOnOffenseCurrently) + 'Scored! ' + str(
-                    self.assistThrower) + ' threw the assist to ' + str(self.goalScorer))
+                self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
+                    self.assistThrower) + ' threw the assist to ' + str(self.goalScorer.player.last_name) + '\n')
                 self.pointOver = True
             elif (self.playDirection == -1) and (-20 < self.discCurrentLocation < 0):
                 self.assistThrower = self.playerWithDisc
@@ -457,8 +457,8 @@ class PointSimulation:
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
                 self.assign_completions(isCompletion=True)
-                print('Team ' + str(self.teamOnOffenseCurrently) + 'Scored! ' + str(
-                    self.assistThrower) + ' threw the assist to ' + str(self.goalScorer))
+                self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
+                    self.assistThrower) + ' threw the assist to ' + str(self.goalScorer.player.last_name)+ '\n')
                 self.pointOver = True
             elif self.discCurrentLocation > 90:
                 self.discCurrentLocation = 70
@@ -472,9 +472,9 @@ class PointSimulation:
                 self.playerBeingThrownTo.gameStats.receivingYards += self.randomYardsThrown
                 self.playerWithDisc = self.playerBeingThrownTo
                 self.playerGuardingDisc = self.playerGuardingPlayerBeingThrownTo
-            print('team two completed ' + str(self.throwChoice) + ' at this location: ' + str(self.discCurrentLocation))
+            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' completed ' + str(self.throwChoice) + ' at this location: ' + str(self.discCurrentLocation)+ '\n')
         else:
-            print('throw was dropped')
+            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' dropped the throw \n')
             # Disc still moves, even if it is dropped, have to handle if disc lands in middle of end zone
             # or way out of bounds
             if self.discCurrentLocation < -20:
@@ -501,7 +501,6 @@ class PointSimulation:
 
         # Probability of Turnover
         while not self.pointOver:
-            print('point is not over yet ')
             # determine what throw is going to be thrown
             random_number = random.randint(0, 10)
             if random_number in [0, 1, 2, 3]:
@@ -523,7 +522,7 @@ class PointSimulation:
 
     def switch_teams_due_to_turnover(self):
         if self.teamOnOffenseCurrently == self.teamInPointSimulationOne:
-            print('team 2 now has disc')
+            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc \n')
             self.teamOnOffenseCurrently = self.teamInPointSimulationTwo
             self.teamOnDefenseCurrently = self.teamInPointSimulationOne
             self.sevenOnFieldForOffense = self.teamInPointSimulationTwo.sevenOnField
@@ -531,7 +530,7 @@ class PointSimulation:
             self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
             self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
         else:
-            print('team 1 now has disc')
+            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc \n')
             self.teamOnOffenseCurrently = self.teamInPointSimulationOne
             self.teamOnDefenseCurrently = self.teamInPointSimulationTwo
             self.sevenOnFieldForOffense = self.teamInPointSimulationOne.sevenOnField
@@ -631,7 +630,7 @@ class PointSimulation:
 
     def simulate_point_by_team_rating(self):
         if self.teamInPointSimulationOne.startPointWithDisc:
-            print('teamOne has disc to start')
+            self.pointPrintStatement += (str(self.teamInPointSimulationOne.team.mascot) + 'has disc to start \n')
             self.sevenOnFieldForTeamOne = self.teamInPointSimulationOne.team.o_line_players
             self.sevenOnFieldForTeamTwo = self.teamInPointSimulationTwo.team.d_line_players
             self.sevenOnFieldForOffense = self.teamInPointSimulationOne.team.o_line_players
@@ -644,26 +643,26 @@ class PointSimulation:
                     self.pointWinner = self.teamInPointSimulationOne.tournamentTeam
                     self.pointLoser = self.teamInPointSimulationTwo.tournamentTeam
                     self.point.teamInPointSimulationOne.score += 1
-                    print('team 1 held as better team')
+                    self.pointPrintStatement += (str(self.teamInPointSimulationOne.team.mascot) + ' held as better team \n')
                 # Team 2 breaks and wins the point as worse team
                 else:
                     self.pointWinner = self.teamInPointSimulationTwo.tournamentTeam
                     self.pointLoser = self.teamInPointSimulationOne.tournamentTeam
                     self.point.teamInPointSimulationTwo.score += 1
-                    print('team 2 broke as worse team')
+                    self.pointPrintStatement += (str(self.teamInPointSimulationTwo.team.mascot) + ' broke as the worse team \n')
             elif self.betterTeam == self.teamInPointSimulationTwo:
                 # Team 1 holds and wins the point as worse team
                 if self.determiner <= (100 - self.probabilityForWinner):
                     self.pointWinner = self.teamInPointSimulationOne.tournamentTeam
                     self.pointLoser = self.teamInPointSimulationTwo.tournamentTeam
                     self.point.teamInPointSimulationOne.score += 1
-                    print('team 1 held as worse team ')
+                    self.pointPrintStatement + (str(self.teamInPointSimulationOne.team.mascot) + ' held as worse team \n ')
                 # Team 2 breaks as the better team
                 else:
                     self.pointWinner = self.teamInPointSimulationTwo.tournamentTeam
                     self.pointLoser = self.teamInPointSimulationOne.tournamentTeam
                     self.point.teamInPointSimulationTwo.score += 1
-                    print('team 2 broke as better team')
+                    self.pointPrintStatement += (str(self.teamInPointSimulationTwo.team.mascot) + ' broke as the better team \n ')
         else:
             print('team 2 has disc to start')
             self.sevenOnFieldForTeamOne = self.teamInPointSimulationOne.team.d_line_players
@@ -677,26 +676,26 @@ class PointSimulation:
                     self.pointWinner = self.teamInPointSimulationTwo.tournamentTeam
                     self.pointLoser = self.teamInPointSimulationOne.tournamentTeam
                     self.point.teamInPointSimulationTwo.score += 1
-                    print('team 2 holds as better team')
+                    self.pointPrintStatement += (str(self.teamInPointSimulationTwo.team.mascot) + ' holds as the better team \n')
                 # Team 1 breaks and wins the point as worse team
                 else:
                     self.pointWinner = self.teamInPointSimulationOne.tournamentTeam
                     self.pointLoser = self.teamInPointSimulationTwo.tournamentTeam
                     self.point.teamInPointSimulationOne.score += 1
-                    print('team 1 breaks as worse team')
+                    self.pointPrintStatement += (str(self.teamInPointSimulationOne.team.mascot) + ' broke as the worse team \n')
             elif self.betterTeam == self.teamInPointSimulationOne:
                 # Team 2 holds and wins the point as worse team
                 if self.determiner <= (100 - self.probabilityForWinner):
                     self.pointWinner = self.teamInPointSimulationTwo.tournamentTeam
                     self.pointLoser = self.teamInPointSimulationOne.tournamentTeam
                     self.point.teamInPointSimulationTwo.score += 1
-                    print('team 2 holds as worse team')
+                    self.pointPrintStatement += (str(self.teamInPointSimulationTwo.team.mascot) + ' holds as the worse team \n')
                 # Team 1 breaks as the better team
                 else:
                     self.pointWinner = self.teamInPointSimulationOne.tournamentTeam
                     self.pointLoser = self.teamInPointSimulationTwo.tournamentTeam
                     self.point.teamInPointSimulationOne.score += 1
-                    print('team 1 breaks as better team')
+                    self.pointPrintStatement += (str(self.teamInPointSimulationOne.team.mascot) + ' breaks as better team \n')
 
     def calculate_difference_in_teams_overall_rating(self):
         if self.teamInPointSimulationOne.team.overall_rating > self.teamInPointSimulationTwo.team.overall_rating:

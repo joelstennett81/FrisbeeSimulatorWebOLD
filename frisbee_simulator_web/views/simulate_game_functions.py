@@ -165,22 +165,21 @@ class GameSimulation:
         self.pointSimulation.playDirection = self.playDirection
         self.pointSimulation.simulate_point()
         self.pointSimulationsList.append(self.pointSimulation)
+        self.point.print_statements = self.pointSimulation.pointPrintStatement
+        self.point.team_one_score_post_point = self.teamInGameSimulationOne.score
+        self.point.team_two_score_post_point = self.teamInGameSimulationTwo.score
         self.point.winner = self.pointSimulation.pointWinner
         self.point.loser = self.pointSimulation.pointLoser
         self.point.save()
         self.point = None
 
     def simulate_full_game(self):
-        self.pointCounter = 0
+        self.pointCounter = 1
         self.setup_first_point_of_first_half()
         self.isFirstHalf = True
         self.isSecondHalf = False
         while not self.gameOver:
-            print('game isnt over, about to simulate point')
-            self.pointCounter += 1
             self.simulate_point()
-            print('team 1: ', self.teamInGameSimulationOne.score)
-            print('team 2: ', self.teamInGameSimulationTwo.score)
             if self.teamInGameSimulationOne.score == 15:
                 self.winner = self.teamInGameSimulationOne.tournamentTeam
                 self.loser = self.teamInGameSimulationTwo.tournamentTeam
@@ -222,6 +221,7 @@ class GameSimulation:
             self.teamInGameSimulationOne.startPointWithDisc = True
             self.teamInGameSimulationTwo.startPointWithDisc = False
         self.flip_play_direction()
+        self.pointCounter += 1
 
     def setup_first_point_of_first_half(self):
         self.isFirstHalf = True
