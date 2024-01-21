@@ -7,11 +7,10 @@ load_dotenv(dotenv_path=env_path)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 FILE_UPLOAD_TEMP_DIR = None
-
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG_SETTING')
-ALLOWED_HOSTS = ['127.0.0.1', 'frisbee-simulator-web-service.onrender.com/']
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://frisbee-simulator-web-service.onrender.com/']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -53,7 +52,6 @@ TEMPLATES = [
     },
 ]
 
-print(os.getenv('DATABASE_NAME'))
 WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     'default': {
