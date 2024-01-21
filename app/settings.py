@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -11,8 +10,8 @@ FILE_UPLOAD_TEMP_DIR = None
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG_SETTING')
-ALLOWED_HOSTS = ['127.0.0.1', 'https://eyjmcwkvjx.us-east-1.awsapprunner.com']
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'https://eyjmcwkvjx.us-east-1.awsapprunner.com']
+ALLOWED_HOSTS = ['127.0.0.1', '52.14.88.92']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://52.14.88.92']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -54,8 +53,8 @@ TEMPLATES = [
     },
 ]
 
+print(os.getenv('DATABASE_NAME'))
 WSGI_APPLICATION = 'app.wsgi.application'
-print('db pass: ', os.getenv('DATABASE_NAME'))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

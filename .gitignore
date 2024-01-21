@@ -6,5 +6,5 @@ db.sqlite3
 media
 staticfiles
 apprunner.yaml
-env
+.env
 .env
