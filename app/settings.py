@@ -10,8 +10,8 @@ FILE_UPLOAD_TEMP_DIR = None
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG_SETTING')
-ALLOWED_HOSTS = ['127.0.0.1', '52.14.88.92']
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://52.14.88.92']
+ALLOWED_HOSTS = ['127.0.0.1', 'frisbee-simulator-web-service.onrender.com/']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://https://frisbee-simulator-web-service.onrender.com/']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
