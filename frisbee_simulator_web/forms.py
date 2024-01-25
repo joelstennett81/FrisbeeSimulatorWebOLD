@@ -127,7 +127,7 @@ class TournamentForm(forms.ModelForm):
     class Meta:
         model = Tournament
         fields = ['name', 'location', 'number_of_teams', 'simulation_type', 'is_public']
-        exclude = ['created_by']
+        exclude = ['created_by', 'pool_play_completed', 'bracket_play_completed']
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)

@@ -64,15 +64,39 @@ def simulate_tournament(request, tournament_id):
     tournament = Tournament.objects.get(id=tournament_id)
     tournamentSimulation = TournamentSimulation(tournament)
     number_of_teams = tournament.number_of_teams
+    if not tournament.pool_play_completed and not tournament.bracket_play_completed:
+        simulate_pool_play(request, tournamentSimulation, tournament_id, number_of_teams)
+    elif tournament.pool_play_completed and not tournament.bracket_play_completed:
+        simulate_bracket(request, tournamentSimulation, tournament_id, number_of_teams)
+    return redirect(reverse('tournament_results', kwargs={'tournament_id': tournament_id}))
+
+
+def simulate_pool_play(request, tournamentSimulation, tournament_id, number_of_teams):
+    tournament = Tournament.objects.get(id=tournament_id)
     tournamentSimulation.rank_teams_for_pool_play()
     if number_of_teams == 4:
         tournamentSimulation.simulate_four_team_pool(request)
-        tournamentSimulation.simulate_four_team_bracket(request)
     elif number_of_teams == 8:
         tournamentSimulation.simulate_eight_team_pool(request)
-        tournamentSimulation.simulate_eight_team_winners_bracket(request, number_of_teams)
     elif number_of_teams == 16:
         tournamentSimulation.simulate_sixteen_team_pool(request)
+    else:
+        return render(request, 'tournaments/tournament_error.html')
+    tournament.pool_play_completed = True
+    tournament.bracket_play_completed = False
+    tournament.save()
+    return redirect(reverse('tournament_results', kwargs={'tournament_id': tournament_id}))
+
+
+def simulate_bracket(request, tournamentSimulation, tournament_id, number_of_teams):
+    tournament = Tournament.objects.get(id=tournament_id)
+    tournamentSimulation = TournamentSimulation(tournament)
+    number_of_teams = tournament.number_of_teams
+    if number_of_teams == 4:
+        tournamentSimulation.simulate_four_team_bracket(request)
+    elif number_of_teams == 8:
+        tournamentSimulation.simulate_eight_team_winners_bracket(request, number_of_teams)
+    elif number_of_teams == 16:
         tournamentSimulation.simulate_eight_team_winners_bracket(request, number_of_teams)
         tournamentSimulation.simulate_eight_team_losers_bracket(request)
     else:
@@ -80,9 +104,38 @@ def simulate_tournament(request, tournament_id):
 
     tournament.champion = tournamentSimulation.champion
     tournament.is_complete = True
+    tournament.bracket_play_completed = True
     tournament.save()
     tournamentSimulation.save_tournament_player_stats_from_game_player_stats()
     return redirect(reverse('tournament_results', kwargs={'tournament_id': tournament_id}))
+
+
+@login_required(login_url='/login/')
+def pool_play_results(request, tournament_id):
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
+    number_of_teams = tournament.number_of_teams
+    teams = TournamentTeam.objects.filter(tournament=tournament)
+    teams_stats = []
+    for team in teams:
+        team_stats = {
+            'team': team,
+            'pool_play_wins': team.pool_play_wins,
+            'pool_play_losses': team.pool_play_losses,
+            'pool_play_point_differential': team.pool_play_point_differential
+        }
+        teams_stats.append(team_stats)
+    top_assists = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('assists').desc())[:3]
+    top_goals = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('goals').desc())[:3]
+    top_throwaways = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('throwaways').desc())[:3]
+    top_throwing_yards = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(
+        F('throwing_yards').desc())[:3]
+    top_receiving_yards = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(
+        F('receiving_yards').desc())[:3]
+    context = {'tournament': tournament, 'teams_stats': teams_stats, 'top_assists': top_assists,
+               'top_goals': top_goals,
+               'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
+               'top_receiving_yards': top_receiving_yards}
+    return render(request, 'tournaments/pool_play_results.html', context)
 
 
 @login_required(login_url='/login/')
@@ -106,17 +159,21 @@ def tournament_results(request, tournament_id):
         F('throwing_yards').desc())[:3]
     top_receiving_yards = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(
         F('receiving_yards').desc())[:3]
-    print('number of teams for showing results: ', number_of_teams)
     context = {'tournament': tournament, 'teams_stats': teams_stats, 'top_assists': top_assists,
                'top_goals': top_goals,
                'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
                'top_receiving_yards': top_receiving_yards}
-    if number_of_teams == 4:
-        return render(request, 'tournaments/four_team_tournament_results.html', context)
-    elif number_of_teams == 8:
-        return render(request, 'tournaments/eight_team_tournament_results.html', context)
-    elif number_of_teams == 16:
-        return render(request, 'tournaments/eight_team_tournament_results.html', context)
+    if tournament.pool_play_completed and not tournament.bracket_play_completed:
+        return redirect(reverse('pool_play_results', kwargs={'tournament_id': tournament_id}))
+    elif tournament.pool_play_completed and tournament.bracket_play_completed:
+        if number_of_teams == 4:
+            return render(request, 'tournaments/four_team_tournament_results.html', context)
+        elif number_of_teams == 8:
+            return render(request, 'tournaments/eight_team_tournament_results.html', context)
+        elif number_of_teams == 16:
+            return render(request, 'tournaments/eight_team_tournament_results.html', context)
+        else:
+            return render(request, 'tournaments/tournament_error.html')
     else:
         return render(request, 'tournaments/tournament_error.html')
 

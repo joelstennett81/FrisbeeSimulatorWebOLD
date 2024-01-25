@@ -2,31 +2,46 @@
 
 {% block content %}
     <div class="container py-4">
-        <h1 class="mb-4">Pool Play Results</h1>
-        <!-- Pool Play Games Card -->
         <div class="card mb-4">
-            <div class="card-header">Pool Play Games</div>
-            <ul class="list-group list-group-flush">
-                {% for game in tournament.games.all %}
-                    <li class="list-group-item">
-                        {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                        won {{ game.winner_score }}- {{ game.loser_score }}
-                    </li>
-                {% empty %}
-                    <li class="list-group-item">No games yet</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Next Steps -->
-        <div class="card">
             <div class="card-header">Next Steps</div>
             <div class="card-body">
                 <p class="card-text">
                     Now that the pool play is complete, you can proceed to the next steps.
                 </p>
-                <a href="{% url 'control_tournament' tournament_id=tournament.id %}?phase=full_tournament"
-                   class="btn btn-primary">Simulate Bracket</a>
+                {% if tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                    <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Bracket Play</a>
+                {% endif %}
             </div>
+        </div>
+        <h1 class="mb-4">Pool Play Results</h1>
+        <!-- Team Statistics Card -->
+        <div class="card mb-4">
+            <div class="card-header">Team Statistics</div>
+            <ul class="list-group list-group-flush">
+                {% for team_stat in teams_stats %}
+                    <li class="list-group-item">
+                        {{ team_stat.team.team }}: {{ team_stat.pool_play_wins }}
+                        wins, {{ team_stat.pool_play_losses }}
+                        losses, Point Differential: {{ team_stat.pool_play_point_differential }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Pool Play Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool Play Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Pool Play' %}
+                        <li class="list-group-item">
+                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                            won {{ game.winner_score }}- {{ game.loser_score }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 {% endblock %}
