@@ -27,8 +27,10 @@
                                 <a href="{% url 'tournament_results' tournament.id %}">Show Tournament Results</a>
                                 <a href="{% url 'list_player_tournament_stats' tournament.id %}">Show Player Tournament
                                     Stats</a>
+                            {% elif tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                                <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Bracket</a>
                             {% else %}
-                                <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Tournament</a>
+                                <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Pool Play</a>
                             {% endif %}
                         </td>
                     </tr>

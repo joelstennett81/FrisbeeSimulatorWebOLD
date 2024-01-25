@@ -121,6 +121,8 @@ class Tournament(models.Model):
     is_complete = models.BooleanField(default=False)
     is_public = models.BooleanField(default=False)
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
+    pool_play_completed = models.BooleanField(default=False)
+    bracket_play_completed = models.BooleanField(default=False)
 
 
 class TournamentPool(models.Model):

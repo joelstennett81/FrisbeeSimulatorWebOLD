@@ -11,7 +11,6 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG_SETTING')
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(',')
-print(ALLOWED_HOSTS)
 
 INSTALLED_APPS = [
     'django.contrib.admin',

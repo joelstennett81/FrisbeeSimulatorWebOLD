@@ -664,7 +664,7 @@ class PointSimulation:
                     self.point.teamInPointSimulationTwo.score += 1
                     self.pointPrintStatement += (str(self.teamInPointSimulationTwo.team.mascot) + ' broke as the better team \n ')
         else:
-            print('team 2 has disc to start')
+            self.pointPrintStatement += (str(self.teamInPointSimulationTwo.team.mascot) + 'has disc to start \n')
             self.sevenOnFieldForTeamOne = self.teamInPointSimulationOne.team.d_line_players
             self.sevenOnFieldForTeamTwo = self.teamInPointSimulationTwo.team.o_line_players
             self.sevenOnFieldForOffense = self.teamInPointSimulationTwo.team.o_line_players

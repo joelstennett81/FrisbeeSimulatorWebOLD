@@ -38,6 +38,7 @@ class TournamentSimulation:
 
     def rank_teams_for_pool_play(self):
         teams = list(self.tournament.teams.all())
+
         teams.sort(key=lambda team: (-team.overall_rating, team.location))
         for i, team in enumerate(teams):
             pool_play_seed = i = 1
@@ -63,7 +64,6 @@ class TournamentSimulation:
     def generate_pools_and_games(self, request, num_teams):
         tournament_teams = TournamentTeam.objects.filter(tournament=self.tournament)[:num_teams]
         num_pools = num_teams // 4
-        threads = []
 
         for i in range(num_pools):
             start_index = i * 4
@@ -76,12 +76,7 @@ class TournamentSimulation:
             for round in schedule:
                 for match in round:
                     game = Game(team_one=match[0], team_two=match[1], tournament=self.tournament, game_type='Pool Play')
-                    thread = threading.Thread(target=self.simulate_pool_play_game, args=(request, game))
-                    thread.start()
-                    threads.append(thread)
-
-        for thread in threads:
-            thread.join()
+                    self.simulate_pool_play_game(request, game)
 
     def simulate_four_team_pool(self, request):
         self.generate_pools_and_games(request, 4)
@@ -330,6 +325,7 @@ class TournamentSimulation:
                                          gameSimulation.teamInGameSimulationTwo]:
                 for gameSimulationPlayer in teamInGameSimulation.allPlayers:
                     gameStats = PlayerGameStat.objects.filter(player=gameSimulationPlayer.player,
+                                                              game__game_type='Pool Play',
                                                               tournament=self.tournament)
                     playerTournamentStat, created = PlayerTournamentStat.objects.get_or_create(
                         tournament=self.tournament,
@@ -358,3 +354,75 @@ class TournamentSimulation:
                         if value is not None:
                             setattr(playerTournamentStat, attr, value)
                     playerTournamentStat.save()
+
+    # def save_pool_play_player_stats_from_game_player_stats(self):
+    #     for gameSimulation in self.gameSimulationsList:
+    #         for teamInGameSimulation in [gameSimulation.teamInGameSimulationOne,
+    #                                      gameSimulation.teamInGameSimulationTwo]:
+    #             for gameSimulationPlayer in teamInGameSimulation.allPlayers:
+    #                 gameStats = PlayerGameStat.objects.filter(player=gameSimulationPlayer.player,
+    #                                                           game__game_type='Pool Play',
+    #                                                           tournament=self.tournament)
+    #                 playerTournamentStat, created = PlayerTournamentStat.objects.get_or_create(
+    #                     tournament=self.tournament,
+    #                     player=gameSimulationPlayer.player,
+    #                 )
+    #                 aggregates = gameStats.aggregate(
+    #                     goals=Sum('goals'),
+    #                     assists=Sum('assists'),
+    #                     swing_passes_thrown=Sum('swing_passes_thrown'),
+    #                     swing_passes_completed=Sum('swing_passes_completed'),
+    #                     under_passes_thrown=Sum('under_passes_thrown'),
+    #                     under_passes_completed=Sum('under_passes_completed'),
+    #                     short_hucks_thrown=Sum('short_hucks_thrown'),
+    #                     short_hucks_completed=Sum('short_hucks_completed'),
+    #                     deep_hucks_thrown=Sum('deep_hucks_thrown'),
+    #                     deep_hucks_completed=Sum('deep_hucks_completed'),
+    #                     throwing_yards=Sum('throwing_yards'),
+    #                     receiving_yards=Sum('receiving_yards'),
+    #                     turnovers_forced=Sum('turnovers_forced'),
+    #                     throwaways=Sum('throwaways'),
+    #                     drops=Sum('drops'),
+    #                     callahans=Sum('callahans'),
+    #                     pulls=Sum('pulls')
+    #                 )
+    #                 for attr, value in aggregates.items():
+    #                     if value is not None:
+    #                         setattr(playerTournamentStat, attr, value)
+    #                 playerTournamentStat.save()
+    #
+    # def save_bracket_player_stats_from_game_player_stats(self):
+    #     for gameSimulation in self.gameSimulationsList:
+    #         for teamInGameSimulation in [gameSimulation.teamInGameSimulationOne,
+    #                                      gameSimulation.teamInGameSimulationTwo]:
+    #             for gameSimulationPlayer in teamInGameSimulation.allPlayers:
+    #                 gameStats = PlayerGameStat.objects.filter(player=gameSimulationPlayer.player,
+    #                                                           tournament=self.tournament).exclude(
+    #                     game__game_type='Pool Play')
+    #                 playerTournamentStat, created = PlayerTournamentStat.objects.get_or_create(
+    #                     tournament=self.tournament,
+    #                     player=gameSimulationPlayer.player,
+    #                 )
+    #                 aggregates = gameStats.aggregate(
+    #                     goals=Sum('goals'),
+    #                     assists=Sum('assists'),
+    #                     swing_passes_thrown=Sum('swing_passes_thrown'),
+    #                     swing_passes_completed=Sum('swing_passes_completed'),
+    #                     under_passes_thrown=Sum('under_passes_thrown'),
+    #                     under_passes_completed=Sum('under_passes_completed'),
+    #                     short_hucks_thrown=Sum('short_hucks_thrown'),
+    #                     short_hucks_completed=Sum('short_hucks_completed'),
+    #                     deep_hucks_thrown=Sum('deep_hucks_thrown'),
+    #                     deep_hucks_completed=Sum('deep_hucks_completed'),
+    #                     throwing_yards=Sum('throwing_yards'),
+    #                     receiving_yards=Sum('receiving_yards'),
+    #                     turnovers_forced=Sum('turnovers_forced'),
+    #                     throwaways=Sum('throwaways'),
+    #                     drops=Sum('drops'),
+    #                     callahans=Sum('callahans'),
+    #                     pulls=Sum('pulls')
+    #                 )
+    #                 for attr, value in aggregates.items():
+    #                     if value is not None:
+    #                         setattr(playerTournamentStat, attr, getattr(playerTournamentStat, attr, 0) + value)
+    #                 playerTournamentStat.save()
