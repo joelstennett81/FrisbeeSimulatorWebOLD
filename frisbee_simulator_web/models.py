@@ -106,7 +106,7 @@ class Tournament(models.Model):
     NUMBER_OF_TEAMS_CHOICES = [
         (4, '4'),
         (8, '8'),
-        (16, '16'),
+        # (16, '16'),
     ]
     SIMULATION_TYPE_CHOICES = [
         ('player_rating', 'player_rating'),
