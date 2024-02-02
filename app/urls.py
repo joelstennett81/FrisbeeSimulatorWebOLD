@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from frisbee_simulator_web.views import players, teams, tournaments, home, stats, users
+from frisbee_simulator_web.views.tournaments import TournamentDeleteView
 
 urlpatterns = [
     path('', home.home, name='home'),
@@ -19,13 +20,31 @@ urlpatterns = [
     path('teams/', teams.list_teams, name='list_teams'),
     path('teams/public/', teams.list_teams, kwargs={'is_public': True}, name='list_public_teams'),
     path('teams/detail/<int:pk>/', teams.detail_team, name='detail_team'),
+    path('pool_play/overview/<int:tournament_id>/', tournaments.pool_play_overview, name='pool_play_overview'),
+    path('bracket/overview/<int:tournament_id>/', tournaments.bracket_overview, name='bracket_overview'),
+    path('pool_play/simulate_game/<int:game_id>/<int:tournament_id>/', tournaments.simulate_game, name='simulate_game'),
+    path('tournaments/simulate_game/<int:game_id>/<int:tournament_id>/', tournaments.simulate_game,
+         name='simulate_game'),
     path('tournaments/new/', tournaments.TournamentCreateView.as_view(), name='create_tournament'),
     path('tournaments/', tournaments.list_tournaments, name='list_tournaments'),
+    path('tournament/<int:pk>/delete/', TournamentDeleteView.as_view(), name='delete_tournament'),
     path('tournaments/public/', tournaments.list_tournaments, kwargs={'is_public': True},
          name='list_public_tournaments'),
     path('tournaments/detail/<int:pk>/', tournaments.detail_tournament, name='detail_tournament'),
-    path('tournaments/simulate/<int:tournament_id>/', tournaments.simulate_tournament,
+    path('tournament/<int:tournament_id>/check_pool_play_simulation_status/',
+         tournaments.check_pool_play_simulation_status,
+         name='check_pool_play_simulation_status'),
+    path('tournament/<int:tournament_id>/check_bracket_simulation_status/',
+         tournaments.check_bracket_simulation_status,
+         name='check_bracket_simulation_status'),
+    path('tournament/<int:tournament_id>/fetch_latest_games_data/', tournaments.fetch_latest_games_data,
+         name='fetch_latest_games_data'),
+    path('tournaments/simulate_bracket/<int:tournament_id>/', tournaments.simulate_bracket,
+         name='simulate_bracket'),
+    path('tournaments/simulate_tournament/<int:tournament_id>/', tournaments.simulate_tournament,
          name='simulate_tournament'),
+    path('tournament/simulate_full_pool_play/<int:tournament_id>/', tournaments.simulate_full_pool_play,
+         name='simulate_full_pool_play'),
     path('tournaments/results/<int:tournament_id>/', tournaments.tournament_results, name='tournament_results'),
     path('tournaments/pool_play_results/<int:tournament_id>/', tournaments.pool_play_results, name='pool_play_results'),
     path('games/detail/<int:pk>/', tournaments.detail_game, name='detail_game'),
