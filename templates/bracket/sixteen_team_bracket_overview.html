@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="card mb-4">
+            <div class="card-header">Instructions</div>
+            <div class="card-body">
+                <p class="card-text">
+                </p>
+                {% if not tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                    <p>Simulate each game individually, when they are all simulated, you can simulate the bracket</p>
+                    <a href="{% url 'simulate_full_pool_play' tournament.id %}">Simulate Pool Play All At Once</a>
+                {% elif tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                    <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Bracket Play</a>
+                {% endif %}
+            </div>
+        </div>
+        <div id="loading-message" style="display: none;">
+            <p>Your games are being simulated, please be patient...</p>
+        </div>
+        <!-- Quarterfinal Games Card -->
+        <div class="card mb-4" id="winnersBracketCard">
+            <div class="card-header">Quarterfinal Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Quarterfinal' %}
+                        <li class="list-group-item">
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Loser Semifinals Games Card -->
+        <div class="card mb-4" id="winnersBracketCard">
+            <div class="card-header">Losers Semifinals Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Loser-Semifinal' %}
+                        <li class="list-group-item">
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- 7th-Place-Final Games Card -->
+        <div class="card mb-4" id="winnersBracketCard">
+            <div class="card-header">7th Place Final Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Seventh-Place-Final' %}
+                        <li class="list-group-item">
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Fifth Place Final Games Card -->
+        <div class="card mb-4" id="winnersBracketCard">
+            <div class="card-header">Fifth Place Final Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Fifth-Place-Final' %}
+                        <li class="list-group-item">
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Semifinal Games Card -->
+        <div class="card mb-4" id="winnersBracketCard">
+            <div class="card-header">Semifinal Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Semifinal' %}
+                        <li class="list-group-item">
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Third Place Game Card -->
+        <div class="card mb-4" id="winnersBracketCard">
+            <div class="card-header">Third Place Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Third-Place' %}
+                        <li class="list-group-item">
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Championship Game Card -->
+        <div class="card mb-4" id="winnersBracketCard">
+            <div class="card-header">Championship Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Championship' %}
+                        <li class="list-group-item">
+                            <a href="{% url 'game_detail' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container py-4" id="losersBracketCard">
+        <h1 class="mb-4">Losers Bracket Tournament Results</h1>
+        <!-- Quarterfinal Games Card -->
+        <div class="card mb-4" id="losersBracketCard">
+            <div class="card-header">9th Place Quarterfinal Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == '9th-Place Quarterfinal' %}
+                        <li class="list-group-item">
+                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Loser Semifinals Games Card -->
+        <div class="card mb-4" id="losersBracketCard">
+            <div class="card-header">13th Place Semifinals Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == '13th-Place Semifinal' %}
+                        <li class="list-group-item">
+                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- 7th-Place-Final Games Card -->
+        <div class="card mb-4" id="losersBracketCard">
+            <div class="card-header">13th Place Final Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == '13th-Place Final' %}
+                        <li class="list-group-item">
+                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Fifth Place Final Games Card -->
+        <div class="card mb-4" id="losersBracketCard">
+            <div class="card-header">15th Place Final Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == '15th-Place Final' %}
+                        <li class="list-group-item">
+                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Semifinal Games Card -->
+        <div class="card mb-4" id="losersBracketCard">
+            <div class="card-header">9th Place Semifinal Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Semifinal' %}
+                        <li class="list-group-item">
+                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Third Place Game Card -->
+        <div class="card mb-4" id="losersBracketCard">
+            <div class="card-header">11th Place Final Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == '11th-Place Final' %}
+                        <li class="list-group-item">
+                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Championship Game Card -->
+        <div class="card mb-4" id="losersBracketCard">
+            <div class="card-header">9th Place Final Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == '9th-Place Final' %}
+                        <li class="list-group-item">
+                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            // Start polling when the page loads
+            startPolling();
+
+            function startPolling() {
+                // Disable all buttons on the page
+                $('button').addClass('disable-buttons');
+
+                // Show the loading message
+                $('#loading-message').show();
+
+                // Poll the server every 5 seconds
+                setInterval(function () {
+                    $.ajax({
+                        url: "{% url 'check_bracket_simulation_status' tournament.id %}",
+                        type: 'GET',
+                        success: function (response) {
+                            if (response.simulations_complete) {
+                                // Enable all buttons on the page
+                                $('button').removeClass('disable-buttons');
+
+                                // Stop polling and redirect to the results page
+                                window.location.href = "{% url 'tournament_results' tournament.id %}";
+                            } else {
+                                // Continue polling
+                                startPolling();
+                            }
+                        },
+                        error: function () {
+                            // Handle errors (e.g., stop polling and show an error message)
+                            console.error('Error checking simulation status');
+                        }
+                    });
+                }, 500); // 5000 milliseconds = 5 seconds
+            }
+        });
+    </script>
+{% endblock %}

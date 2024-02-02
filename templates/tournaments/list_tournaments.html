@@ -11,7 +11,7 @@
                     <th>Name</th>
                     <th>Location</th>
                     <th># of Teams</th>
-                    <th>Actions</th>
+                    <th colspan="2">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -27,11 +27,15 @@
                                 <a href="{% url 'tournament_results' tournament.id %}">Show Tournament Results</a>
                                 <a href="{% url 'list_player_tournament_stats' tournament.id %}">Show Player Tournament
                                     Stats</a>
-                            {% elif tournament.pool_play_completed and not tournament.bracket_play_completed %}
-                                <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Bracket</a>
                             {% else %}
-                                <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Pool Play</a>
+                                {% if not tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                                    <a href="{% url 'pool_play_overview' tournament.id %}">Pool Play Overview</a>
+                                {% elif tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                                    <a href="{% url 'bracket_overview' tournament.id %}">Bracket Overview</a>
+                                {% endif %}
                             {% endif %}
+                        <td>
+                            <a href="{% url 'delete_tournament' tournament.id %}">Delete Tournament</a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -1,10 +1,14 @@
+from itertools import count
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import F, Prefetch
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
-from django.views.generic.edit import CreateView
+from django.urls import reverse, reverse_lazy
+from django.views.generic.edit import CreateView, DeleteView
 from frisbee_simulator_web.models import Tournament, PlayerTournamentStat, TournamentTeam, Game, Point
 from frisbee_simulator_web.forms import TournamentForm
+from frisbee_simulator_web.views.simulate_game_functions import GameSimulation
 from frisbee_simulator_web.views.simulate_tournament_functions import TournamentSimulation
 from frisbee_simulator_web.views.teams import create_random_team
 
@@ -49,6 +53,12 @@ class TournamentCreateView(CreateView):
         return super().form_invalid(form)
 
 
+class TournamentDeleteView(DeleteView):
+    model = Tournament
+    success_url = '/tournaments/'
+    template_name = 'tournaments/tournament_confirm_delete.html'  # Replace with your template name
+
+
 @login_required(login_url='/login/')
 def list_tournaments(request, is_public=None):
     if is_public is None:
@@ -65,30 +75,103 @@ def simulate_tournament(request, tournament_id):
     tournamentSimulation = TournamentSimulation(tournament)
     number_of_teams = tournament.number_of_teams
     if not tournament.pool_play_completed and not tournament.bracket_play_completed:
-        simulate_pool_play(request, tournamentSimulation, tournament_id, number_of_teams)
+        return redirect(reverse('pool_play_overview', kwargs={'tournament_id': tournament_id}))
     elif tournament.pool_play_completed and not tournament.bracket_play_completed:
-        simulate_bracket(request, tournamentSimulation, tournament_id, number_of_teams)
+        return redirect(reverse('bracket_overview', kwargs={'tournament_id': tournament_id}))
     return redirect(reverse('tournament_results', kwargs={'tournament_id': tournament_id}))
 
 
-def simulate_pool_play(request, tournamentSimulation, tournament_id, number_of_teams):
+def pool_play_overview(request, tournament_id):
     tournament = Tournament.objects.get(id=tournament_id)
-    tournamentSimulation.rank_teams_for_pool_play()
-    if number_of_teams == 4:
-        tournamentSimulation.simulate_four_team_pool(request)
-    elif number_of_teams == 8:
-        tournamentSimulation.simulate_eight_team_pool(request)
-    elif number_of_teams == 16:
-        tournamentSimulation.simulate_sixteen_team_pool(request)
+    tournamentSimulation = TournamentSimulation(tournament=tournament)
+    if not tournament.pool_play_initialized:
+        tournamentSimulation.setup_pool_play_games_for_simulation(tournamentSimulation.numberOfTeams)
+    return render(request, 'pool_play/pool_play_overview.html',
+                  {'pool_play_games': tournament.pool_play_games, 'tournament': tournament})
+
+
+def bracket_overview(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    if tournament.number_of_teams == 4:
+        return render(request, 'bracket/four_team_bracket_overview.html', {'tournament': tournament})
+    elif tournament.number_of_teams == 8:
+        return render(request, 'bracket/eight_team_bracket_overview.html', {'tournament': tournament})
+    elif tournament.number_of_teams == 16:
+        return render(request, 'bracket/sixteen_team_bracket_overview.html', {'tournament': tournament})
+
+
+def simulate_game(request, game_id, tournament_id):
+    game = Game.objects.get(id=game_id)
+    tournament = Tournament.objects.get(id=tournament_id)
+    tournamentSimulation = TournamentSimulation(tournament=tournament)
+    gameSimulation = GameSimulation(tournament, game)
+    gameSimulation.coin_flip()
+    gameSimulation.simulationType = game.tournament.simulation_type
+    gameSimulation.simulate_full_game()
+    tournamentSimulation.gameSimulationsList.append(gameSimulation)
+    if gameSimulation.winner == gameSimulation.teamInGameSimulationOne:
+        game.winner = gameSimulation.teamInGameSimulationOne.tournamentTeam
+        game.loser = gameSimulation.teamInGameSimulationTwo.tournamentTeam
+        point_differential = abs(
+            gameSimulation.teamInGameSimulationOne.score - gameSimulation.teamInGameSimulationTwo.score)
     else:
-        return render(request, 'tournaments/tournament_error.html')
+        game.winner = gameSimulation.teamInGameSimulationTwo.tournamentTeam
+        game.loser = gameSimulation.teamInGameSimulationOne.tournamentTeam
+        point_differential = abs(
+            gameSimulation.teamInGameSimulationTwo.score - gameSimulation.teamInGameSimulationOne.score)
+    if game.game_type == 'Pool Play':
+        TournamentTeam.objects.filter(pk=game.winner.pk).update(pool_play_wins=F('pool_play_wins') + 1,
+                                                                pool_play_point_differential=F(
+                                                                    'pool_play_point_differential') + point_differential)
+        TournamentTeam.objects.filter(pk=game.loser.pk).update(pool_play_losses=F('pool_play_losses') + 1,
+                                                               pool_play_point_differential=F(
+                                                                   'pool_play_point_differential') - point_differential)
+        tournamentSimulation.poolPlayGamesDoneSimulating += 1
+        if tournamentSimulation.poolPlayGamesDoneSimulating == tournamentSimulation.poolPlayTotalGamesCount:
+            tournament.pool_play_completed = True
+            tournament.save()
+    else:
+        game.winner.bracket_play_wins += 1
+        game.loser.bracket_play_losses += 1
+    game.created_by = request.user.profile
+    game.is_completed = True
+    game.save()
+    if game.game_type == 'Pool Play':
+        return redirect(reverse('pool_play_overview', kwargs={'tournament_id': tournament_id}))
+    else:
+        return redirect(reverse('list_tournaments'))
+
+
+def check_pool_play_simulation_status(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    incomplete_games = Game.objects.filter(tournament=tournament, game_type='Pool Play', is_completed=False)
+    return JsonResponse({'simulations_complete': not incomplete_games.exists()})
+
+
+def check_bracket_simulation_status(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    incomplete_games = Game.objects.filter(tournament=tournament, is_completed=False)
+    return JsonResponse({'simulations_complete': not incomplete_games.exists()})
+
+
+def fetch_latest_games_data(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    games = Game.objects.filter(tournament=tournament).values('id', 'is_completed', 'winner__team', 'loser__team',
+                                                              'winner_score', 'loser_score', 'tournament_id')
+    return JsonResponse({'games': list(games)})
+
+
+def simulate_full_pool_play(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    for game in tournament.pool_play_games.all():
+        if not game.is_completed:
+            simulate_game(request, game.id, tournament.id)
     tournament.pool_play_completed = True
-    tournament.bracket_play_completed = False
     tournament.save()
-    return redirect(reverse('tournament_results', kwargs={'tournament_id': tournament_id}))
+    return redirect(reverse('pool_play_results', kwargs={'tournament_id': tournament_id}))
 
 
-def simulate_bracket(request, tournamentSimulation, tournament_id, number_of_teams):
+def simulate_bracket(request, tournament_id):
     tournament = Tournament.objects.get(id=tournament_id)
     tournamentSimulation = TournamentSimulation(tournament)
     number_of_teams = tournament.number_of_teams
@@ -108,6 +191,12 @@ def simulate_bracket(request, tournamentSimulation, tournament_id, number_of_tea
     tournament.save()
     tournamentSimulation.save_tournament_player_stats_from_game_player_stats()
     return redirect(reverse('tournament_results', kwargs={'tournament_id': tournament_id}))
+
+
+@login_required(login_url='/login/')
+def game_results(request, game_id):
+    game = get_object_or_404(Game, pk=game_id)
+    return JsonResponse(game)
 
 
 @login_required(login_url='/login/')

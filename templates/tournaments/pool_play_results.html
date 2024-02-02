@@ -9,7 +9,7 @@
                     Now that the pool play is complete, you can proceed to the next steps.
                 </p>
                 {% if tournament.pool_play_completed and not tournament.bracket_play_completed %}
-                    <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Bracket Play</a>
+                    <a href="{% url 'bracket_overview' tournament.id %}">Go to Bracket Overview</a>
                 {% endif %}
             </div>
         </div>

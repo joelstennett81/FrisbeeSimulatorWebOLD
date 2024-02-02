@@ -123,7 +123,10 @@ class Tournament(models.Model):
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     pool_play_completed = models.BooleanField(default=False)
     bracket_play_completed = models.BooleanField(default=False)
-
+    pool_play_initialized = models.BooleanField(default=False)
+    bracket_initialized = models.BooleanField(default=False)
+    pool_play_games = models.ManyToManyField('Game', related_name='pool_play_games_tournament')
+    bracket_games = models.ManyToManyField('Game', related_name='bracket_games_tournament')
 
 class TournamentPool(models.Model):
     POOL_SIZE_CHOICES = [
@@ -193,6 +196,7 @@ class Game(models.Model):
     loser = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='loser_games', null=True)
     winner_score = models.PositiveIntegerField(default=0)
     loser_score = models.PositiveIntegerField(default=0)
+    is_completed = models.BooleanField(default=False)
     is_public = models.BooleanField(default=False)
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
 
