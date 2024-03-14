@@ -60,7 +60,7 @@
             <div class="card-header">Losers Semifinals Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Loser-Semifinal' %}
+                    {% if game.game_type == '5th-Place Semifinal' %}
                         <li class="list-group-item">
                             <a href="{% url 'detail_game' game.id %}">
                                 {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
@@ -78,7 +78,7 @@
             <div class="card-header">7th Place Final Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Seventh-Place-Final' %}
+                    {% if game.game_type == '7th-Place Final' %}
                         <li class="list-group-item">
                             <a href="{% url 'detail_game' game.id %}">
                                 {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
@@ -96,7 +96,7 @@
             <div class="card-header">Fifth Place Final Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Fifth-Place-Final' %}
+                    {% if game.game_type == '5th-Place Final' %}
                         <li class="list-group-item">
                             <a href="{% url 'detail_game' game.id %}">
                                 {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
@@ -132,7 +132,7 @@
             <div class="card-header">Third Place Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Third-Place' %}
+                    {% if game.game_type == '3rd-Place Final' %}
                         <li class="list-group-item">
                             <a href="{% url 'detail_game' game.id %}">
                                 {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
@@ -232,7 +232,7 @@
                 {% endfor %}
             </ul>
         </div>
-        <!-- Quarterfinal Games Card -->
+        <!-- 9th Place Quarterfinal Games Card -->
         <div class="card mb-4" id="losersBracketCard">
             <div class="card-header">9th Place Quarterfinal Results</div>
             <ul class="list-group list-group-flush">
@@ -248,7 +248,7 @@
                 {% endfor %}
             </ul>
         </div>
-        <!-- Loser Semifinals Games Card -->
+        <!-- 13th Semifinals Games Card -->
         <div class="card mb-4" id="losersBracketCard">
             <div class="card-header">13th Place Semifinals Results</div>
             <ul class="list-group list-group-flush">
@@ -264,7 +264,7 @@
                 {% endfor %}
             </ul>
         </div>
-        <!-- 7th-Place-Final Games Card -->
+        <!-- 13th-Place-Final Games Card -->
         <div class="card mb-4" id="losersBracketCard">
             <div class="card-header">13th Place Final Results</div>
             <ul class="list-group list-group-flush">
@@ -280,7 +280,7 @@
                 {% endfor %}
             </ul>
         </div>
-        <!-- Fifth Place Final Games Card -->
+        <!-- 15th Place Final Games Card -->
         <div class="card mb-4" id="losersBracketCard">
             <div class="card-header">15th Place Final Results</div>
             <ul class="list-group list-group-flush">
@@ -301,7 +301,7 @@
             <div class="card-header">9th Place Semifinal Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Semifinal' %}
+                    {% if game.game_type == '9th-Place Semifinal' %}
                         <li class="list-group-item">
                             {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
                             won {{ game.winner_score }}- {{ game.loser_score }}

@@ -57,7 +57,7 @@
             <div class="card-header">Third Place Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Third-Place' %}
+                    {% if game.game_type == '3rd-Place Final' %}
                         <li class="list-group-item">
                             <a href="{% url 'detail_game' game.id %}">
                                 {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
