@@ -1,31 +1,13 @@
 from itertools import count
 
 from django.contrib.auth.decorators import login_required
-<< << << < HEAD
-from django.db.models import F, Prefetch
-== == == =
 from django.db.models import F, Prefetch, Sum
->> >> >> > 7
-bca278(Fixed
-a
-lot
-of
-stuff)
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView
-<< << << < HEAD
-from frisbee_simulator_web.models import Tournament, PlayerTournamentStat, TournamentTeam, Game, Point
-== == == =
 from frisbee_simulator_web.models import Tournament, PlayerTournamentStat, TournamentTeam, Game, Point, \
     TournamentBracket, PlayerGameStat
->> >> >> > 7
-bca278(Fixed
-a
-lot
-of
-stuff)
 from frisbee_simulator_web.forms import TournamentForm
 from frisbee_simulator_web.views.simulate_game_functions import GameSimulation
 from frisbee_simulator_web.views.simulate_tournament_functions import TournamentSimulation
