@@ -102,7 +102,7 @@
             <div class="card-header">Third Place Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Third-Place' %}
+                    {% if game.game_type == '3rd-Place Final' %}
                         <li class="list-group-item">
                             <a href="{% url 'detail_game' game.id %}">
                                 {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
@@ -120,7 +120,7 @@
             <div class="card-header">Losers Semifinals Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Loser-Semifinal' %}
+                    {% if game.game_type == '5th-Place Semifinal' %}
                         <li class="list-group-item">
                             <a href="{% url 'detail_game' game.id %}">
                                 {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
@@ -138,7 +138,7 @@
             <div class="card-header">Fifth Place Final Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Fifth-Place-Final' %}
+                    {% if game.game_type == '5th-Place Final' %}
                         <li class="list-group-item">
                             <a href="{% url 'detail_game' game.id %}">
                                 {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
@@ -156,7 +156,7 @@
             <div class="card-header">7th Place Final Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Seventh-Place-Final' %}
+                    {% if game.game_type == '7th-Place Final' %}
                         <li class="list-group-item">
                             <a href="{% url 'detail_game' game.id %}">
                                 {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}

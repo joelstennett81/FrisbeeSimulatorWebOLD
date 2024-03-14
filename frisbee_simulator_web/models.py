@@ -106,7 +106,7 @@ class Tournament(models.Model):
     NUMBER_OF_TEAMS_CHOICES = [
         (4, '4'),
         (8, '8'),
-        # (16, '16'),
+        (16, '16'),
     ]
     SIMULATION_TYPE_CHOICES = [
         ('player_rating', 'player_rating'),
@@ -122,17 +122,45 @@ class Tournament(models.Model):
     is_public = models.BooleanField(default=False)
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     pool_play_completed = models.BooleanField(default=False)
-    bracket_play_completed = models.BooleanField(default=False)
+    quarterfinal_round_completed = models.BooleanField(default=False)
+    losers_quarterfinal_round_completed = models.BooleanField(default=False)
+    semifinal_round_completed = models.BooleanField(default=False)
+    losers_semifinal_round_completed = models.BooleanField(default=False)
+    final_round_completed = models.BooleanField(default=False)
+    losers_final_round_completed = models.BooleanField(default=False)
     pool_play_initialized = models.BooleanField(default=False)
-    bracket_initialized = models.BooleanField(default=False)
+    quarterfinal_round_initialized = models.BooleanField(default=False)
+    losers_quarterfinal_round_initialized = models.BooleanField(default=False)
+    semifinal_round_initialized = models.BooleanField(default=False)
+    losers_semifinal_round_initialized = models.BooleanField(default=False)
+    final_round_initialized = models.BooleanField(default=False)
+    losers_final_round_initialized = models.BooleanField(default=False)
     pool_play_games = models.ManyToManyField('Game', related_name='pool_play_games_tournament')
-    bracket_games = models.ManyToManyField('Game', related_name='bracket_games_tournament')
+    quarterfinal_round_games = models.ManyToManyField('Game', related_name='quarterfinal_games_tournament')
+    losers_quarterfinal_round_games = models.ManyToManyField('Game',
+                                                             related_name='losers_quarterfinal_games_tournament')
+    semifinal_round_games = models.ManyToManyField('Game', related_name='semifinal_games_tournament')
+    losers_semifinal_round_games = models.ManyToManyField('Game', related_name='losers_semifinal_games_tournament')
+    final_round_games = models.ManyToManyField('Game', related_name='final_games_tournament')
+    losers_final_round_games = models.ManyToManyField('Game', related_name='losers_final_games_tournament')
+
+    def total_pool_play_games(self):
+        num_teams = self.teams.count()
+        if num_teams == 4:
+            return 6
+        elif num_teams == 8:
+            return 12
+        # Add more conditions here if you support more team counts
+        else:
+            return 0
+
 
 class TournamentPool(models.Model):
     POOL_SIZE_CHOICES = [
         (4, '4'),
         (5, '5'),
     ]
+    name = models.CharField(max_length=50, null=True)
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     teams = models.ManyToManyField('TournamentTeam', related_name='teams_pools')
     number_of_teams = models.PositiveIntegerField(choices=POOL_SIZE_CHOICES, default=4)
@@ -142,7 +170,7 @@ class TournamentBracket(models.Model):
     BRACKET_SIZE_CHOICES = [
         (4, '4'),
         (8, '8'),
-        (12, '12')
+        (16, '16')
     ]
     BRACKET_TYPE_CHOICES = [
         ('Championship', 'Championship'),
@@ -174,18 +202,19 @@ class Game(models.Model):
         ('Pool Play', 'Pool Play'),
         ('Pre-Quarterfinal', 'Pre-Quarterfinal'),
         ('Quarterfinal', 'Quarterfinal'),
-        ('Loser-Semifinal', 'Loser-Semifinal'),
-        ('Fifth-Place-Final', 'Fifth-Place-Final'),
-        ('Seventh-Place-Final', 'Seventh-Place-Final'),
         ('Semifinal', 'Semifinal'),
         ('Championship', 'Championship'),
+        ('3rd-Place Final', '3rd-Place Final'),
+        ('5th-Place Semifinal', '5th-Place Semifinal'),
+        ('5th-Place Final', '5th-Place Final'),
+        ('7th-Place Final', '7th-Place Final'),
         ('9th-Place Quarterfinal', '9th-Place Quarterfinal'),
-        ('13th-Place Semifinal', '13th-Place Semifinal'),
-        ('15th-Place Final', '15th-Place Final'),
         ('9th-Place Semifinal', '9th-Place Semifinal'),
-        ('11th-Place Final', '11th-Place Final'),
         ('9th-Place Final', '9th-Place Final'),
-
+        ('11th-Place Final', '11th-Place Final'),
+        ('13th-Place Semifinal', '13th-Place Semifinal'),
+        ('13th-Place Final', '13th-Place Final'),
+        ('15th-Place Final', '15th-Place Final'),
     ]
     date = models.DateTimeField(default=timezone.now)
     team_one = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_one_games')

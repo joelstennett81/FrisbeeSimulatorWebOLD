@@ -8,3 +8,4 @@ staticfiles
 apprunner.yaml
 .env
 .env
+*.xml
