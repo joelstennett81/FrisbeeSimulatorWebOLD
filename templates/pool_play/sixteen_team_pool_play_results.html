@@ -16,19 +16,6 @@
         <h1 class="mb-4">Pool Play Results</h1>
         <!-- Team Statistics Card -->
         <div class="card mb-4">
-            <div class="card-header">Team Statistics</div>
-            <ul class="list-group list-group-flush">
-                {% for team_stat in teams_stats %}
-                    <li class="list-group-item">
-                        {{ team_stat.team.team }}: {{ team_stat.pool_play_wins }}
-                        wins, {{ team_stat.pool_play_losses }}
-                        losses, Point Differential: {{ team_stat.pool_play_point_differential }}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Team Statistics Card -->
-        <div class="card mb-4">
             <div class="card-header">Pool A Team Statistics</div>
             <ul class="list-group list-group-flush">
                 {% for team in pool_a_teams %}
