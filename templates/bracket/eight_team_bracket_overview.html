@@ -2,6 +2,36 @@
 
 {% block content %}
     <div class="container py-4">
+        <h1 class="mb-4">Bracket Overview</h1>
+        <div class="bracket">
+            <!-- Final Round -->
+            <div class="round final">
+                {% for game in tournament.games.filter(game_type='Championship') %}
+                    <div class="match">
+                        <div class="team">{{ game.team_one.team }}</div>
+                        <div class="team">{{ game.team_two.team }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+            <!-- Semifinal Rounds -->
+            <div class="round semifinal">
+                {% for game in tournament.games.filter(game_type='Semifinal') %}
+                    <div class="match">
+                        <div class="team">{{ game.team_one.team }}</div>
+                        <div class="team">{{ game.team_two.team }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+            <!-- Quarterfinal Rounds -->
+            <div class="round quarterfinal">
+                {% for game in tournament.games.filter(game_type='Quarterfinal') %}
+                    <div class="match">
+                        <div class="team">{{ game.team_one.team }}</div>
+                        <div class="team">{{ game.team_two.team }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
         <div class="card mb-4">
             <div class="card-header">Instructions</div>
             <div class="card-body">

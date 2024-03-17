@@ -100,37 +100,37 @@ class TournamentSimulation:
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[2], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 # Round  2
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[1], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 # Round  3
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[1], team_two=poolATeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolA)
             ])
             # Pool B games
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[2], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 # Round  2
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[1], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 # Round  3
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[1], team_two=poolBTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolB)
             ])
         elif num_teams == 16:
             poolATeams = tournament_teams[:4]
@@ -150,78 +150,78 @@ class TournamentSimulation:
             poolB.teams.set(poolBTeams)
             poolB.save()
             poolC.teams.set(poolCTeams)
-            poolD.save()
+            poolC.save()
             poolD.teams.set(poolDTeams)
             poolD.save()
             # Pool A games
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[2], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 # Round  2
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[1], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 # Round  3
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[1], team_two=poolATeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolA)
             ])
             # Pool B games
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[2], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 # Round  2
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[1], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 # Round  3
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[1], team_two=poolBTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolB)
             ])
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolCTeams[0], team_two=poolCTeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolC),
                 Game.objects.create(team_one=poolCTeams[2], team_two=poolCTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolC),
                 # Round  2
                 Game.objects.create(team_one=poolCTeams[0], team_two=poolCTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolC),
                 Game.objects.create(team_one=poolCTeams[1], team_two=poolCTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolC),
                 # Round  3
                 Game.objects.create(team_one=poolCTeams[0], team_two=poolCTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolC),
                 Game.objects.create(team_one=poolCTeams[1], team_two=poolCTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolC)
             ])
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolDTeams[0], team_two=poolDTeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolD),
                 Game.objects.create(team_one=poolDTeams[2], team_two=poolDTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolD),
                 # Round  2
                 Game.objects.create(team_one=poolDTeams[0], team_two=poolDTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolD),
                 Game.objects.create(team_one=poolDTeams[1], team_two=poolDTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolD),
                 # Round  3
                 Game.objects.create(team_one=poolDTeams[0], team_two=poolDTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolD),
                 Game.objects.create(team_one=poolDTeams[1], team_two=poolDTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolD)
             ])
         self.tournament.pool_play_initialized = True
         self.tournament.pool_play_games.set(games)

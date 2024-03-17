@@ -87,10 +87,27 @@ def pool_play_overview(request, tournament_id):
         tournamentSimulation.setup_manual_pool_play_games_for_simulation()
     if tournament.number_of_teams == 4:
         total_number_of_games = 6
+        return render(request, 'pool_play/four_team_pool_play_overview.html',
+                      {'pool_play_games': tournament.pool_play_games, 'tournament': tournament,
+                       'total_number_of_games': total_number_of_games})
     elif tournament.number_of_teams == 8:
         total_number_of_games = 12
+        pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
+        print('pool a: ', pool_a_games)
+        pool_b_games = tournament.pool_play_games.filter(pool__name='Pool B')
+        return render(request, 'pool_play/eight_team_pool_play_overview.html',
+                      {'pool_a_games': pool_a_games, 'pool_b_games': pool_b_games, 'tournament': tournament,
+                       'total_number_of_games': total_number_of_games})
     elif tournament.number_of_teams == 16:
         total_number_of_games = 24
+        pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
+        pool_b_games = tournament.pool_play_games.filter(pool__name='Pool B')
+        pool_c_games = tournament.pool_play_games.filter(pool__name='Pool C')
+        pool_d_games = tournament.pool_play_games.filter(pool__name='Pool D')
+        return render(request, 'pool_play/sixteen_team_pool_play_overview.html',
+                      {'pool_a_games': pool_a_games, 'pool_b_games': pool_b_games, 'pool_c_games': pool_c_games,
+                       'pool_d_games': pool_d_games, 'tournament': tournament,
+                       'total_number_of_games': total_number_of_games})
     else:
         total_number_of_games = 0
     return render(request, 'pool_play/pool_play_overview.html',

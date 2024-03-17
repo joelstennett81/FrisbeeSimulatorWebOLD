@@ -219,6 +219,8 @@ class Game(models.Model):
     date = models.DateTimeField(default=timezone.now)
     team_one = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_one_games')
     team_two = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_two_games')
+    pool = models.ForeignKey(TournamentPool, on_delete=models.CASCADE, null=True)
+    bracket = models.ForeignKey(TournamentBracket, on_delete=models.CASCADE, null=True)
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='games')
     game_type = models.CharField(max_length=50, choices=GAME_TYPE_CHOICES)
     winner = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='winner_games', null=True)
