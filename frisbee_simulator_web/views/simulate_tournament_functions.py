@@ -63,6 +63,9 @@ class TournamentSimulation:
             pool = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=len(tournament_teams),
                                                  name='Pool A')
             pool.teams.set(tournament_teams)
+            for team in tournament_teams:
+                team.pool = pool
+                team.save()
             pool.save()
             # Round  1
             games.extend([
@@ -93,8 +96,14 @@ class TournamentSimulation:
             poolB = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=len(poolBTeams),
                                                   name='Pool B')
             poolA.teams.set(poolATeams)
+            for team in poolATeams:
+                team.pool = poolA
+                team.save()
             poolA.save()
             poolB.teams.set(poolBTeams)
+            for team in poolBTeams:
+                team.pool = poolB
+                team.save()
             poolB.save()
             # Pool A games
             games.extend([
@@ -153,6 +162,18 @@ class TournamentSimulation:
             poolC.save()
             poolD.teams.set(poolDTeams)
             poolD.save()
+            for team in poolATeams:
+                team.pool = poolA
+                team.save()
+            for team in poolBTeams:
+                team.pool = poolB
+                team.save()
+            for team in poolCTeams:
+                team.pool = poolC
+                team.save()
+            for team in poolDTeams:
+                team.pool = poolD
+                team.save()
             # Pool A games
             games.extend([
                 # Round  1
@@ -277,6 +298,8 @@ class TournamentSimulation:
         poolB = TournamentPool.objects.get(tournament=self.tournament, name='Pool B')
         poolASortedTeams = poolA.teams.order_by('-pool_play_wins', 'pool_play_point_differential')
         poolBSortedTeams = poolB.teams.order_by('-pool_play_wins', 'pool_play_point_differential')
+        print('poola teams: ', poolASortedTeams)
+        print('poolb teams: ', poolBSortedTeams)
         # poolA1 v pool B4, pool B2vA3, pool B1vA4, pool A2vB3
         teamsInBracket = [poolASortedTeams[0], poolBSortedTeams[0], poolASortedTeams[1], poolBSortedTeams[1],
                           poolASortedTeams[2], poolBSortedTeams[2], poolASortedTeams[3], poolBSortedTeams[3]]
@@ -288,6 +311,7 @@ class TournamentSimulation:
             team.bracket_play_seed = i
             team.save()
         teams_in_bracket = tournament_bracket.teams.all()
+        print('teams in bracket')
         created_by = request.user.profile
         game_one = Game(team_one=teams_in_bracket[0], team_two=teams_in_bracket[7],
                         tournament=tournament_bracket.tournament,
@@ -306,17 +330,20 @@ class TournamentSimulation:
         game_three.save()
         game_four.save()
         games = [game_one, game_two, game_three, game_four]
+        print('self.games: ', self.games)
         self.tournament.quarterfinal_round_initialized = True
         self.tournament.quarterfinal_round_games.set(games)
         self.tournament.save()
 
     def setup_semifinal_round_for_eight_team_bracket(self, request):
         quarterFinalGames = self.tournament.quarterfinal_round_games.all()
+        print('qfgames: ', quarterFinalGames)
         quarterFinalGameOne = quarterFinalGames[0]
         quarterFinalGameTwo = quarterFinalGames[1]
         quarterFinalGameThree = quarterFinalGames[2]
         quarterFinalGameFour = quarterFinalGames[3]
         created_by = request.user.profile
+        print('quarterfinalone winner: ', quarterFinalGameOne.winner)
         semiFinalGameOne = Game(team_one=quarterFinalGameOne.winner, team_two=quarterFinalGameTwo.winner,
                                 tournament=self.tournament,
                                 game_type='Semifinal', created_by=created_by)
@@ -333,6 +360,7 @@ class TournamentSimulation:
         semiFinalGameTwo.save()
         loserSemiFinalGameOne.save()
         loserSemiFinalGameTwo.save()
+        print('semi one: ', semiFinalGameOne)
         games = [semiFinalGameOne, semiFinalGameTwo, loserSemiFinalGameOne, loserSemiFinalGameTwo]
         self.tournament.semifinal_round_initialized = True
         self.tournament.semifinal_round_games.set(games)
