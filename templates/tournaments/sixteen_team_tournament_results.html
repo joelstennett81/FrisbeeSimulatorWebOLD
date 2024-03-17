@@ -6,32 +6,110 @@
         <button onclick="toggleVisibility('winnersBracketCard', 'losersBracketCard')">Show Winners Bracket</button>
         <button onclick="toggleVisibility('losersBracketCard', 'winnersBracketCard')">Show Losers Bracket</button>
 
+        <h1 class="mb-4">Pool Play Results</h1>
         <!-- Team Statistics Card -->
         <div class="card mb-4">
-            <div class="card-header">Team Statistics</div>
+            <div class="card-header">Pool A Team Statistics</div>
             <ul class="list-group list-group-flush">
-                {% for team_stat in teams_stats %}
+                {% for team in pool_a_teams %}
                     <li class="list-group-item">
-                        {{ team_stat.team.team }}: {{ team_stat.pool_play_wins }}
-                        wins, {{ team_stat.pool_play_losses }}
-                        losses, Point Differential: {{ team_stat.pool_play_point_differential }}
+                        {{ team.team }}: {{ team.pool_play_wins }}
+                        wins, {{ team.pool_play_losses }}
+                        losses, Point Differential: {{ team.pool_play_point_differential }}
                     </li>
                 {% endfor %}
             </ul>
         </div>
-        <!-- Pool Play Games Card -->
-        <div class="card mb-4" id="poolPlayCard">
-            <div class="card-header">Pool Games</div>
+        <!-- Pool A Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool A Games</div>
             <ul class="list-group list-group-flush">
-                {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Pool Play' %}
-                        <li class="list-group-item">
-                            <a href="{% url 'detail_game' game.id %}">
-                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                                won {{ game.winner_score }}- {{ game.loser_score }}
-                            </a>
-                        </li>
-                    {% endif %}
+                {% for game in pool_a_games %}
+                    <li class="list-group-item">
+                        {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                        won {{ game.winner_score }}- {{ game.loser_score }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Team Statistics Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool B Team Statistics</div>
+            <ul class="list-group list-group-flush">
+                {% for team in pool_b_teams %}
+                    <li class="list-group-item">
+                        {{ team.team }}: {{ team.pool_play_wins }}
+                        wins, {{ team.pool_play_losses }}
+                        losses, Point Differential: {{ team.pool_play_point_differential }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Pool B Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool B Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in pool_b_games %}
+                    <li class="list-group-item">
+                        {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                        won {{ game.winner_score }}- {{ game.loser_score }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Team Statistics Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool C Team Statistics</div>
+            <ul class="list-group list-group-flush">
+                {% for team in pool_c_teams %}
+                    <li class="list-group-item">
+                        {{ team.team }}: {{ team.pool_play_wins }}
+                        wins, {{ team.pool_play_losses }}
+                        losses, Point Differential: {{ team.pool_play_point_differential }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Pool C Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool C Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in pool_c_games %}
+                    <li class="list-group-item">
+                        {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                        won {{ game.winner_score }}- {{ game.loser_score }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Team Statistics Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool D Team Statistics</div>
+            <ul class="list-group list-group-flush">
+                {% for team in pool_d_teams %}
+                    <li class="list-group-item">
+                        {{ team.team }}: {{ team.pool_play_wins }}
+                        wins, {{ team.pool_play_losses }}
+                        losses, Point Differential: {{ team.pool_play_point_differential }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Pool D Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool D Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in pool_d_games %}
+                    <li class="list-group-item">
+                        {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                        won {{ game.winner_score }}- {{ game.loser_score }}
+                    </li>
                 {% empty %}
                     <li class="list-group-item">No games yet</li>
                 {% endfor %}
@@ -220,18 +298,6 @@
     </div>
     <div class="container py-4" id="losersBracketCard">
         <h1 class="mb-4">Losers Bracket Tournament Results</h1>
-        <!-- Team Statistics Card -->
-        <div class="card mb-4">
-            <div class="card-header">Team Statistics</div>
-            <ul class="list-group list-group-flush">
-                {% for team_stat in teams_stats %}
-                    <li class="list-group-item">
-                        {{ team_stat.team.team }}: {{ team_stat.pool_play_wins }} wins, {{ team_stat.pool_play_losses }}
-                        losses, Point Differential: {{ team_stat.pool_play_point_differential }}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
         <!-- 9th Place Quarterfinal Games Card -->
         <div class="card mb-4" id="losersBracketCard">
             <div class="card-header">9th Place Quarterfinal Results</div>
@@ -239,8 +305,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '9th-Place Quarterfinal' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -255,8 +323,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '13th-Place Semifinal' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -271,8 +341,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '13th-Place Final' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -287,8 +359,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '15th-Place Final' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -303,8 +377,10 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '9th-Place Semifinal' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -312,15 +388,16 @@
                 {% endfor %}
             </ul>
         </div>
-        <!-- Third Place Game Card -->
         <div class="card mb-4" id="losersBracketCard">
             <div class="card-header">11th Place Final Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '11th-Place Final' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}
@@ -328,15 +405,16 @@
                 {% endfor %}
             </ul>
         </div>
-        <!-- Championship Game Card -->
         <div class="card mb-4" id="losersBracketCard">
             <div class="card-header">9th Place Final Results</div>
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '9th-Place Final' %}
                         <li class="list-group-item">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
+                            <a href="{% url 'detail_game' game.id %}">
+                                {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
+                                won {{ game.winner_score }}- {{ game.loser_score }}
+                            </a>
                         </li>
                     {% endif %}
                 {% empty %}

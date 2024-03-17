@@ -403,17 +403,71 @@ def pool_play_results(request, tournament_id):
 
 @login_required(login_url='/login/')
 def tournament_results(request, tournament_id):
-    tournament = Tournament.objects.get(id=tournament_id)
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
     number_of_teams = tournament.number_of_teams
+    teams = TournamentTeam.objects.filter(tournament=tournament)
+    teams_stats = []
+    for team in teams:
+        team_stats = {
+            'team': team,
+            'pool_play_wins': team.pool_play_wins,
+            'pool_play_losses': team.pool_play_losses,
+            'pool_play_point_differential': team.pool_play_point_differential
+        }
+        teams_stats.append(team_stats)
+    top_assists = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('assists').desc())[:3]
+    top_goals = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('goals').desc())[:3]
+    top_throwaways = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('throwaways').desc())[:3]
+    top_throwing_yards = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(
+        F('throwing_yards').desc())[:3]
+    top_receiving_yards = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(
+        F('receiving_yards').desc())[:3]
     if tournament.pool_play_completed and not tournament.semifinal_round_completed and not tournament.final_round_completed:
         return redirect(reverse('pool_play_results', kwargs={'tournament_id': tournament_id}))
     elif tournament.pool_play_completed and tournament.semifinal_round_completed and tournament.final_round_completed:
         if number_of_teams == 4:
-            return redirect(reverse('four_team_tournament_results', kwargs={'tournament_id': tournament_id}))
+            context = {'tournament_id': tournament_id, 'tournament': tournament, 'teams_stats': teams_stats,
+                      'top_assists': top_assists,
+                      'top_goals': top_goals,
+                      'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
+                      'top_receiving_yards': top_receiving_yards}
+            return render(request, 'tournaments/four_team_tournament_results.html', context)
         elif number_of_teams == 8:
-            return redirect(reverse('eight_team_tournament_results', kwargs={'tournament_id': tournament_id}))
+            pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
+            pool_b_games = tournament.pool_play_games.filter(pool__name='Pool B')
+            pool_a = TournamentPool.objects.get(tournament=tournament, name='Pool A')
+            pool_b = TournamentPool.objects.get(tournament=tournament, name='Pool B')
+            pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a)
+            pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b)
+            context = {'tournament_id': tournament_id, 'tournament': tournament, 'teams_stats': teams_stats,
+                      'top_assists': top_assists,
+                      'top_goals': top_goals,
+                      'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
+                      'top_receiving_yards': top_receiving_yards, 'pool_a_games': pool_a_games,
+                      'pool_b_games': pool_b_games, 'pool_a_teams': pool_a_teams, 'pool_b_teams': pool_b_teams}
+            return render(request, 'tournaments/eight_team_tournament_results.html', context)
         elif number_of_teams == 16:
-            return redirect(reverse('sixteen_team_tournament_results', kwargs={'tournament_id': tournament_id}))
+            pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
+            pool_b_games = tournament.pool_play_games.filter(pool__name='Pool B')
+            pool_c_games = tournament.pool_play_games.filter(pool__name='Pool C')
+            pool_d_games = tournament.pool_play_games.filter(pool__name='Pool D')
+            pool_a = TournamentPool.objects.get(tournament=tournament, name='Pool A')
+            pool_b = TournamentPool.objects.get(tournament=tournament, name='Pool B')
+            pool_c = TournamentPool.objects.get(tournament=tournament, name='Pool C')
+            pool_d = TournamentPool.objects.get(tournament=tournament, name='Pool D')
+            pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a)
+            pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b)
+            pool_c_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_c)
+            pool_d_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_d)
+            context = {'tournament_id': tournament_id, 'tournament': tournament, 'teams_stats': teams_stats,
+                      'top_assists': top_assists,
+                      'top_goals': top_goals,
+                      'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
+                      'top_receiving_yards': top_receiving_yards, 'pool_a_games': pool_a_games,
+                      'pool_b_games': pool_b_games, 'pool_c_games': pool_c_games,
+                      'pool_d_games': pool_d_games, 'pool_a_teams': pool_a_teams, 'pool_b_teams': pool_b_teams,
+                      'pool_c_teams': pool_c_teams, 'pool_d_teams': pool_d_teams}
+            return render(request, 'tournaments/sixteen_team_tournament_results.html', context)
         else:
             return render(request, 'tournaments/tournament_error.html')
     else:
