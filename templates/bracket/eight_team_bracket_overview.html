@@ -2,6 +2,7 @@
 
 {% block content %}
     <div class="container py-4">
+        <h1 class="mb-4">Bracket Overview</h1>
         <div class="card mb-4">
             <div class="card-header">Instructions</div>
             <div class="card-body">
@@ -165,6 +166,7 @@
                                 }
                             } else {
                                 // Update game scores for completed games
+                                updateQuarterfinalGamesData();
                                 updateSemifinalGamesData();
                                 updateFinalGamesData();
                             }

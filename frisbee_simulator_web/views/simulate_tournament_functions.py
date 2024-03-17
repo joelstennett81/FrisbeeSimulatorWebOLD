@@ -63,6 +63,9 @@ class TournamentSimulation:
             pool = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=len(tournament_teams),
                                                  name='Pool A')
             pool.teams.set(tournament_teams)
+            for team in tournament_teams:
+                team.pool = pool
+                team.save()
             pool.save()
             # Round  1
             games.extend([
@@ -93,44 +96,50 @@ class TournamentSimulation:
             poolB = TournamentPool.objects.create(tournament=self.tournament, number_of_teams=len(poolBTeams),
                                                   name='Pool B')
             poolA.teams.set(poolATeams)
+            for team in poolATeams:
+                team.pool = poolA
+                team.save()
             poolA.save()
             poolB.teams.set(poolBTeams)
+            for team in poolBTeams:
+                team.pool = poolB
+                team.save()
             poolB.save()
             # Pool A games
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[2], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 # Round  2
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[1], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 # Round  3
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[1], team_two=poolATeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolA)
             ])
             # Pool B games
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[2], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 # Round  2
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[1], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 # Round  3
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[1], team_two=poolBTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolB)
             ])
         elif num_teams == 16:
             poolATeams = tournament_teams[:4]
@@ -150,78 +159,90 @@ class TournamentSimulation:
             poolB.teams.set(poolBTeams)
             poolB.save()
             poolC.teams.set(poolCTeams)
-            poolD.save()
+            poolC.save()
             poolD.teams.set(poolDTeams)
             poolD.save()
+            for team in poolATeams:
+                team.pool = poolA
+                team.save()
+            for team in poolBTeams:
+                team.pool = poolB
+                team.save()
+            for team in poolCTeams:
+                team.pool = poolC
+                team.save()
+            for team in poolDTeams:
+                team.pool = poolD
+                team.save()
             # Pool A games
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[2], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 # Round  2
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[1], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 # Round  3
                 Game.objects.create(team_one=poolATeams[0], team_two=poolATeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolA),
                 Game.objects.create(team_one=poolATeams[1], team_two=poolATeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolA)
             ])
             # Pool B games
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[2], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 # Round  2
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[1], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 # Round  3
                 Game.objects.create(team_one=poolBTeams[0], team_two=poolBTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolB),
                 Game.objects.create(team_one=poolBTeams[1], team_two=poolBTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolB)
             ])
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolCTeams[0], team_two=poolCTeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolC),
                 Game.objects.create(team_one=poolCTeams[2], team_two=poolCTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolC),
                 # Round  2
                 Game.objects.create(team_one=poolCTeams[0], team_two=poolCTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolC),
                 Game.objects.create(team_one=poolCTeams[1], team_two=poolCTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolC),
                 # Round  3
                 Game.objects.create(team_one=poolCTeams[0], team_two=poolCTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolC),
                 Game.objects.create(team_one=poolCTeams[1], team_two=poolCTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolC)
             ])
             games.extend([
                 # Round  1
                 Game.objects.create(team_one=poolDTeams[0], team_two=poolDTeams[1], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolD),
                 Game.objects.create(team_one=poolDTeams[2], team_two=poolDTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolD),
                 # Round  2
                 Game.objects.create(team_one=poolDTeams[0], team_two=poolDTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolD),
                 Game.objects.create(team_one=poolDTeams[1], team_two=poolDTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolD),
                 # Round  3
                 Game.objects.create(team_one=poolDTeams[0], team_two=poolDTeams[3], tournament=self.tournament,
-                                    game_type='Pool Play'),
+                                    game_type='Pool Play', pool=poolD),
                 Game.objects.create(team_one=poolDTeams[1], team_two=poolDTeams[2], tournament=self.tournament,
-                                    game_type='Pool Play')
+                                    game_type='Pool Play', pool=poolD)
             ])
         self.tournament.pool_play_initialized = True
         self.tournament.pool_play_games.set(games)
@@ -277,6 +298,8 @@ class TournamentSimulation:
         poolB = TournamentPool.objects.get(tournament=self.tournament, name='Pool B')
         poolASortedTeams = poolA.teams.order_by('-pool_play_wins', 'pool_play_point_differential')
         poolBSortedTeams = poolB.teams.order_by('-pool_play_wins', 'pool_play_point_differential')
+        print('poola teams: ', poolASortedTeams)
+        print('poolb teams: ', poolBSortedTeams)
         # poolA1 v pool B4, pool B2vA3, pool B1vA4, pool A2vB3
         teamsInBracket = [poolASortedTeams[0], poolBSortedTeams[0], poolASortedTeams[1], poolBSortedTeams[1],
                           poolASortedTeams[2], poolBSortedTeams[2], poolASortedTeams[3], poolBSortedTeams[3]]
@@ -288,6 +311,7 @@ class TournamentSimulation:
             team.bracket_play_seed = i
             team.save()
         teams_in_bracket = tournament_bracket.teams.all()
+        print('teams in bracket')
         created_by = request.user.profile
         game_one = Game(team_one=teams_in_bracket[0], team_two=teams_in_bracket[7],
                         tournament=tournament_bracket.tournament,
@@ -306,17 +330,20 @@ class TournamentSimulation:
         game_three.save()
         game_four.save()
         games = [game_one, game_two, game_three, game_four]
+        print('self.games: ', self.games)
         self.tournament.quarterfinal_round_initialized = True
         self.tournament.quarterfinal_round_games.set(games)
         self.tournament.save()
 
     def setup_semifinal_round_for_eight_team_bracket(self, request):
         quarterFinalGames = self.tournament.quarterfinal_round_games.all()
+        print('qfgames: ', quarterFinalGames)
         quarterFinalGameOne = quarterFinalGames[0]
         quarterFinalGameTwo = quarterFinalGames[1]
         quarterFinalGameThree = quarterFinalGames[2]
         quarterFinalGameFour = quarterFinalGames[3]
         created_by = request.user.profile
+        print('quarterfinalone winner: ', quarterFinalGameOne.winner)
         semiFinalGameOne = Game(team_one=quarterFinalGameOne.winner, team_two=quarterFinalGameTwo.winner,
                                 tournament=self.tournament,
                                 game_type='Semifinal', created_by=created_by)
@@ -333,6 +360,7 @@ class TournamentSimulation:
         semiFinalGameTwo.save()
         loserSemiFinalGameOne.save()
         loserSemiFinalGameTwo.save()
+        print('semi one: ', semiFinalGameOne)
         games = [semiFinalGameOne, semiFinalGameTwo, loserSemiFinalGameOne, loserSemiFinalGameTwo]
         self.tournament.semifinal_round_initialized = True
         self.tournament.semifinal_round_games.set(games)
