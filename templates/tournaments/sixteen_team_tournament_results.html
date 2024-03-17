@@ -152,7 +152,7 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Championship' %}
                         <li class="list-group-item">
-                            <a href="{% url 'game_detail' game.id %}">
+                            <a href="{% url 'detail_game' game.id %}">
                                 {{ game.team_one.team }} vs {{ game.team_two.team }}: {{ game.winner.team }}
                                 won {{ game.winner_score }}- {{ game.loser_score }}
                             </a>

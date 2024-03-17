@@ -247,6 +247,11 @@ def simulate_quarterfinal_round(request, tournament_id):
         if not game.is_completed:
             simulate_game(request, game.id, tournament.id)
     tournament.quarterfinal_round_completed = True
+    if tournament.number_of_teams == 16:
+        for game in tournament.losers_quarterfinal_round_games.all():
+            if not game.is_completed:
+                simulate_game(request, game.id, tournament.id)
+        tournament.losers_quarterfinal_round_completed = True
     print('quarterfinals done')
     tournament.save()
     return redirect(reverse('bracket_overview', kwargs={'tournament_id': tournament_id}))
@@ -258,6 +263,11 @@ def simulate_semifinal_round(request, tournament_id):
         if not game.is_completed:
             simulate_game(request, game.id, tournament.id)
     tournament.semifinal_round_completed = True
+    if tournament.number_of_teams == 16:
+        for game in tournament.losers_semifinal_round_games.all():
+            if not game.is_completed:
+                simulate_game(request, game.id, tournament.id)
+        tournament.losers_semifinal_round_completed = True
     tournament.save()
     return redirect(reverse('bracket_overview', kwargs={'tournament_id': tournament_id}))
 
@@ -267,6 +277,11 @@ def simulate_final_round(request, tournament_id):
     for game in tournament.final_round_games.all():
         if not game.is_completed:
             simulate_game(request, game.id, tournament.id)
+    if tournament.number_of_teams == 16:
+        for game in tournament.losers_final_round_games.all():
+            if not game.is_completed:
+                simulate_game(request, game.id, tournament.id)
+        tournament.losers_final_round_completed = True
     championship_game = Game.objects.get(tournament=tournament, game_type='Championship')
     tournament.champion = championship_game.winner.team
     tournament.final_round_completed = True
