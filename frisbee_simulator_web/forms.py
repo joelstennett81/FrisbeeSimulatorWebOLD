@@ -14,13 +14,16 @@ from .views.misc import calculate_overall_team_rating, calculate_overall_player_
 class RegisterForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2']
+        fields = ['username', 'password1']
 
 
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['email', 'date_of_birth']
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 
 class LoginForm(forms.Form):
