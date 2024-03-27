@@ -96,7 +96,7 @@ class PlayerStatsInGameSimulation:
 
 
 class GameSimulation:
-    def __init__(self, tournament, game):
+    def __init__(self, tournament=None, game=None):
         super().__init__()
         self.tournament = tournament
         self.game = game

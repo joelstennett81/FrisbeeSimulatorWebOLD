@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from frisbee_simulator_web.forms import TeamForm
 from frisbee_simulator_web.models import Team
 from frisbee_simulator_web.views.misc import create_random_player, generate_random_city, generate_random_mascot, \
@@ -32,8 +32,8 @@ def create_random_team(request):
         mascot=generate_random_mascot()
     )
     team.save()
-    o_line_players = [create_random_player(request, "OLINE") for _ in range(7)]
-    d_line_players = [create_random_player(request, "DLINE") for _ in range(7)]
+    o_line_players = [create_random_player(request, "OFFENSE") for _ in range(7)]
+    d_line_players = [create_random_player(request, "DEFENSE") for _ in range(7)]
     bench_players = [create_random_player(request, "BENCH") for _ in range(7)]
     players = o_line_players + d_line_players + bench_players
     for player in players:
@@ -51,12 +51,13 @@ def create_random_team(request):
 
 @login_required(login_url='/login/')
 def list_teams(request, is_public=None):
-    if is_public is None:
-        teams = Team.objects.filter(created_by=request.user.profile)
-    elif is_public:
-        teams = Team.objects.filter(is_public=True).order_by('created_by')
-    else:
-        teams = Team.objects.filter(created_by=request.user.profile)
+    # if is_public is None:
+    #     teams = Team.objects.filter(created_by=request.user.profile)
+    # elif is_public:
+    #     teams = Team.objects.filter(is_public=True).order_by('created_by')
+    # else:
+    #     teams = Team.objects.filter(created_by=request.user.profile)
+    teams = Team.objects.filter(created_by=request.user.profile)
     return render(request, 'teams/list_teams.html', {'teams': teams})
 
 
@@ -64,3 +65,23 @@ def list_teams(request, is_public=None):
 def detail_team(request, pk):
     team = get_object_or_404(Team, pk=pk)
     return render(request, 'teams/detail_team.html', {'team': team})
+
+
+class TeamUpdateView(UpdateView):
+    model = Team
+    form_class = TeamForm
+    template_name = 'teams/edit_team.html'  # Assuming you have a template named 'edit_team.html'
+    success_url = '/teams/'  # Redirect to the list of teams after successful update
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def form_valid(self, form):
+        # Custom logic to handle form submission
+        team = form.save(commit=False)
+        team.created_by = self.request.user.profile
+        team.save()
+        form.save_m2m()  # Save many-to-many fields
+        return super().form_valid(form)

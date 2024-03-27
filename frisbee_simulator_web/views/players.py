@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import CreateView
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, UpdateView
 
 from frisbee_simulator_web.forms import PlayerForm
 from frisbee_simulator_web.models import Player
@@ -34,3 +35,15 @@ def list_players(request, is_public=None):
 def detail_player(request, pk):
     player = get_object_or_404(Player, pk=pk)
     return render(request, 'players/detail_player.html', {'player': player})
+
+
+class PlayerUpdateView(UpdateView):
+    model = Player
+    form_class = PlayerForm
+    template_name = 'players/edit_player.html'
+    success_url = reverse_lazy('list_players')  # Redirect to the list of players after update
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'request': self.request})
+        return kwargs
