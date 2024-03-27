@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">Edit Player</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                {{ form.first_name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                {{ form.last_name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.jersey_number.id_for_label }}">Jersey Number</label>
+                {{ form.jersey_number }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.height_in_inches.id_for_label }}">Height (in inches)</label>
+                {{ form.height_in_inches }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.weight_in_lbs.id_for_label }}">Weight (in lbs)</label>
+                {{ form.weight_in_lbs }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.overall_rating.id_for_label }}">Overall Rating</label>
+                {{ form.overall_rating }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.overall_handle_offense_rating.id_for_label }}">Overall Handle Offense Rating</label>
+                {{ form.overall_handle_offense_rating }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.overall_handle_defense_rating.id_for_label }}">Overall Handle Defense Rating</label>
+                {{ form.overall_handle_defense_rating }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.overall_cutter_offense_rating.id_for_label }}">Overall Cutter Offense Rating</label>
+                {{ form.overall_cutter_offense_rating }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.overall_cutter_defense_rating.id_for_label }}">Overall Cutter Defense Rating</label>
+                {{ form.overall_cutter_defense_rating }}
+            </div>
+            <button type="submit" class="btn btn-primary">Update Player</button>
+        </form>
+    </div>
+{% endblock %}

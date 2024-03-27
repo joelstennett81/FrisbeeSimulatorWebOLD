@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
-from frisbee_simulator_web.views import players, teams, tournaments, home, stats, users
+from frisbee_simulator_web.views import players, teams, tournaments, home, stats, users, games
+from frisbee_simulator_web.views.players import PlayerUpdateView
 from frisbee_simulator_web.views.tournaments import TournamentDeleteView
 
 urlpatterns = [
@@ -12,6 +13,7 @@ urlpatterns = [
     path('profile/edit/', users.ProfileEditView.as_view(), name='edit_profile'),
     path('logout/', users.user_logout, name='logout'),
     path('players/new/', players.PlayerCreateView.as_view(), name='create_player'),
+    path('player/<int:pk>/edit/', PlayerUpdateView.as_view(), name='edit_player'),
     path('players/', players.list_players, name='list_players'),
     path('players/public/', players.list_players, kwargs={'is_public': True}, name='list_public_players'),
     path('players/detail/<int:pk>/', players.detail_player, name='detail_player'),
@@ -64,4 +66,8 @@ urlpatterns = [
          name='list_player_tournament_stats'),
     path('stats/detail_player_tournament_stats/<int:tournament_id>/<int:player_id>/',
          stats.detail_player_tournament_stats, name='detail_player_tournament_stats'),
+    path('games/simulate_individual_game/<int:game_id>/', games.simulate_individual_game,
+         name='simulate_individual_game'),
+    path('games/create_individual_game/', games.create_individual_game, name='create_individual_game'),
+    path('games/games_list/', games.games_list, name='games_list')
 ]

@@ -196,6 +196,9 @@ class TournamentTeam(models.Model):
     bracket_play_wins = models.PositiveIntegerField(default=0)
     bracket_play_losses = models.PositiveIntegerField(default=0)
 
+    def __str__(self):
+        return self.team.location + ' ' + self.team.mascot
+
 
 class Game(models.Model):
     GAME_TYPE_CHOICES = [
@@ -215,14 +218,15 @@ class Game(models.Model):
         ('13th-Place Semifinal', '13th-Place Semifinal'),
         ('13th-Place Final', '13th-Place Final'),
         ('15th-Place Final', '15th-Place Final'),
+        ('Exhibition', 'Exhibition')
     ]
     date = models.DateTimeField(default=timezone.now)
     team_one = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_one_games')
     team_two = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_two_games')
     pool = models.ForeignKey(TournamentPool, on_delete=models.CASCADE, null=True)
     bracket = models.ForeignKey(TournamentBracket, on_delete=models.CASCADE, null=True)
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='games')
-    game_type = models.CharField(max_length=50, choices=GAME_TYPE_CHOICES)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='games', null=True)
+    game_type = models.CharField(max_length=50, choices=GAME_TYPE_CHOICES, default='Exhibition')
     winner = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='winner_games', null=True)
     loser = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='loser_games', null=True)
     winner_score = models.PositiveIntegerField(default=0)
@@ -268,7 +272,8 @@ class PlayerPointStat(models.Model):
 
 
 class PlayerGameStat(models.Model):
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='game_stats_for_tournament')
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='game_stats_for_tournament',
+                                   null=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='player_stats')
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='game_stats')
     goals = models.PositiveIntegerField(default=0)

@@ -252,7 +252,6 @@ def simulate_quarterfinal_round(request, tournament_id):
             if not game.is_completed:
                 simulate_game(request, game.id, tournament.id)
         tournament.losers_quarterfinal_round_completed = True
-    print('quarterfinals done')
     tournament.save()
     return redirect(reverse('bracket_overview', kwargs={'tournament_id': tournament_id}))
 
