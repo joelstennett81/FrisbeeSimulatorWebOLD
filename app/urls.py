@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from frisbee_simulator_web.views import players, teams, tournaments, home, stats, users, games
+from frisbee_simulator_web.views.about import AboutPageView
 from frisbee_simulator_web.views.players import PlayerUpdateView
 from frisbee_simulator_web.views.tournaments import TournamentDeleteView
 
@@ -9,6 +10,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', users.user_login, name='login'),
     path('register/', users.user_register, name='register'),
+    path('about/', AboutPageView.as_view(), name='about'),
     path('profile/view/', users.ProfileDetailView.as_view(), name='view_profile'),
     path('profile/edit/', users.ProfileEditView.as_view(), name='edit_profile'),
     path('logout/', users.user_logout, name='logout'),

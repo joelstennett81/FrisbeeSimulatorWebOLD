@@ -28,8 +28,9 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'list_players' %}">View Players</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'list_teams' %}">View Teams</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'games_list' %}">View Games</a></li>
-{#                    <li class="nav-item"><a class="nav-link" href="{% url 'list_tournaments' %}">View Tournaments</a>#}
-{#                    </li>#}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+                    {#                    <li class="nav-item"><a class="nav-link" href="{% url 'list_tournaments' %}">View Tournaments</a>#}
+                    {#                    </li>#}
                 {% endif %}
             </ul>
             <ul class="navbar-nav ml-auto">
@@ -50,7 +51,11 @@
     {% endblock %}
 </main>
 <footer class="footer bg-light text-center">
-    <p>© 2021 My Tournament App</p>
+    <div class="container">
+        <p>Frisbee Simulator</p>
+        <p>Contact us at: owner@beanstechnologies.com</p>
+    </div>
 </footer>
+
 </body>
 </html>
