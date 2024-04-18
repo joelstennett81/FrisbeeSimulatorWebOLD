@@ -2,10 +2,24 @@
 
 {% block content %}
     <div class="container py-4">
-        <h1 class="mb-4">My Profile</h1>
-        <p>Username: {{ profile.user.username }}</p>
-        <p>Email: {{ profile.email }}</p>
-        <p>Date of Birth: {{ profile.date_of_birth }}</p>
-        <button onclick="location.href='{% url 'edit_profile' %}'">Edit Profile</button>
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="mb-0">My Profile</h1>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Username:</strong> {{ profile.user.username }}</p>
+                        <p><strong>Email:</strong> {{ profile.email }}</p>
+                        <p><strong>Date of Birth:</strong> {{ profile.date_of_birth }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" onclick="location.href='{% url 'edit_profile' %}'">Edit
+                            Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

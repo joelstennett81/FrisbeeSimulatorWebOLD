@@ -22,13 +22,12 @@ class PlayerCreateView(CreateView):
 
 @login_required(login_url='/login/')
 def list_players(request, is_public=None):
-    # if is_public is None:
-    #     players = Player.objects.filter(created_by=request.user.profile)
-    # elif is_public:
-    #     players = Player.objects.filter(is_public=True).order_by('created_by')
-    # else:
-    #     players = Player.objects.filter(created_by=request.user.profile)
-    players = Player.objects.filter(created_by=request.user.profile)
+    if is_public is None:
+        players = Player.objects.filter(created_by=request.user.profile)
+    elif is_public:
+        players = Player.objects.filter(is_public=True).order_by('created_by')
+    else:
+        players = Player.objects.filter(created_by=request.user.profile)
     return render(request, 'players/list_players.html', {'players': players})
 
 

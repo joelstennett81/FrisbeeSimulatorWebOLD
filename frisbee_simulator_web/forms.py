@@ -9,6 +9,7 @@ from .models import Player, Team, Tournament, Profile, Game, TournamentTeam
 from .views.misc import calculate_overall_team_rating, calculate_overall_player_rating, calculate_handle_offense_rating, \
     calculate_handle_defense_rating, calculate_cutter_offense_rating, calculate_cutter_defense_rating, \
     create_random_player
+from django.db.models import Q
 
 
 class RegisterForm(UserCreationForm):
@@ -32,6 +33,10 @@ class LoginForm(forms.Form):
 
 
 class PlayerForm(forms.ModelForm):
+    is_public = forms.BooleanField(
+        required=False,
+        help_text="Do you want to allow other users to see and use this?"
+    )
     class Meta:
         model = Player
         exclude = ['teams', 'seasons', 'overall_rating', 'overall_handle_offense_rating',
@@ -56,9 +61,28 @@ class PlayerForm(forms.ModelForm):
 
 
 class TeamForm(forms.ModelForm):
-    o_line_players = forms.ModelMultipleChoiceField(queryset=Player.objects.none(), required=False)
-    d_line_players = forms.ModelMultipleChoiceField(queryset=Player.objects.none(), required=False)
-    bench_players = forms.ModelMultipleChoiceField(queryset=Player.objects.none(), required=False)
+    o_line_players = forms.ModelMultipleChoiceField(
+        queryset=Player.objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={'size': 10, 'style': 'width: 300px; height: 200px;'}),
+        help_text="Select up to 7 O Line players. If you select less than 7, the others will be randomly generated."
+    )
+    d_line_players = forms.ModelMultipleChoiceField(
+        queryset=Player.objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={'size': 10, 'style': 'width: 300px; height: 200px;'}),
+        help_text="Select up to 7 D Line players. If you select less than 7, the others will be randomly generated."
+    )
+    bench_players = forms.ModelMultipleChoiceField(
+        queryset=Player.objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={'size': 10, 'style': 'width: 300px; height: 200px;'}),
+        help_text="Select up to 7 Bench players. If you select less than 7, the others will be randomly generated."
+    )
+    is_public = forms.BooleanField(
+        required=False,
+        help_text="Do you want to allow other users to see and use this?"
+    )
 
     class Meta:
         model = Team
@@ -67,13 +91,19 @@ class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
-        # Dynamically set querysets for each player type based on the user's profile
-        self.fields['o_line_players'].queryset = Player.objects.filter(primary_line='OFFENSE',
-                                                                       created_by=self.request.user.profile)
-        self.fields['d_line_players'].queryset = Player.objects.filter(primary_line='DEFENSE',
-                                                                       created_by=self.request.user.profile)
-        self.fields['bench_players'].queryset = Player.objects.filter(primary_line='BENCH',
-                                                                      created_by=self.request.user.profile)
+        user_profile = self.request.user.profile
+        self.fields['o_line_players'].queryset = Player.objects.filter(
+            Q(created_by=user_profile) | Q(is_public=True),
+            primary_line='OFFENSE'
+        )
+        self.fields['d_line_players'].queryset = Player.objects.filter(
+            Q(created_by=user_profile) | Q(is_public=True),
+            primary_line='DEFENSE'
+        )
+        self.fields['bench_players'].queryset = Player.objects.filter(
+            Q(created_by=user_profile) | Q(is_public=True),
+            primary_line='BENCH'
+        )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -106,7 +136,13 @@ class TeamForm(forms.ModelForm):
 class TournamentForm(forms.ModelForm):
     teams = forms.ModelMultipleChoiceField(
         queryset=Team.objects.all(),
-        widget=Select2MultipleWidget(attrs={'data-placeholder': 'Select teams...'})
+        required=False,
+        widget=forms.SelectMultiple(attrs={'size': 10, 'style': 'width: 300px; height: 200px;'}),
+        help_text="Select multiple teams. If you don't select as many as will be in tourney, they will be randomly generated."
+    )
+    is_public = forms.BooleanField(
+        required=False,
+        help_text="Do you want to allow other users to see and use this?"
     )
 
     class Meta:
@@ -117,8 +153,11 @@ class TournamentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
-        self.fields['teams'].queryset = Team.objects.filter(created_by=self.request.user.profile)
-
+        user_profile = self.request.user.profile
+        self.fields['teams'].queryset = Team.objects.filter(Q(created_by=user_profile) | Q(is_public=True))
+        self.fields['simulation_type'].initial = 'player_rating'
+        self.fields['simulation_type'].widget.attrs['readonly'] = True
+        self.fields['simulation_type'].widget = forms.HiddenInput()
     def save(self, commit=True):
         tournament = super().save(commit=False)
         tournament.created_by = self.request.user.profile
@@ -129,13 +168,21 @@ class TournamentForm(forms.ModelForm):
 
 
 class GameForm(forms.ModelForm):
+    is_public = forms.BooleanField(
+        required=False,
+        help_text="Do you want to allow other users to see and use this?"
+    )
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super(GameForm, self).__init__(*args, **kwargs)
         if user:
             user_profile = user.profile
-            self.fields['team_one'].queryset = TournamentTeam.objects.filter(created_by=user_profile)
-            self.fields['team_two'].queryset = TournamentTeam.objects.filter(created_by=user_profile)
+            self.fields['team_one'].queryset = TournamentTeam.objects.filter(
+                Q(created_by=user_profile) | Q(is_public=True)
+            )
+            self.fields['team_two'].queryset = TournamentTeam.objects.filter(
+                Q(created_by=user_profile) | Q(is_public=True)
+            )
 
     class Meta:
         model = Game

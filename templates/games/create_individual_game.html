@@ -1,18 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'base_form.html' %}
 
-{% block content %}
-    <div class="container py-4">
-        <h1 class="mb-4">Create New Game</h1>
-        <form method="post" class="needs-validation" novalidate>
-            {% csrf_token %}
-            <div class="form-group">
-                {{ form.as_p }}
-            </div>
-            <button type="submit" class="btn btn-primary">Create</button>
-        </form>
-        <br>
-    </div>
-{% endblock %}
+{% block title %}Create New Game{% endblock %}
+{% block submit_button %}Create{% endblock %}
+
 
 <script>
     $(document).ready(function () {

@@ -21,16 +21,16 @@
 <body>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{% url 'home' %}">Frisbee Simulator Web</a>
+        <a class="navbar-brand" href="{% url 'home' %}">Frisbee Simulator</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'list_players' %}">View Players</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'list_teams' %}">View Teams</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'games_list' %}">View Games</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
-                    {#                    <li class="nav-item"><a class="nav-link" href="{% url 'list_tournaments' %}">View Tournaments</a>#}
-                    {#                    </li>#}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'list_players' %}">Players</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'list_teams' %}">Teams</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'games_list' %}">Games</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'list_tournaments' %}">Tournaments</a>
+                    </li>
                 {% endif %}
             </ul>
             <ul class="navbar-nav ml-auto">
