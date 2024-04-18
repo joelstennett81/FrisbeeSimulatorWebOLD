@@ -4,6 +4,7 @@
     <div class="container py-4">
         <h1 class="mb-4">Teams</h1>
         <a href="{% url 'create_team' %}" class="btn btn-primary mb-4">Create Team</a>
+        <a href="{% url 'random_team' %}" class="btn btn-primary mb-4">Create Random Team</a>
         <button onclick="window.location.href='{% url 'list_public_teams' %}'">List Public Teams</button>
         <button onclick="window.location.href='{% url 'list_teams' %}'">List Personal Teams</button>
         <div class="table-responsive">

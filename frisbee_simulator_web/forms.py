@@ -37,6 +37,7 @@ class PlayerForm(forms.ModelForm):
         required=False,
         help_text="Do you want to allow other users to see and use this?"
     )
+
     class Meta:
         model = Player
         exclude = ['teams', 'seasons', 'overall_rating', 'overall_handle_offense_rating',
@@ -158,6 +159,7 @@ class TournamentForm(forms.ModelForm):
         self.fields['simulation_type'].initial = 'player_rating'
         self.fields['simulation_type'].widget.attrs['readonly'] = True
         self.fields['simulation_type'].widget = forms.HiddenInput()
+
     def save(self, commit=True):
         tournament = super().save(commit=False)
         tournament.created_by = self.request.user.profile
@@ -172,17 +174,11 @@ class GameForm(forms.ModelForm):
         required=False,
         help_text="Do you want to allow other users to see and use this?"
     )
+
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
-        super(GameForm, self).__init__(*args, **kwargs)
-        if user:
-            user_profile = user.profile
-            self.fields['team_one'].queryset = TournamentTeam.objects.filter(
-                Q(created_by=user_profile) | Q(is_public=True)
-            )
-            self.fields['team_two'].queryset = TournamentTeam.objects.filter(
-                Q(created_by=user_profile) | Q(is_public=True)
-            )
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        user_profile = self.request.user.profile
 
     class Meta:
         model = Game

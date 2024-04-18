@@ -4,21 +4,29 @@ from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
 
 from frisbee_simulator_web.forms import GameForm
-from frisbee_simulator_web.models import Game, TournamentTeam
+from frisbee_simulator_web.models import Game, TournamentTeam, Tournament
 from frisbee_simulator_web.views.simulate_game_functions import GameSimulation
 
 
 @login_required(login_url='/login/')
 def create_individual_game(request):
     if request.method == 'POST':
-        form = GameForm(request.POST)
+        form = GameForm(request.POST, request=request)
         if form.is_valid():
-            # Set the created_by field to the current user's profile
-            form.instance.created_by = request.user.profile
-            form.save()
-            return redirect('games_list') # Redirect to a page that lists all games
+            game = form.save(commit=False)
+            game.created_by = request.user.profile
+            game.save()
+
+            # Assuming you want to create TournamentTeam instances for the selected teams
+            # within a specific tournament. You might need to adjust this part based on your actual requirements.
+            tournament, created = Tournament.objects.get_or_create(name='Fake Tournament')
+            TournamentTeam.objects.create(team=game.t1, tournament=tournament, pool_play_seed=1,
+                                          bracket_play_seed=1)
+            TournamentTeam.objects.create(team=game.t2, tournament=tournament, pool_play_seed=2,
+                                          bracket_play_seed=2)
+            return redirect('games_list')
     else:
-        form = GameForm()
+        form = GameForm(request=request)
     return render(request, 'games/create_individual_game.html', {'form': form})
 
 
