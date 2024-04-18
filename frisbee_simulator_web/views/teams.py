@@ -51,13 +51,12 @@ def create_random_team(request):
 
 @login_required(login_url='/login/')
 def list_teams(request, is_public=None):
-    # if is_public is None:
-    #     teams = Team.objects.filter(created_by=request.user.profile)
-    # elif is_public:
-    #     teams = Team.objects.filter(is_public=True).order_by('created_by')
-    # else:
-    #     teams = Team.objects.filter(created_by=request.user.profile)
-    teams = Team.objects.filter(created_by=request.user.profile)
+    if is_public is None:
+        teams = Team.objects.filter(created_by=request.user.profile)
+    elif is_public:
+        teams = Team.objects.filter(is_public=True).order_by('created_by')
+    else:
+        teams = Team.objects.filter(created_by=request.user.profile)
     return render(request, 'teams/list_teams.html', {'teams': teams})
 
 

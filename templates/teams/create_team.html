@@ -1,21 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_form.html' %}
 
-{% block content %}
-    <div class="container py-4">
-        <h1 class="mb-4">Create New Team</h1>
-        <form method="post" class="needs-validation" novalidate>
-            {% csrf_token %}
-            <div class="form-group">
-                {{ form.as_p }}
-            </div>
-            <p>Please note: If fewer than 7 players are selected for a line, the system will automatically generate the
-                missing players.</p>
-            <button type="submit" class="btn btn-primary">Create</button>
-        </form>
-        <br>
-        <form method="post" action="{% url 'random_team' %}" class="needs-validation" novalidate>
-            {% csrf_token %}
-            <button type="submit" class="btn btn-secondary">Create Random Team</button>
-        </form>
-    </div>
-{% endblock %}
+{% block title %}Create New Team{% endblock %}
+{% block submit_button %}Create{% endblock %}

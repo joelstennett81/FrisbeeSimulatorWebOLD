@@ -24,7 +24,7 @@
             <ul class="list-group list-group-flush">
                 {% for game in pool_a_games %}
                     <li class="list-group-item" id="game-{{ game.id }}">
-                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>
+{#                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                         {{ game.team_one.team }} vs {{ game.team_two.team }}
                     </li>
                 {% empty %}
@@ -39,7 +39,7 @@
             <ul class="list-group list-group-flush">
                 {% for game in pool_b_games %}
                     <li class="list-group-item" id="game-{{ game.id }}">
-                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>
+{#                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                         {{ game.team_one.team }} vs {{ game.team_two.team }}
                     </li>
                 {% empty %}
@@ -53,7 +53,7 @@
             <ul class="list-group list-group-flush">
                 {% for game in pool_c_games %}
                     <li class="list-group-item" id="game-{{ game.id }}">
-                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>
+{#                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                         {{ game.team_one.team }} vs {{ game.team_two.team }}
                     </li>
                 {% empty %}
@@ -68,7 +68,7 @@
             <ul class="list-group list-group-flush">
                 {% for game in pool_d_games %}
                     <li class="list-group-item" id="game-{{ game.id }}">
-                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>
+{#                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                         {{ game.team_one.team }} vs {{ game.team_two.team }}
                     </li>
                 {% empty %}
