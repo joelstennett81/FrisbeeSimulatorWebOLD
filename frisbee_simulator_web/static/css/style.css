@@ -106,16 +106,11 @@ button:hover {
 }
 
 .btn-link {
-    background-color: #199319; /* Change this to your preferred button color */
     color: white; /* Change this to your preferred text color */
     padding: 15px 25px; /* Adjust padding as needed */
     text-decoration: none; /* Removes the underline */
     display: inline-block; /* Allows padding and other styling */
     border-radius: 5px; /* Optional: adds rounded corners */
-}
-
-.btn-link:hover {
-    background-color: #223094; /* Change this to your preferred hover color */
 }
 
 .disabled-link {
