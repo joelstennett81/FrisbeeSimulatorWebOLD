@@ -3,19 +3,19 @@
 {% block content %}
     <div class="container py-4">
         <div class="card mb-4">
-            <div class="card-header">Instructions</div>
             <div class="card-body">
-                <p class="card-text">
-                </p>
                 {% if not tournament.pool_play_completed and not tournament.bracket_play_completed %}
-                    <p>Simulate each game individually, when they are all simulated, you can simulate the bracket</p>
-                    <a href="{% url 'simulate_full_pool_play' tournament.id %}">Simulate Pool Play All At Once</a>
+                    <a href="{% url 'simulate_full_pool_play' tournament.id %}" class="btn-link"
+                       id="simulatePoolPlay">Simulate Pool Play All At Once</a>
                 {% elif tournament.pool_play_completed and not tournament.quarterfinal_round_completed and not tournament.semifinal_round_completed and not tournament.final_round_completed %}
-                    <a href="{% url 'simulate_quarterfinal_round' tournament.id %}">Simulate Quarter-Final Round</a>
+                    <a href="{% url 'simulate_quarterfinal_round' tournament.id %}" class="btn-link"
+                       id="simulateQuarterfinalRound">Simulate Quarter-Final Round</a>
                 {% elif tournament.pool_play_completed and tournament.quarterfinal_round_completed and not tournament.semifinal_round_completed and not tournament.final_round_completed %}
-                    <a href="{% url 'simulate_semifinal_round' tournament.id %}">Simulate Semi-Final Round</a>
+                    <a href="{% url 'simulate_semifinal_round' tournament.id %}" class="btn-link"
+                       id="simulateSemifinalRound">Simulate Semi-Final Round</a>
                 {% elif tournament.pool_play_completed and tournament.quarterfinal_round_completed and tournament.semifinal_round_completed and not tournament.final_round_completed %}
-                    <a href="{% url 'simulate_final_round' tournament.id %}">Simulate Final Round</a>
+                    <a href="{% url 'simulate_final_round' tournament.id %}" class="btn-link"
+                       id="simulateFinalRound">Simulate Final Round</a>
                 {% endif %}
             </div>
         </div>
@@ -29,7 +29,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '9th-Place Quarterfinal' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -45,7 +44,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Quarterfinal' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -61,7 +59,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '5th-Place Semifinal' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -77,7 +74,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Semifinal' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -93,7 +89,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '9th-Place Semifinal' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -109,7 +104,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '13th-Place Semifinal' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -125,7 +119,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '15th-Place Final' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -141,7 +134,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '13th-Place Final' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -157,7 +149,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '11th-Place Final' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -173,7 +164,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '9th-Place Final' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -189,7 +179,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '7th-Place Final' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -205,7 +194,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '5th-Place Final' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -221,7 +209,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '3rd-Place Final' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -237,7 +224,6 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Championship' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-{#                            <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>
                     {% endif %}
@@ -247,126 +233,5 @@
             </ul>
         </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            // Start polling when the page loads
-            startPolling();
-
-            function startPolling() {
-                // Show the loading message
-                $('#loading-message').show();
-
-                // Poll the server every 5 seconds
-                setInterval(function () {
-                    $.ajax({
-                        url: "{% url 'check_bracket_simulation_status' tournament.id %}",
-                        type: 'GET',
-                        success: function (response) {
-                            console.log(response);
-                            if (response.simulations_complete) {
-                                // Hide the loading message
-                                $('#loading-message').hide();
-
-                                // Redirect to the appropriate results page based on the current stage
-                                if (!response.semifinal_round_completed && !response.final_round_completed) {
-                                    window.location.href = "{% url 'bracket_overview' tournament.id %}";
-                                } else if (response.semifinal_round_completed && !response.final_round_completed) {
-                                    window.location.href = "{% url 'bracket_overview' tournament.id %}";
-                                } else {
-                                    window.location.href = "{% url 'tournament_results' tournament.id %}";
-                                }
-                            } else {
-                                // Update game scores for completed games
-                                updateQuarterfinalGamesData();
-                                updateSemifinalGamesData();
-                                updateFinalGamesData();
-                            }
-                        },
-                        error: function () {
-                            // Handle errors (e.g., stop polling and show an error message)
-                            console.error('Error checking simulation status');
-                        }
-                    });
-                }, 5000); // 5000 milliseconds = 5 seconds
-            }
-
-            function updateQuarterfinalGamesData() {
-                // Fetch the latest game data for the semifinals from the server
-                $.ajax({
-                    url: "{% url 'fetch_latest_games_data' tournament.id %}",
-                    type: 'GET',
-                    data: {
-                        game_type: 'Quarterfinal'
-                    },
-                    success: function (data) {
-                        // Update the DOM with the new game data for the semifinals
-                        $.each(data.games, function (index, game) {
-                            var gameItem = $('#game-' + game.id);
-                            if (game.is_completed) {
-                                // Construct the HTML string for the completed game
-                                var gameHtml = game.winner_team + ' won ' + game.winner_score + '-' + game.loser_score + ' over ' + game.loser_team;
-                                // Update the game item's HTML with the new score
-                                gameItem.html(gameHtml);
-                            }
-                        });
-                    },
-                    error: function () {
-                        console.error('Error fetching latest games data for semifinals');
-                    }
-                });
-            }
-
-            function updateSemifinalGamesData() {
-                // Fetch the latest game data for the semifinals from the server
-                $.ajax({
-                    url: "{% url 'fetch_latest_games_data' tournament.id %}",
-                    type: 'GET',
-                    data: {
-                        game_type: 'Semifinal'
-                    },
-                    success: function (data) {
-                        // Update the DOM with the new game data for the semifinals
-                        $.each(data.games, function (index, game) {
-                            var gameItem = $('#game-' + game.id);
-                            if (game.is_completed) {
-                                // Construct the HTML string for the completed game
-                                var gameHtml = game.winner_team + ' won ' + game.winner_score + '-' + game.loser_score + ' over ' + game.loser_team;
-                                // Update the game item's HTML with the new score
-                                gameItem.html(gameHtml);
-                            }
-                        });
-                    },
-                    error: function () {
-                        console.error('Error fetching latest games data for semifinals');
-                    }
-                });
-            }
-
-            function updateFinalGamesData() {
-                // Fetch the latest game data for the finals from the server
-                $.ajax({
-                    url: "{% url 'fetch_latest_games_data' tournament.id %}",
-                    type: 'GET',
-                    data: {
-                        game_type: 'Championship'
-                    },
-                    success: function (data) {
-                        // Update the DOM with the new game data for the finals
-                        $.each(data.games, function (index, game) {
-                            var gameItem = $('#game-' + game.id);
-                            if (game.is_completed) {
-                                // Construct the HTML string for the completed game
-                                var gameHtml = game.winner_team + ' won ' + game.winner_score + '-' + game.loser_score + ' over ' + game.loser_team;
-                                // Update the game item's HTML with the new score
-                                gameItem.html(gameHtml);
-                            }
-                        });
-                    },
-                    error: function () {
-                        console.error('Error fetching latest games data for finals');
-                    }
-                });
-            }
-        });
-    </script>
+    {% include 'sixteen_team_bracket_scripts.html' %}
 {% endblock %}

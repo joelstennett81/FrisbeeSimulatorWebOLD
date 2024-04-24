@@ -201,8 +201,11 @@ def simulate_game(request, game_id, tournament_id):
 
 def check_pool_play_simulation_status(request, tournament_id):
     tournament = Tournament.objects.get(id=tournament_id)
-    incomplete_games = Game.objects.filter(tournament=tournament, game_type='Pool Play', is_completed=False)
-    return JsonResponse({'simulations_complete': not incomplete_games.exists()})
+    if tournament.pool_play_completed:
+        completed = True
+    else:
+        completed = False
+    return JsonResponse({'simulations_complete': completed})
 
 
 def check_bracket_simulation_status(request, tournament_id):

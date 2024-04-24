@@ -3,15 +3,13 @@
 {% block content %}
     <div class="container py-4">
         <div class="card mb-4">
-            <div class="card-header">Instructions</div>
             <div class="card-body">
-                <p class="card-text">
-                </p>
                 {% if not tournament.pool_play_completed and not tournament.bracket_play_completed %}
-                    <p>Simulate each game individually, when they are all simulated, you can simulate the bracket</p>
-                    <a href="{% url 'simulate_full_pool_play' tournament.id %}">Simulate Pool Play All At Once</a>
+                    <a href="{% url 'simulate_full_pool_play' tournament.id %}" class="btn-link"
+                       id="simulatePoolPlay">Simulate Pool Play All At Once</a>
                 {% elif tournament.pool_play_completed and not tournament.bracket_play_completed %}
-                    <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Bracket Play</a>
+                    <a href="{% url 'simulate_tournament' tournament.id %}" class="btn-link"
+                       id="simulateBracketPlay" style="display: none;">Simulate Bracket Play</a>
                 {% endif %}
             </div>
         </div>
@@ -24,7 +22,6 @@
             <ul class="list-group list-group-flush">
                 {% for game in pool_a_games %}
                     <li class="list-group-item" id="game-{{ game.id }}">
-{#                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                         {{ game.team_one.team }} vs {{ game.team_two.team }}
                     </li>
                 {% empty %}
@@ -32,14 +29,11 @@
                 {% endfor %}
             </ul>
         </div>
-
-        <!-- Pool B Games Card -->
         <div class="card mb-4">
             <div class="card-header">Pool B Games</div>
             <ul class="list-group list-group-flush">
                 {% for game in pool_b_games %}
                     <li class="list-group-item" id="game-{{ game.id }}">
-{#                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                         {{ game.team_one.team }} vs {{ game.team_two.team }}
                     </li>
                 {% empty %}
@@ -53,7 +47,6 @@
             <ul class="list-group list-group-flush">
                 {% for game in pool_c_games %}
                     <li class="list-group-item" id="game-{{ game.id }}">
-{#                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                         {{ game.team_one.team }} vs {{ game.team_two.team }}
                     </li>
                 {% empty %}
@@ -68,7 +61,6 @@
             <ul class="list-group list-group-flush">
                 {% for game in pool_d_games %}
                     <li class="list-group-item" id="game-{{ game.id }}">
-{#                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
                         {{ game.team_one.team }} vs {{ game.team_two.team }}
                     </li>
                 {% empty %}
@@ -77,72 +69,5 @@
             </ul>
         </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            // Start polling when the page loads
-            startPolling();
-
-            function startPolling() {
-                // Disable all buttons on the page
-                $('button').addClass('disable-buttons');
-
-                // Show the loading message
-                $('#loading-message').show();
-
-                // Poll the server every 5 seconds
-                setInterval(function () {
-                    $.ajax({
-                        url: "{% url 'check_pool_play_simulation_status' tournament.id %}",
-                        type: 'GET',
-                        success: function (response) {
-                            if (response.simulations_complete) {
-                                // Enable all buttons on the page
-                                $('button').removeClass('disable-buttons');
-                                // Redirect to the pool play results page
-                                window.location.href = "{% url 'pool_play_results' tournament.id %}";
-                            } else {
-                                // Update game scores for completed games
-                                updateGamesData();
-                            }
-                        },
-                        error: function () {
-                            // Handle errors (e.g., stop polling and show an error message)
-                            console.error('Error checking simulation status');
-                        }
-                    });
-                }, 5000); // 5000 milliseconds = 5 seconds
-            }
-
-            function updateGamesData() {
-                // Fetch the latest game data from the server
-                $.ajax({
-                    url: "{% url 'fetch_latest_games_data' tournament.id %}",
-                    type: 'GET',
-                    success: function (data) {
-                        // Update the DOM with the new game data
-                        var completedGamesCount = 0;
-                        $.each(data.games, function (index, game) {
-                            var gameItem = $('#game-' + game.id);
-                            if (game.is_completed) {
-                                completedGamesCount++;
-                                // Construct the HTML string for the completed game
-                                var gameHtml = game.winner_team + ' won ' + game.winner_score + '-' + game.loser_score + ' over ' + game.loser_team;
-                                // Update the game item's HTML with the new score
-                                gameItem.html(gameHtml);
-                            }
-                        });
-
-                        // Check if all games are completed
-                        if (completedGamesCount === {{ total_number_of_games }}) {
-                            // Redirect to the pool play results page
-                            window.location.href = "{% url 'pool_play_results' tournament.id %}";
-                        }
-                    },
-                    error: function () {
-                        console.error('Error fetching latest games data');
-                    }
-                });
-            }
-        });
-    </script>
+    {% include 'pool_play_scripts.html' %}
 {% endblock %}
