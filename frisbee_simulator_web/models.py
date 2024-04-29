@@ -122,6 +122,7 @@ class Tournament(models.Model):
     is_public = models.BooleanField(default=False)
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     pool_play_completed = models.BooleanField(default=False)
+    pre_quarterfinal_round_completed = models.BooleanField(default=False)
     quarterfinal_round_completed = models.BooleanField(default=False)
     losers_quarterfinal_round_completed = models.BooleanField(default=False)
     semifinal_round_completed = models.BooleanField(default=False)
@@ -129,6 +130,7 @@ class Tournament(models.Model):
     final_round_completed = models.BooleanField(default=False)
     losers_final_round_completed = models.BooleanField(default=False)
     pool_play_initialized = models.BooleanField(default=False)
+    pre_quarterfinal_round_initialized = models.BooleanField(default=False)
     quarterfinal_round_initialized = models.BooleanField(default=False)
     losers_quarterfinal_round_initialized = models.BooleanField(default=False)
     semifinal_round_initialized = models.BooleanField(default=False)
@@ -136,6 +138,7 @@ class Tournament(models.Model):
     final_round_initialized = models.BooleanField(default=False)
     losers_final_round_initialized = models.BooleanField(default=False)
     pool_play_games = models.ManyToManyField('Game', related_name='pool_play_games_tournament')
+    pre_quarterfinal_round_games = models.ManyToManyField('Game', related_name='prequarter_final_games_tournament')
     quarterfinal_round_games = models.ManyToManyField('Game', related_name='quarterfinal_games_tournament')
     losers_quarterfinal_round_games = models.ManyToManyField('Game',
                                                              related_name='losers_quarterfinal_games_tournament')

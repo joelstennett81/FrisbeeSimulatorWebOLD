@@ -7,6 +7,9 @@
                 {% if not tournament.pool_play_completed and not tournament.bracket_play_completed %}
                     <a href="{% url 'simulate_full_pool_play' tournament.id %}" class="btn-link"
                        id="simulatePoolPlay">Simulate Pool Play All At Once</a>
+                {% elif tournament.pool_play_completed and not tournament.pre_quarterfinal_round_completed and not tournament.quarterfinal_round_completed and not tournament.semifinal_round_completed and not tournament.final_round_completed %}
+                    <a href="{% url 'simulate_prequarterfinal_round' tournament.id %}" class="btn-link"
+                       id="simulateQuarterfinalRound">Simulate Pre-Quarter-Final Round</a>
                 {% elif tournament.pool_play_completed and not tournament.quarterfinal_round_completed and not tournament.semifinal_round_completed and not tournament.final_round_completed %}
                     <a href="{% url 'simulate_quarterfinal_round' tournament.id %}" class="btn-link"
                        id="simulateQuarterfinalRound">Simulate Quarter-Final Round</a>
@@ -28,6 +31,21 @@
             <ul class="list-group list-group-flush">
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '9th-Place Quarterfinal' %}
+                        <li class="list-group-item" id="game-{{ game.id }}">
+                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Quarterfinal Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pre-Quarterfinal Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Pre-Quarterfinal' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
                             {{ game.team_one.team }} vs {{ game.team_two.team }}
                         </li>

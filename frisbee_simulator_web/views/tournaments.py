@@ -139,7 +139,12 @@ def bracket_overview(request, tournament_id):
             return render(request, 'bracket/eight_team_bracket_overview.html', {'tournament': tournament})
         return render(request, 'bracket/eight_team_bracket_overview.html', {'tournament': tournament})
     elif tournament.number_of_teams == 16:
-        if not tournament.quarterfinal_round_initialized:
+        print('in bracket overview')
+        if not tournament.pre_quarterfinal_round_initialized:
+            print('setting up prequarter')
+            tournamentSimulation.setup_prequarterfinal_round_for_sixteen_team_bracket(request)
+        elif tournament.pre_quarterfinal_round_initialized and not tournament.quarterfinal_round_initialized:
+            print('setting up quarterfinals')
             tournamentSimulation.setup_quarterfinal_round_for_sixteen_team_bracket(request)
         elif tournament.quarterfinal_round_initialized and not tournament.semifinal_round_initialized:
             tournamentSimulation.setup_semifinal_round_for_sixteen_team_bracket(request)
@@ -242,6 +247,16 @@ def simulate_full_pool_play(request, tournament_id):
     tournament.pool_play_completed = True
     tournament.save()
     return redirect(reverse('pool_play_results', kwargs={'tournament_id': tournament_id}))
+
+
+def simulate_prequarterfinal_round(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    for game in tournament.pre_quarterfinal_round_games.all():
+        if not game.is_completed:
+            simulate_game(request, game.id, tournament.id)
+    tournament.pre_quarterfinal_round_completed = True
+    tournament.save()
+    return redirect(reverse('bracket_overview', kwargs={'tournament_id': tournament_id}))
 
 
 def simulate_quarterfinal_round(request, tournament_id):
@@ -429,10 +444,10 @@ def tournament_results(request, tournament_id):
     elif tournament.pool_play_completed and tournament.semifinal_round_completed and tournament.final_round_completed:
         if number_of_teams == 4:
             context = {'tournament_id': tournament_id, 'tournament': tournament, 'teams_stats': teams_stats,
-                      'top_assists': top_assists,
-                      'top_goals': top_goals,
-                      'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
-                      'top_receiving_yards': top_receiving_yards}
+                       'top_assists': top_assists,
+                       'top_goals': top_goals,
+                       'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
+                       'top_receiving_yards': top_receiving_yards}
             return render(request, 'tournaments/four_team_tournament_results.html', context)
         elif number_of_teams == 8:
             pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
@@ -442,11 +457,11 @@ def tournament_results(request, tournament_id):
             pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a)
             pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b)
             context = {'tournament_id': tournament_id, 'tournament': tournament, 'teams_stats': teams_stats,
-                      'top_assists': top_assists,
-                      'top_goals': top_goals,
-                      'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
-                      'top_receiving_yards': top_receiving_yards, 'pool_a_games': pool_a_games,
-                      'pool_b_games': pool_b_games, 'pool_a_teams': pool_a_teams, 'pool_b_teams': pool_b_teams}
+                       'top_assists': top_assists,
+                       'top_goals': top_goals,
+                       'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
+                       'top_receiving_yards': top_receiving_yards, 'pool_a_games': pool_a_games,
+                       'pool_b_games': pool_b_games, 'pool_a_teams': pool_a_teams, 'pool_b_teams': pool_b_teams}
             return render(request, 'tournaments/eight_team_tournament_results.html', context)
         elif number_of_teams == 16:
             pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
@@ -462,13 +477,13 @@ def tournament_results(request, tournament_id):
             pool_c_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_c)
             pool_d_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_d)
             context = {'tournament_id': tournament_id, 'tournament': tournament, 'teams_stats': teams_stats,
-                      'top_assists': top_assists,
-                      'top_goals': top_goals,
-                      'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
-                      'top_receiving_yards': top_receiving_yards, 'pool_a_games': pool_a_games,
-                      'pool_b_games': pool_b_games, 'pool_c_games': pool_c_games,
-                      'pool_d_games': pool_d_games, 'pool_a_teams': pool_a_teams, 'pool_b_teams': pool_b_teams,
-                      'pool_c_teams': pool_c_teams, 'pool_d_teams': pool_d_teams}
+                       'top_assists': top_assists,
+                       'top_goals': top_goals,
+                       'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
+                       'top_receiving_yards': top_receiving_yards, 'pool_a_games': pool_a_games,
+                       'pool_b_games': pool_b_games, 'pool_c_games': pool_c_games,
+                       'pool_d_games': pool_d_games, 'pool_a_teams': pool_a_teams, 'pool_b_teams': pool_b_teams,
+                       'pool_c_teams': pool_c_teams, 'pool_d_teams': pool_d_teams}
             return render(request, 'tournaments/sixteen_team_tournament_results.html', context)
         else:
             return render(request, 'tournaments/tournament_error.html')
