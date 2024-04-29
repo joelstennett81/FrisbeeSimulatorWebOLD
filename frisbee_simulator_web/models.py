@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
@@ -146,6 +147,7 @@ class Tournament(models.Model):
     losers_semifinal_round_games = models.ManyToManyField('Game', related_name='losers_semifinal_games_tournament')
     final_round_games = models.ManyToManyField('Game', related_name='final_games_tournament')
     losers_final_round_games = models.ManyToManyField('Game', related_name='losers_final_games_tournament')
+    pool_play_seeds_set = models.BooleanField(default=False)
 
     def total_pool_play_games(self):
         num_teams = self.teams.count()
@@ -200,8 +202,7 @@ class TournamentTeam(models.Model):
     bracket_play_losses = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return self.team.location + ' ' + self.team.mascot
-
+        return 'Seed ' + str(self.pool_play_seed) + ': ' + self.team.location + ' ' + self.team.mascot
 
 class Game(models.Model):
     GAME_TYPE_CHOICES = [

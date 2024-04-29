@@ -25,6 +25,8 @@ urlpatterns = [
     path('teams/public/', teams.list_teams, kwargs={'is_public': True}, name='list_public_teams'),
     path('teams/detail/<int:pk>/', teams.detail_team, name='detail_team'),
     path('pool_play/overview/<int:tournament_id>/', tournaments.pool_play_overview, name='pool_play_overview'),
+    path('pool_play/manually_rank_teams_for_pool_play/<int:tournament_id>/',
+         tournaments.manually_rank_teams_for_pool_play, name='manually_rank_teams_for_pool_play'),
     path('bracket/overview/<int:tournament_id>/', tournaments.bracket_overview, name='bracket_overview'),
     path('tournaments/simulate_game/<int:game_id>/<int:tournament_id>/', tournaments.simulate_game,
          name='simulate_game'),
