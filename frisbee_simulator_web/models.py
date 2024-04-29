@@ -122,6 +122,8 @@ class Tournament(models.Model):
     is_complete = models.BooleanField(default=False)
     is_public = models.BooleanField(default=False)
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
+    pool_play_games_completed_counter = models.PositiveIntegerField(default=0, null=True)
+    pool_play_total_number_of_games = models.PositiveIntegerField(default=0, null=True)
     pool_play_completed = models.BooleanField(default=False)
     pre_quarterfinal_round_completed = models.BooleanField(default=False)
     quarterfinal_round_completed = models.BooleanField(default=False)
