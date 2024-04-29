@@ -18,14 +18,13 @@
         <div id="loading-message" style="display: none;">
             <p>Your games are being simulated, please be patient...</p>
         </div>
-        <!-- Pool Play Games Card -->
+        <!-- Pool Play Games Card -->that
         <div class="card mb-4">
             <div class="card-header">Pool Play Games</div>
             <ul class="list-group list-group-flush">
                 {% for game in pool_play_games.all %}
                     <li class="list-group-item" id="game-{{ game.id }}">
-{#                        <a href="{% url 'simulate_game' game.id tournament.id %}">Simulate Game</a>#}
-                        {{ game.team_one.team }} vs {{ game.team_two.team }}
+                        {{ game.team_one }} vs {{ game.team_two }}
                     </li>
                 {% empty %}
                     <li class="list-group-item">No games yet</li>

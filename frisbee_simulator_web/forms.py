@@ -183,3 +183,9 @@ class GameForm(forms.ModelForm):
     class Meta:
         model = Game
         fields = ['team_one', 'team_two', 'date']
+
+
+class UpdateTournamentTeamPoolPlaySeedForm(forms.ModelForm):
+    class Meta:
+        model = TournamentTeam
+        fields = ['pool_play_seed']

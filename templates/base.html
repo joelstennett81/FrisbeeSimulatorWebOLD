@@ -28,7 +28,7 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'list_players' %}">Players</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'list_teams' %}">Teams</a></li>
-{#                    <li class="nav-item"><a class="nav-link" href="{% url 'games_list' %}">Games</a></li>#}
+                    {#                    <li class="nav-item"><a class="nav-link" href="{% url 'games_list' %}">Games</a></li>#}
                     <li class="nav-item"><a class="nav-link" href="{% url 'list_tournaments' %}">Tournaments</a>
                     </li>
                 {% endif %}
@@ -47,6 +47,11 @@
 
 </header>
 <main class="container">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
     {% block content %}
     {% endblock %}
 </main>
