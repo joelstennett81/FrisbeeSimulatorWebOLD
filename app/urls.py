@@ -48,6 +48,8 @@ urlpatterns = [
          name='simulate_tournament'),
     path('tournament/simulate_full_pool_play/<int:tournament_id>/', tournaments.simulate_full_pool_play,
          name='simulate_full_pool_play'),
+    path('tournament/simulate_prequarterfinal_round/<int:tournament_id>/', tournaments.simulate_prequarterfinal_round,
+         name='simulate_prequarterfinal_round'),
     path('tournament/simulate_quarterfinal_round/<int:tournament_id>/', tournaments.simulate_quarterfinal_round,
          name='simulate_quarterfinal_round'),
     path('tournament/simulate_semifinal_round/<int:tournament_id>/', tournaments.simulate_semifinal_round,

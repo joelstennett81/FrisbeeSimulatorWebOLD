@@ -387,71 +387,94 @@ class TournamentSimulation:
         self.tournament.final_round_games.set(games)
         self.tournament.save()
 
-    def setup_quarterfinal_round_for_sixteen_team_bracket(self, request):
-        # set up two rounds, a winners and losers quarterfinals
+    def setup_prequarterfinal_round_for_sixteen_team_bracket(self, request):
         tournament_pools = TournamentPool.objects.filter(tournament=self.tournament)
         poolASortedTeams = tournament_pools[0].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
         poolBSortedTeams = tournament_pools[1].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
         poolCSortedTeams = tournament_pools[2].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
         poolDSortedTeams = tournament_pools[3].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
-        # poolA3 v pool D4, pool A4v pool D3, pool B3vC4, pool B4vC3
-        teamsInLosersBracket = [poolASortedTeams[2], poolBSortedTeams[2], poolCSortedTeams[2], poolDSortedTeams[2],
-                                poolASortedTeams[3], poolBSortedTeams[3], poolCSortedTeams[3], poolDSortedTeams[3]]
-        # poolA1 v pool D2, pool B1vC2, pool B2vC1, pool A2v pool D1
         teamsInWinnersBracket = [poolASortedTeams[0], poolBSortedTeams[0], poolCSortedTeams[0], poolDSortedTeams[0],
-                                 poolASortedTeams[1], poolBSortedTeams[1], poolCSortedTeams[1], poolDSortedTeams[1]]
-        losersBracket = TournamentBracket.objects.create(tournament=self.tournament, number_of_teams=8,
-                                                         bracket_type='Loser')
-        winnersBracket = TournamentBracket.objects.create(tournament=self.tournament, number_of_teams=8,
+                                 poolASortedTeams[1], poolBSortedTeams[1], poolCSortedTeams[1], poolDSortedTeams[1],
+                                 poolASortedTeams[2], poolBSortedTeams[2], poolCSortedTeams[2], poolDSortedTeams[2]]
+        winnersBracket = TournamentBracket.objects.create(tournament=self.tournament, number_of_teams=12,
                                                           bracket_type='Championship')
-        losersBracket.teams.set(teamsInLosersBracket)
         winnersBracket.teams.set(teamsInWinnersBracket)
-        losersBracket.save()
         winnersBracket.save()
-        for i, team in enumerate(teamsInLosersBracket, start=1):
-            team.bracket_play_seed = i
-            team.save()
         for i, team in enumerate(teamsInWinnersBracket, start=1):
             team.bracket_play_seed = i
             team.save()
         created_by = request.user.profile
-        loser_game_one = Game.objects.create(team_one=teamsInLosersBracket[0], team_two=teamsInLosersBracket[7],
-                                             tournament=self.tournament,
-                                             game_type='9th-Place Quarterfinal', created_by=created_by)
-        loser_game_two = Game.objects.create(team_one=teamsInLosersBracket[1], team_two=teamsInLosersBracket[6],
-                                             tournament=self.tournament,
-                                             game_type='9th-Place Quarterfinal', created_by=created_by)
-        loser_game_three = Game.objects.create(team_one=teamsInLosersBracket[2], team_two=teamsInLosersBracket[5],
-                                               tournament=self.tournament,
-                                               game_type='9th-Place Quarterfinal', created_by=created_by)
-        loser_game_four = Game.objects.create(team_one=teamsInLosersBracket[3], team_two=teamsInLosersBracket[4],
-                                              tournament=self.tournament,
-                                              game_type='9th-Place Quarterfinal', created_by=created_by)
-        winner_game_one = Game(team_one=teamsInWinnersBracket[0], team_two=teamsInWinnersBracket[7],
-                               tournament=self.tournament,
-                               game_type='Quarterfinal', created_by=created_by)
-        winner_game_two = Game(team_one=teamsInWinnersBracket[1], team_two=teamsInWinnersBracket[6],
-                               tournament=self.tournament,
-                               game_type='Quarterfinal', created_by=created_by)
-        winner_game_three = Game(team_one=teamsInWinnersBracket[2], team_two=teamsInWinnersBracket[5],
-                                 tournament=self.tournament,
-                                 game_type='Quarterfinal', created_by=created_by)
-        winner_game_four = Game(team_one=teamsInWinnersBracket[3], team_two=teamsInWinnersBracket[4],
-                                tournament=self.tournament,
-                                game_type='Quarterfinal', created_by=created_by)
-        loser_game_one.save()
-        loser_game_two.save()
-        loser_game_three.save()
-        loser_game_four.save()
-        winner_game_one.save()
-        winner_game_two.save()
-        winner_game_three.save()
-        winner_game_four.save()
-        loser_games = [loser_game_one, loser_game_two, loser_game_three, loser_game_four]
-        winner_games = [winner_game_one, winner_game_two, winner_game_three, winner_game_four]
-        self.tournament.losers_quarterfinal_round_initialized = True
+        # Pool B2 v Pool C3
+        prequarter_game_one = Game(team_one=poolBSortedTeams[1], team_two=poolCSortedTeams[2],
+                                   tournament=self.tournament,
+                                   game_type='Pre-Quarterfinal', created_by=created_by)
+        # Pool C2 v B3
+        prequarter_game_two = Game(team_one=poolCSortedTeams[1], team_two=poolBSortedTeams[2],
+                                   tournament=self.tournament,
+                                   game_type='Pre-Quarterfinal', created_by=created_by)
+        # Pool D2 v A3
+        prequarter_game_three = Game(team_one=poolDSortedTeams[1], team_two=poolASortedTeams[2],
+                                     tournament=self.tournament,
+                                     game_type='Pre-Quarterfinal', created_by=created_by)
+        # Pool A2 v D3
+        prequarter_game_four = Game(team_one=poolASortedTeams[1], team_two=poolDSortedTeams[2],
+                                    tournament=self.tournament,
+                                    game_type='Pre-Quarterfinal', created_by=created_by)
+        prequarter_game_one.save()
+        prequarter_game_two.save()
+        prequarter_game_three.save()
+        prequarter_game_four.save()
+        prequarter_games = [prequarter_game_one, prequarter_game_two, prequarter_game_three, prequarter_game_four]
+        self.tournament.pre_quarterfinal_round_initialized = True
+        self.tournament.pre_quarterfinal_round_games.set(prequarter_games)
+        self.tournament.save()
+        print('prequarters initizialied')
+
+    def setup_quarterfinal_round_for_sixteen_team_bracket(self, request):
+        winnerPrequarterFinalGames = self.tournament.pre_quarterfinal_round_games.all()
+        winnerPrequarterFinalGameOne = winnerPrequarterFinalGames[0]
+        winnerPrequarterFinalGameTwo = winnerPrequarterFinalGames[1]
+        winnerPrequarterFinalGameThree = winnerPrequarterFinalGames[2]
+        winnerPrequarterFinalGameFour = winnerPrequarterFinalGames[3]
+        created_by = request.user.profile
+        tournament_pools = TournamentPool.objects.filter(tournament=self.tournament)
+        poolASortedTeams = tournament_pools[0].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
+        poolBSortedTeams = tournament_pools[1].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
+        poolCSortedTeams = tournament_pools[2].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
+        poolDSortedTeams = tournament_pools[3].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
+        teamsInWinnersBracket = [poolASortedTeams[0], poolBSortedTeams[0], poolCSortedTeams[0], poolDSortedTeams[0],
+                                 winnerPrequarterFinalGameOne.winner, winnerPrequarterFinalGameTwo.winner,
+                                 winnerPrequarterFinalGameThree.winner, winnerPrequarterFinalGameFour.winner]
+        winnersBracket = TournamentBracket.objects.create(tournament=self.tournament, number_of_teams=8,
+                                                          bracket_type='Championship')
+        winnersBracket.teams.set(teamsInWinnersBracket)
+        winnersBracket.save()
+        winnerQuarterFinalGameOne = Game(team_one=teamsInWinnersBracket[0],
+                                         team_two=winnerPrequarterFinalGameOne.winner,
+                                         tournament=self.tournament,
+                                         game_type='Quarterfinal', created_by=created_by)
+        winnerQuarterFinalGameTwo = Game(team_one=teamsInWinnersBracket[1],
+                                         team_two=winnerPrequarterFinalGameTwo.winner,
+                                         tournament=self.tournament,
+                                         game_type='Quarterfinal', created_by=created_by)
+        winnerQuarterFinalGameThree = Game(team_one=teamsInWinnersBracket[2],
+                                           team_two=winnerPrequarterFinalGameThree.winner,
+                                           tournament=self.tournament,
+                                           game_type='Quarterfinal', created_by=created_by)
+        winnerQuarterFinalGameFour = Game(team_one=teamsInWinnersBracket[3],
+                                          team_two=winnerPrequarterFinalGameFour.winner,
+                                          tournament=self.tournament,
+                                          game_type='Quarterfinal', created_by=created_by)
+        winnerQuarterFinalGameOne.save()
+        winnerQuarterFinalGameTwo.save()
+        winnerQuarterFinalGameThree.save()
+        winnerQuarterFinalGameFour.save()
+        for i, team in enumerate(teamsInWinnersBracket, start=1):
+            team.bracket_play_seed = i
+            team.save()
+        winner_games = [winnerQuarterFinalGameOne, winnerQuarterFinalGameTwo, winnerQuarterFinalGameThree,
+                        winnerQuarterFinalGameFour]
         self.tournament.quarterfinal_round_initialized = True
-        self.tournament.losers_quarterfinal_round_games.set(loser_games)
         self.tournament.quarterfinal_round_games.set(winner_games)
         self.tournament.save()
 
@@ -487,25 +510,30 @@ class TournamentSimulation:
         self.tournament.semifinal_round_initialized = True
         self.tournament.semifinal_round_games.set(winnerGames)
         self.tournament.save()
-        loserQuarterFinalGames = self.tournament.losers_quarterfinal_round_games.all()
-        loserQuarterFinalGameOne = loserQuarterFinalGames[0]
-        loserQuarterFinalGameTwo = loserQuarterFinalGames[1]
-        loserQuarterFinalGameThree = loserQuarterFinalGames[2]
-        loserQuarterFinalGameFour = loserQuarterFinalGames[3]
-        ninthPlaceSemiFinalGameOne = Game(team_one=loserQuarterFinalGameOne.winner,
-                                          team_two=loserQuarterFinalGameTwo.winner,
+        prequarterFinalGames = self.tournament.pre_quarterfinal_round_games.all()
+        prequarterFinalGameOne = prequarterFinalGames[0]
+        prequarterFinalGameTwo = prequarterFinalGames[1]
+        prequarterFinalGameThree = prequarterFinalGames[2]
+        prequarterFinalGameFour = prequarterFinalGames[3]
+        ninthPlaceSemiFinalGameOne = Game(team_one=prequarterFinalGameOne.loser,
+                                          team_two=prequarterFinalGameFour.loser,
                                           tournament=self.tournament,
                                           game_type='9th-Place Semifinal', created_by=created_by)
-        ninthPlaceSemiFinalGameTwo = Game(team_one=loserQuarterFinalGameThree.winner,
-                                          team_two=loserQuarterFinalGameFour.winner,
+        ninthPlaceSemiFinalGameTwo = Game(team_one=prequarterFinalGameTwo.loser,
+                                          team_two=prequarterFinalGameThree.loser,
                                           tournament=self.tournament,
                                           game_type='9th-Place Semifinal', created_by=created_by)
-        thirteenthPlaceSemiFinalGameOne = Game(team_one=loserQuarterFinalGameOne.loser,
-                                               team_two=loserQuarterFinalGameTwo.loser,
+        tournament_pools = TournamentPool.objects.filter(tournament=self.tournament)
+        poolASortedTeams = tournament_pools[0].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
+        poolBSortedTeams = tournament_pools[1].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
+        poolCSortedTeams = tournament_pools[2].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
+        poolDSortedTeams = tournament_pools[3].teams.order_by('-pool_play_wins', 'pool_play_point_differential')
+        thirteenthPlaceSemiFinalGameOne = Game(team_one=poolASortedTeams[3],
+                                               team_two=poolDSortedTeams[3],
                                                tournament=self.tournament,
                                                game_type='13th-Place Semifinal', created_by=created_by)
-        thirteenthPlaceSemiFinalGameTwo = Game(team_one=loserQuarterFinalGameThree.loser,
-                                               team_two=loserQuarterFinalGameFour.loser,
+        thirteenthPlaceSemiFinalGameTwo = Game(team_one=poolBSortedTeams[3],
+                                               team_two=poolCSortedTeams[3],
                                                tournament=self.tournament,
                                                game_type='13th-Place Semifinal', created_by=created_by)
         ninthPlaceSemiFinalGameOne.save()
@@ -568,7 +596,7 @@ class TournamentSimulation:
         eleventhPlaceGame.save()
         thirteenthPlaceGame.save()
         fifteenthPlaceGame.save()
-        loserGames = [ninthPlaceGame, thirdPlaceGame, fifthPlaceGame, seventhPlaceGame]
+        loserGames = [ninthPlaceGame, eleventhPlaceGame, thirteenthPlaceGame, fifteenthPlaceGame]
         self.tournament.losers_final_round_initialized = True
         self.tournament.losers_final_round_games.set(loserGames)
         self.tournament.save()
