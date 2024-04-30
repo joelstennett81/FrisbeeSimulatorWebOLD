@@ -47,8 +47,8 @@ def setup_manual_pool_play_games_for_simulation(request, tournament_id):
                                 tournament=tournament, game_type='Pool Play')
         ])
     elif num_teams == 8:
-        poolATeams = tournament_teams[:4]
-        poolBTeams = tournament_teams[4:]
+        poolATeams = [tournament_teams[i] for i in [0, 3, 4, 7]]
+        poolBTeams = [tournament_teams[i] for i in [1, 2, 5, 6]]
         poolA = TournamentPool.objects.create(tournament=tournament, number_of_teams=len(poolATeams),
                                               name='Pool A')
         poolB = TournamentPool.objects.create(tournament=tournament, number_of_teams=len(poolBTeams),
@@ -100,10 +100,10 @@ def setup_manual_pool_play_games_for_simulation(request, tournament_id):
                                 game_type='Pool Play', pool=poolB)
         ])
     elif num_teams == 16:
-        poolATeams = tournament_teams[:4]
-        poolBTeams = tournament_teams[4:8]
-        poolCTeams = tournament_teams[8:12]
-        poolDTeams = tournament_teams[12:]
+        poolATeams = [tournament_teams[0], tournament_teams[7], tournament_teams[11], tournament_teams[12]]
+        poolBTeams = [tournament_teams[1], tournament_teams[6], tournament_teams[10], tournament_teams[13]]
+        poolCTeams = [tournament_teams[2], tournament_teams[5], tournament_teams[9], tournament_teams[14]]
+        poolDTeams = [tournament_teams[3], tournament_teams[4], tournament_teams[8], tournament_teams[15]]
         poolA = TournamentPool.objects.create(tournament=tournament, number_of_teams=len(poolATeams),
                                               name='Pool A')
         poolB = TournamentPool.objects.create(tournament=tournament, number_of_teams=len(poolBTeams),
@@ -203,10 +203,14 @@ def setup_manual_pool_play_games_for_simulation(request, tournament_id):
                                 game_type='Pool Play', pool=poolD)
         ])
     elif num_teams == 20:
-        poolATeams = tournament_teams[:5]
-        poolBTeams = tournament_teams[5:10]
-        poolCTeams = tournament_teams[10:15]
-        poolDTeams = tournament_teams[15:20]
+        poolATeams = [tournament_teams[0], tournament_teams[7], tournament_teams[11], tournament_teams[12],
+                      tournament_teams[16]]
+        poolBTeams = [tournament_teams[1], tournament_teams[6], tournament_teams[10], tournament_teams[13],
+                      tournament_teams[17]]
+        poolCTeams = [tournament_teams[2], tournament_teams[5], tournament_teams[9], tournament_teams[14],
+                      tournament_teams[18]]
+        poolDTeams = [tournament_teams[3], tournament_teams[4], tournament_teams[8], tournament_teams[15],
+                      tournament_teams[19]]
         poolA = TournamentPool.objects.create(tournament=tournament, number_of_teams=len(poolATeams),
                                               name='Pool A')
         poolB = TournamentPool.objects.create(tournament=tournament, number_of_teams=len(poolBTeams),
