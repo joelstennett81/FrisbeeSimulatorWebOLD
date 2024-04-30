@@ -6,7 +6,7 @@
         <ul class="list-group">
             {% for game in games %}
                 <li class="list-group-item">
-                    {{ game.team_one.team }} vs {{ game.team_two.team }}
+                    {{ game.team_one }} vs {{ game.team_two }}
                     <button class="btn btn-primary" onclick="simulateGame({{ game.id }})">Simulate</button>
                     <span id="game_{{ game.id }}_result" style="display: none;"></span>
                 </li>
