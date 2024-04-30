@@ -22,7 +22,7 @@
             <ul class="list-group list-group-flush">
                 {% for game in pool_play_games.all %}
                     <li class="list-group-item" id="game-{{ game.id }}">
-                        {{ game.team_one.team }} vs {{ game.team_two.team }}
+                        {{ game.team_one }} vs {{ game.team_two }}
                     </li>
                 {% empty %}
                     <li class="list-group-item">No games yet</li>

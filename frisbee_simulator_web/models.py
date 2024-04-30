@@ -108,6 +108,7 @@ class Tournament(models.Model):
         (4, '4'),
         (8, '8'),
         (16, '16'),
+        (20, '20')
     ]
     SIMULATION_TYPE_CHOICES = [
         ('player_rating', 'player_rating'),
@@ -206,6 +207,7 @@ class TournamentTeam(models.Model):
     def __str__(self):
         return 'Seed ' + str(self.pool_play_seed) + ': ' + self.team.location + ' ' + self.team.mascot
 
+
 class Game(models.Model):
     GAME_TYPE_CHOICES = [
         ('Pool Play', 'Pool Play'),
@@ -224,6 +226,9 @@ class Game(models.Model):
         ('13th-Place Semifinal', '13th-Place Semifinal'),
         ('13th-Place Final', '13th-Place Final'),
         ('15th-Place Final', '15th-Place Final'),
+        ('17th-Place Semifinal', '17th-Place Semifinal'),
+        ('17th-Place Final', '17th-Place Final'),
+        ('19th-Place Final', '19th-Place Final'),
         ('Exhibition', 'Exhibition')
     ]
     date = models.DateTimeField(default=timezone.now)

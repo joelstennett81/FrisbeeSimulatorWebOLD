@@ -30,7 +30,7 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Quarterfinal' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            {{ game.team_one }} vs {{ game.team_two }}
                         </li>
                     {% endif %}
                 {% empty %}
@@ -45,7 +45,7 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '5th-Place Semifinal' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            {{ game.team_one }} vs {{ game.team_two }}
                         </li>
                     {% endif %}
                 {% empty %}
@@ -60,7 +60,7 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Semifinal' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            {{ game.team_one }} vs {{ game.team_two }}
                         </li>
                     {% endif %}
                 {% empty %}
@@ -75,7 +75,7 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '7th-Place Final' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            {{ game.team_one }} vs {{ game.team_two }}
                         </li>
                     {% endif %}
                 {% empty %}
@@ -90,7 +90,7 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '5th-Place Final' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            {{ game.team_one }} vs {{ game.team_two }}
                         </li>
                     {% endif %}
                 {% empty %}
@@ -105,7 +105,7 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == '3rd-Place Final' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            {{ game.team_one }} vs {{ game.team_two }}
                         </li>
                     {% endif %}
                 {% empty %}
@@ -120,7 +120,7 @@
                 {% for game in tournament.games.all %}
                     {% if game.game_type == 'Championship' %}
                         <li class="list-group-item" id="game-{{ game.id }}">
-                            {{ game.team_one.team }} vs {{ game.team_two.team }}
+                            {{ game.team_one }} vs {{ game.team_two }}
                         </li>
                     {% endif %}
                 {% empty %}
